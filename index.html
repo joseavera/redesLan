@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes LAN — Guía Interactiva</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --surface: #111827;
+  --surface2: #1a2235;
+  --border: #1e2d45;
+  --navy: #1b3a6b;
+  --blue: #2563eb;
+  --teal: #0891b2;
+  --green: #16a34a;
+  --amber: #d97706;
+  --red: #dc2626;
+  --purple: #7c3aed;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --accent: #38bdf8;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,14,26,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0;
+  padding: 0 24px; height: 52px;
+  overflow-x: auto;
+}
+nav a {
+  color: var(--text3); text-decoration: none; font-size: 12px;
+  font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  padding: 0 16px; height: 52px; display: flex; align-items: center;
+  border-bottom: 2px solid transparent; white-space: nowrap;
+  transition: color .2s, border-color .2s;
+}
+nav a:hover, nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+nav .logo {
+  font-size: 13px; font-weight: 800; color: var(--accent);
+  margin-right: 24px; letter-spacing: .04em; white-space: nowrap;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 64px 24px 48px;
+  max-width: 860px; margin: 0 auto; text-align: center;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(56,189,248,.1); border: 1px solid rgba(56,189,248,.25);
+  color: var(--accent); font-size: 11px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 20px; margin-bottom: 24px;
+}
+.hero h1 {
+  font-size: clamp(32px, 5vw, 52px); font-weight: 800; line-height: 1.1;
+  color: #fff; margin-bottom: 16px;
+}
+.hero h1 span { color: var(--accent); }
+.hero p { font-size: 16px; color: var(--text2); max-width: 540px; margin: 0 auto; }
+
+/* ── SECTION ── */
+section {
+  max-width: 900px; margin: 0 auto;
+  padding: 48px 24px;
+  border-top: 1px solid var(--border);
+}
+.section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--accent);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.section-label::before {
+  content: ''; width: 24px; height: 2px; background: var(--accent);
+}
+.section-title {
+  font-size: clamp(22px, 3vw, 30px); font-weight: 800;
+  color: #fff; margin-bottom: 8px;
+}
+.section-sub { color: var(--text2); margin-bottom: 32px; font-size: 14px; }
+
+/* ── CONCEPT CARDS ── */
+.concepts-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px;
+  transition: border-color .2s, transform .2s;
+  cursor: default;
+}
+.concept-card:hover {
+  border-color: var(--accent); transform: translateY(-2px);
+}
+.concept-card .card-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 12px;
+}
+.concept-card h3 {
+  font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px;
+}
+.concept-card p {
+  font-size: 12.5px; color: var(--text2); line-height: 1.55;
+}
+.concept-card .tag {
+  display: inline-block; margin-top: 10px;
+  font-family: var(--mono); font-size: 10px;
+  padding: 2px 8px; border-radius: 4px; font-weight: 400;
+}
+
+/* ── COMMAND TABLE ── */
+.cmd-section { margin-bottom: 32px; }
+.cmd-section-title {
+  font-size: 12px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; padding: 8px 14px;
+  border-radius: 6px 6px 0 0; color: #fff;
+}
+.cmd-table { width: 100%; border-collapse: collapse; }
+.cmd-table tr { border-bottom: 1px solid var(--border); }
+.cmd-table tr:last-child { border-bottom: none; }
+.cmd-table td {
+  padding: 10px 14px; font-size: 13px; vertical-align: top;
+  background: var(--surface);
+}
+.cmd-table tr:nth-child(even) td { background: var(--surface2); }
+.cmd-table .cmd-col {
+  font-family: var(--mono); color: #3fb950; font-size: 12px;
+  white-space: nowrap; width: 44%;
+}
+.cmd-table .desc-col { color: var(--text2); }
+.cmd-table .when-col {
+  font-size: 11px; color: var(--text3); text-align: right;
+  white-space: nowrap;
+}
+
+/* ── PROMPT CHIP ── */
+.prompt {
+  display: inline-block; font-family: var(--mono); font-size: 11px;
+  background: rgba(255,255,255,.05); border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 7px; color: var(--text3);
+  margin-right: 4px; vertical-align: middle;
+}
+.prompt.priv { color: #58a6ff; border-color: #1e3a5f; background: rgba(37,99,235,.08); }
+.prompt.cfg  { color: #7EE787; border-color: #1a3a1a; background: rgba(22,163,74,.08); }
+.prompt.vlan { color: #d2a8ff; border-color: #2d1a4a; background: rgba(124,58,237,.08); }
+.prompt.iface{ color: #e3b341; border-color: #3a2800; background: rgba(217,119,6,.08); }
+.prompt.range{ color: #ff7b72; border-color: #3a1010; background: rgba(220,38,38,.08); }
+
+/* ── PRACTICE ── */
+.practice-header {
+  background: linear-gradient(135deg, var(--navy) 0%, #0d1f3c 100%);
+  border: 1px solid rgba(56,189,248,.2);
+  border-radius: 12px; padding: 28px;
+  margin-bottom: 28px; position: relative; overflow: hidden;
+}
+.practice-header::before {
+  content: ''; position: absolute; top: -40px; right: -40px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(56,189,248,.08) 0%, transparent 70%);
+}
+.practice-header .ph-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+}
+.practice-header h2 {
+  font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px;
+}
+.practice-header p { font-size: 13.5px; color: var(--text2); }
+.practice-header .ph-badges {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px;
+}
+.practice-header .ph-badge {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  border: 1px solid; display: flex; align-items: center; gap: 5px;
+}
+
+/* ── STEP ── */
+.step {
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+.step-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px; cursor: pointer;
+  transition: background .15s; user-select: none;
+}
+.step-header:hover { background: var(--surface2); }
+.step-num {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+  font-family: var(--mono);
+}
+.step-title { font-size: 14px; font-weight: 700; color: #fff; flex: 1; }
+.step-arrow {
+  color: var(--text3); font-size: 12px; transition: transform .2s;
+  flex-shrink: 0;
+}
+.step.open .step-arrow { transform: rotate(180deg); }
+.step-body {
+  display: none; padding: 18px 20px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.step.open .step-body { display: block; }
+
+/* ── QUESTION ── */
+.question {
+  background: rgba(56,189,248,.06); border: 1px solid rgba(56,189,248,.15);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 12px;
+}
+.question .q-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 5px;
+}
+.question .q-text { font-size: 13.5px; color: var(--text); font-weight: 600; }
+.question .q-sub { font-size: 12px; color: var(--text2); margin-top: 5px; }
+
+/* ── ALERT BOXES ── */
+.alert {
+  border-radius: 7px; padding: 11px 14px;
+  font-size: 12.5px; line-height: 1.55; margin: 10px 0;
+  border-left: 3px solid;
+}
+.alert-info  { background: rgba(37,99,235,.08); border-color: var(--blue); color: #93c5fd; }
+.alert-ok    { background: rgba(22,163,74,.08); border-color: var(--green); color: #86efac; }
+.alert-warn  { background: rgba(217,119,6,.08); border-color: var(--amber); color: #fcd34d; }
+.alert-err   { background: rgba(220,38,38,.08); border-color: var(--red); color: #fca5a5; }
+
+/* ── TERM ── */
+.term {
+  background: #0d1117; border: 1px solid #21262d;
+  border-radius: 8px; padding: 12px 14px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.8;
+  margin: 10px 0; overflow-x: auto;
+}
+.term .t-cmt { color: #6e7681; }
+.term .t-cmd { color: #3fb950; }
+.term .t-out { color: #58a6ff; }
+.term .t-ok  { color: #7EE787; }
+.term .t-err { color: #ff7b72; }
+.term .t-hi  { color: #e3b341; }
+.term::before {
+  content: '● ● ●'; font-size: 10px; color: #444d56;
+  display: block; margin-bottom: 8px; letter-spacing: 4px;
+}
+
+/* ── NOTE ── */
+.note {
+  font-size: 12px; color: var(--text2);
+  padding: 8px 12px; border-left: 2px solid var(--border);
+  margin: 10px 0;
+}
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; margin: 10px 0; }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 0; font-size: 13px; color: var(--text2);
+  border-bottom: 1px solid var(--border);
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist li::before {
+  content: ''; width: 16px; height: 16px; flex-shrink: 0;
+  border: 1.5px solid var(--text3); border-radius: 4px;
+  margin-top: 2px;
+}
+
+/* ── COLOR HELPERS ── */
+.c-blue   { color: #58a6ff; }
+.c-green  { color: #3fb950; }
+.c-teal   { color: #0891b2; }
+.c-amber  { color: #e3b341; }
+.c-red    { color: #ff7b72; }
+.c-purple { color: #d2a8ff; }
+.c-white  { color: #fff; }
+
+/* ── IP TABLE ── */
+.ip-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+.ip-table th {
+  font-size: 11px; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--text3);
+  padding: 8px 12px; text-align: left;
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+}
+.ip-table td {
+  padding: 9px 12px; font-size: 12.5px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+}
+.ip-table tr:last-child td { border-bottom: none; }
+.ip-table tr:nth-child(even) td { background: var(--surface2); }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center; padding: 40px 24px;
+  border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--text3);
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">⬡ REDES LAN</span>
+  <a href="#conceptos" class="active">Conceptos</a>
+  <a href="#comandos">Comandos</a>
+  <a href="#practica">Práctica</a>
+</nav>
+
+<!-- ════════════ HERO ════════════ -->
+<div class="hero">
+  <div class="hero-badge">Unidad 3 · Logística Express S.A.</div>
+  <h1>Guía Interactiva de<br><span>Redes LAN</span></h1>
+  <p>Conceptos, comandos y práctica en Cisco Packet Tracer — todo lo visto hasta ahora, sin más ni menos.</p>
+</div>
+
+<!-- ════════════ CONCEPTOS ════════════ -->
+<section id="conceptos">
+  <div class="section-label">Sección 1</div>
+  <div class="section-title">Conceptos clave</div>
+  <div class="section-sub">Todo lo que necesitas entender antes de tocar el teclado.</div>
+
+  <div class="concepts-grid">
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(37,99,235,.15)">🖧</div>
+      <h3>Dirección IP</h3>
+      <p>Identificador único de cada dispositivo en la red. Tiene 32 bits divididos en 4 octetos. La red es la "colonia" y el host es la "casa".</p>
+      <div class="tag" style="background:rgba(37,99,235,.15);color:#58a6ff">192.168.1.10</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(8,145,178,.15)">📏</div>
+      <h3>Máscara de subred</h3>
+      <p>Define qué parte de la IP es red y qué parte es host. /24 = 255.255.255.0 = 254 hosts disponibles en la misma red.</p>
+      <div class="tag" style="background:rgba(8,145,178,.15);color:#38bdf8">255.255.255.0</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(22,163,74,.15)">🚪</div>
+      <h3>Gateway (puerta de enlace)</h3>
+      <p>El router que conecta la red local con el exterior. Toda PC necesita saber su dirección para salir a internet.</p>
+      <div class="tag" style="background:rgba(22,163,74,.15);color:#4ade80">192.168.1.1</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(124,58,237,.15)">🏢</div>
+      <h3>VLAN</h3>
+      <p>Red lógica dentro de un switch físico. Separa el tráfico entre departamentos sin necesidad de hardware extra. Un piso = una VLAN.</p>
+      <div class="tag" style="background:rgba(124,58,237,.15);color:#c084fc">Virtual LAN</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(217,119,6,.15)">🔌</div>
+      <h3>Puerto Access</h3>
+      <p>Conecta un dispositivo final (PC) a UNA sola VLAN. Es el tipo de puerto que usas para las computadoras de la red.</p>
+      <div class="tag" style="background:rgba(217,119,6,.15);color:#fbbf24">switchport access</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(220,38,38,.15)">🔐</div>
+      <h3>Enable Secret</h3>
+      <p>Contraseña cifrada con MD5 que protege el modo privilegiado (#) del router y switch. Siempre usar en lugar de enable password.</p>
+      <div class="tag" style="background:rgba(220,38,38,.15);color:#f87171">MD5 cifrado</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(8,145,178,.15)">🛡</div>
+      <h3>Port-Security</h3>
+      <p>Limita qué dispositivos pueden conectarse a un puerto por su dirección MAC. Si entra una MAC no autorizada, el puerto se apaga.</p>
+      <div class="tag" style="background:rgba(8,145,178,.15);color:#38bdf8">MAC address</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(22,163,74,.15)">🔒</div>
+      <h3>SSH</h3>
+      <p>Protocolo de administración remota cifrada. Reemplaza a Telnet (que envía contraseñas en texto plano). Requiere clave RSA.</p>
+      <div class="tag" style="background:rgba(22,163,74,.15);color:#4ade80">Puerto 22</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(37,99,235,.15)">📡</div>
+      <h3>Ping</h3>
+      <p>Envía paquetes ICMP para verificar si hay comunicación entre dos IPs. 0% pérdida = conexión OK. 100% pérdida = sin ruta o VLAN mal configurada.</p>
+      <div class="tag" style="background:rgba(37,99,235,.15);color:#58a6ff">ICMP</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(217,119,6,.15)">🗺</div>
+      <h3>Tracert</h3>
+      <p>Muestra todos los saltos (routers) que recorre un paquete hasta su destino. El primer salto siempre debe ser tu gateway.</p>
+      <div class="tag" style="background:rgba(217,119,6,.15);color:#fbbf24">tracert 8.8.8.8</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(124,58,237,.15)">🔍</div>
+      <h3>DNS (nslookup)</h3>
+      <p>Traduce nombres de dominio a IPs. Si fallas un ping por nombre pero sí por IP, el problema es el DNS, no la red.</p>
+      <div class="tag" style="background:rgba(124,58,237,.15);color:#c084fc">nslookup</div>
+    </div>
+
+    <div class="concept-card">
+      <div class="card-icon" style="background:rgba(22,163,74,.15)">💾</div>
+      <h3>Running vs Startup Config</h3>
+      <p>Running-config = activa en RAM (se pierde al reiniciar). Startup-config = guardada en flash. Siempre guardar antes de cerrar Packet Tracer.</p>
+      <div class="tag" style="background:rgba(22,163,74,.15);color:#4ade80">copy run start</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════ COMANDOS ════════════ -->
+<section id="comandos">
+  <div class="section-label">Sección 2</div>
+  <div class="section-title">Comandos usados hasta ahora</div>
+  <div class="section-sub">Solo los comandos que hemos practicado en clase. Nada más.</div>
+
+  <!-- Diagnóstico en PC -->
+  <div class="cmd-section">
+    <div class="cmd-section-title" style="background:rgba(37,99,235,.2);border-left:3px solid var(--blue)">
+      💻 Diagnóstico desde la PC (Command Prompt / Windows)
+    </div>
+    <table class="cmd-table">
+      <tr>
+        <td class="cmd-col">ipconfig /all</td>
+        <td class="desc-col">Ver IP, máscara, gateway y MAC del equipo</td>
+        <td class="when-col">Primer comando del técnico</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">ping [IP]</td>
+        <td class="desc-col">Verificar conectividad con otro equipo</td>
+        <td class="when-col">Comprobar comunicación</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">tracert 8.8.8.8</td>
+        <td class="desc-col">Ver la ruta hasta internet (salto a salto)</td>
+        <td class="when-col">Localizar dónde falla</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">nslookup [dominio]</td>
+        <td class="desc-col">Verificar que el DNS traduce nombres</td>
+        <td class="when-col">Problema de nombres</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">ssh -l admin [IP]</td>
+        <td class="desc-col">Conectarse al router por SSH cifrado</td>
+        <td class="when-col">Administración remota</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Modos CLI -->
+  <div class="cmd-section">
+    <div class="cmd-section-title" style="background:rgba(8,145,178,.15);border-left:3px solid var(--teal)">
+      ⌨ Modos del CLI (Switch / Router Cisco)
+    </div>
+    <table class="cmd-table">
+      <tr>
+        <td class="cmd-col"><span class="prompt">Switch&gt;</span> enable</td>
+        <td class="desc-col">Entrar al modo privilegiado <span class="prompt priv">#</span></td>
+        <td class="when-col">Siempre primero</td>
+      </tr>
+      <tr>
+        <td class="cmd-col"><span class="prompt priv">Switch#</span> configure terminal</td>
+        <td class="desc-col">Entrar al modo configuración global <span class="prompt cfg">(config)#</span></td>
+        <td class="when-col">Para modificar config</td>
+      </tr>
+      <tr>
+        <td class="cmd-col"><span class="prompt cfg">(config)#</span> end</td>
+        <td class="desc-col">Salir directo al modo privilegiado</td>
+        <td class="when-col">Salida rápida</td>
+      </tr>
+      <tr>
+        <td class="cmd-col"><span class="prompt cfg">(config)#</span> exit</td>
+        <td class="desc-col">Subir un nivel en el modo actual</td>
+        <td class="when-col">Paso a paso</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- VLANs -->
+  <div class="cmd-section">
+    <div class="cmd-section-title" style="background:rgba(124,58,237,.15);border-left:3px solid var(--purple)">
+      🏢 VLANs en el switch
+    </div>
+    <table class="cmd-table">
+      <tr>
+        <td class="cmd-col">vlan 10</td>
+        <td class="desc-col">Crear VLAN con ID 10. Prompt cambia a <span class="prompt vlan">(config-vlan)#</span></td>
+        <td class="when-col">Crear segmento</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">name Administracion</td>
+        <td class="desc-col">Poner nombre descriptivo a la VLAN</td>
+        <td class="when-col">Dentro de config-vlan</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">show vlan brief</td>
+        <td class="desc-col">Ver todas las VLANs y sus puertos asignados</td>
+        <td class="when-col">Verificar y diagnosticar</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">interface fa0/1</td>
+        <td class="desc-col">Seleccionar puerto. Prompt: <span class="prompt iface">(config-if)#</span></td>
+        <td class="when-col">Configurar puerto</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">interface range fa0/1-3</td>
+        <td class="desc-col">Seleccionar varios puertos a la vez. Prompt: <span class="prompt range">(config-if-range)#</span></td>
+        <td class="when-col">Atajo para varios</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">switchport mode access</td>
+        <td class="desc-col">Definir el puerto como acceso (una sola VLAN). Obligatorio antes del siguiente.</td>
+        <td class="when-col">Siempre antes de access vlan</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">switchport access vlan 10</td>
+        <td class="desc-col">Asignar el puerto a VLAN 10</td>
+        <td class="when-col">Asignar segmento</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Seguridad -->
+  <div class="cmd-section">
+    <div class="cmd-section-title" style="background:rgba(220,38,38,.12);border-left:3px solid var(--red)">
+      🔐 Seguridad (contraseñas + port-security + SSH)
+    </div>
+    <table class="cmd-table">
+      <tr>
+        <td class="cmd-col">enable secret [clave]</td>
+        <td class="desc-col">Contraseña cifrada MD5 para modo privilegiado. Nunca usar enable password.</td>
+        <td class="when-col">Lo más importante</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">service password-encryption</td>
+        <td class="desc-col">Cifra todas las contraseñas en texto plano del running-config</td>
+        <td class="when-col">Después de cada clave</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">line console 0</td>
+        <td class="desc-col">Entrar a config de la consola física. Agregar: password + login</td>
+        <td class="when-col">Acceso físico</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">line vty 0 4</td>
+        <td class="desc-col">Entrar a config de acceso remoto (Telnet/SSH). Agregar: password + login</td>
+        <td class="when-col">Acceso remoto</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">switchport port-security</td>
+        <td class="desc-col">Activar port-security en el puerto (debe estar en modo access primero)</td>
+        <td class="when-col">Control de MAC</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">switchport port-security<br>mac-address sticky</td>
+        <td class="desc-col">Aprender automáticamente la MAC del dispositivo conectado</td>
+        <td class="when-col">Más fácil en clase</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">switchport port-security<br>violation shutdown</td>
+        <td class="desc-col">Apagar el puerto si entra una MAC no autorizada</td>
+        <td class="when-col">Respuesta ante intruso</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">ip domain-name [nombre]</td>
+        <td class="desc-col">Nombre de dominio obligatorio para generar clave RSA de SSH</td>
+        <td class="when-col">Paso 1 de SSH</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">crypto key generate rsa<br>modulus 1024</td>
+        <td class="desc-col">Generar par de claves RSA. En Packet Tracer usar 1024.</td>
+        <td class="when-col">Paso 3 de SSH</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">ip ssh version 2</td>
+        <td class="desc-col">Forzar SSH versión 2 (más segura)</td>
+        <td class="when-col">Paso 4 de SSH</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">transport input ssh</td>
+        <td class="desc-col">Bloquear Telnet y permitir solo SSH en las líneas VTY</td>
+        <td class="when-col">En line vty 0 4</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Verificación -->
+  <div class="cmd-section">
+    <div class="cmd-section-title" style="background:rgba(22,163,74,.12);border-left:3px solid var(--green)">
+      ✅ Verificación y guardado
+    </div>
+    <table class="cmd-table">
+      <tr>
+        <td class="cmd-col">show running-config</td>
+        <td class="desc-col">Ver toda la configuración activa. Aquí ves contraseñas, VLANs, interfaces.</td>
+        <td class="when-col">Auditar configuración</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">show ip interface brief</td>
+        <td class="desc-col">Ver estado de todas las interfaces. Busca up/up.</td>
+        <td class="when-col">Estado de puertos</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">show port-security interface fa0/1</td>
+        <td class="desc-col">Ver estado de port-security en un puerto específico</td>
+        <td class="when-col">Verificar port-sec</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">show ip ssh</td>
+        <td class="desc-col">Verificar que SSH está habilitado y su versión</td>
+        <td class="when-col">Verificar SSH</td>
+      </tr>
+      <tr>
+        <td class="cmd-col">copy running-config startup-config</td>
+        <td class="desc-col">Guardar la configuración. Sin esto se pierde al reiniciar.</td>
+        <td class="when-col">SIEMPRE al final</td>
+      </tr>
+    </table>
+  </div>
+
+</section>
+
+<!-- ════════════ PRÁCTICA ════════════ -->
+<section id="practica">
+  <div class="section-label">Sección 3</div>
+  <div class="section-title">Práctica en Packet Tracer</div>
+  <div class="section-sub">Sigue los pasos en orden. Cada paso tiene una pregunta que debes responder.</div>
+
+  <!-- Header -->
+  <div class="practice-header">
+    <div class="ph-label">Escenario empresarial</div>
+    <h2>Logística Express S.A. — Red segura con VLANs</h2>
+    <p>La empresa acaba de mudarse. Te contratan para construir su red desde cero: 3 departamentos separados, contraseñas en todos los equipos y acceso seguro por SSH.</p>
+    <div class="ph-badges">
+      <span class="ph-badge" style="color:#38bdf8;border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.08)">🖧 1 Switch 2960</span>
+      <span class="ph-badge" style="color:#4ade80;border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.08)">💻 7 PCs</span>
+      <span class="ph-badge" style="color:#c084fc;border-color:rgba(192,132,252,.3);background:rgba(192,132,252,.08)">🏢 3 VLANs</span>
+      <span class="ph-badge" style="color:#fbbf24;border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08)">🔐 Port-Security</span>
+      <span class="ph-badge" style="color:#f87171;border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.08)">🔒 SSH v2</span>
+    </div>
+  </div>
+
+  <!-- Tabla IPs de referencia -->
+  <p style="font-size:13px;color:var(--text2);margin-bottom:10px;font-weight:600">📋 Tabla de referencia — IPs a asignar:</p>
+  <table class="ip-table" style="margin-bottom:32px">
+    <thead>
+      <tr><th>PC</th><th>IP Address</th><th>Máscara</th><th>VLAN</th><th>Puerto switch</th></tr>
+    </thead>
+    <tbody>
+      <tr><td style="color:#58a6ff">PC-Admin1</td><td>10.10.10.1</td><td>255.255.255.0</td><td style="color:#7c3aed">VLAN 10</td><td>Fa0/1</td></tr>
+      <tr><td style="color:#58a6ff">PC-Admin2</td><td>10.10.10.2</td><td>255.255.255.0</td><td style="color:#7c3aed">VLAN 10</td><td>Fa0/2</td></tr>
+      <tr><td style="color:#58a6ff">PC-Admin3</td><td>10.10.10.3</td><td>255.255.255.0</td><td style="color:#7c3aed">VLAN 10</td><td>Fa0/3</td></tr>
+      <tr><td style="color:#0891b2">PC-Op1</td><td>10.20.20.1</td><td>255.255.255.0</td><td style="color:#0891b2">VLAN 20</td><td>Fa0/4</td></tr>
+      <tr><td style="color:#0891b2">PC-Op2</td><td>10.20.20.2</td><td>255.255.255.0</td><td style="color:#0891b2">VLAN 20</td><td>Fa0/5</td></tr>
+      <tr><td style="color:#dc2626">PC-Ger1</td><td>10.30.30.1</td><td>255.255.255.0</td><td style="color:#dc2626">VLAN 30</td><td>Fa0/6</td></tr>
+      <tr><td style="color:#dc2626">PC-Ger2</td><td>10.30.30.2</td><td>255.255.255.0</td><td style="color:#dc2626">VLAN 30</td><td>Fa0/7</td></tr>
+    </tbody>
+  </table>
+
+  <!-- PASO 1 -->
+  <div class="step open" id="s1">
+    <div class="step-header" onclick="toggle('s1')">
+      <div class="step-num" style="background:rgba(37,99,235,.2);color:#58a6ff">01</div>
+      <div class="step-title">Construir la topología</div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-body">
+      <div class="question">
+        <div class="q-label">Pregunta</div>
+        <div class="q-text">¿Qué componentes necesitas agregar al canvas y cómo los conectas?</div>
+        <div class="q-sub">Piensa antes de arrastrar: ¿qué switch? ¿qué cable entre PC y switch?</div>
+      </div>
+      <p style="font-size:13px;color:var(--text2);margin:12px 0 6px">Lo que debes hacer:</p>
+      <ul class="checklist">
+        <li>Agregar 1 switch Catalyst 2960 al centro del canvas</li>
+        <li>Agregar 7 PCs: 3 para Admin (izquierda), 2 para Operaciones (derecha arriba), 2 para Gerencia (derecha abajo)</li>
+        <li>Conectar cada PC al switch con cable <strong style="color:#fff">Copper Straight-Through</strong> (el recto, no el cruzado)</li>
+        <li>Esperar a que los puertos pasen de naranja a <strong style="color:#3fb950">verde</strong> antes de continuar</li>
+      </ul>
+      <div class="alert alert-warn">Si algún puerto queda en amarillo o naranja permanente, el cable está mal. Bórralo y vuelve a conectar con el cable correcto.</div>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="step" id="s2">
+    <div class="step-header" onclick="toggle('s2')">
+      <div class="step-num" style="background:rgba(124,58,237,.2);color:#c084fc">02</div>
+      <div class="step-title">Crear las 3 VLANs en el switch</div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-body">
+      <div class="question">
+        <div class="q-label">Pregunta</div>
+        <div class="q-text">¿Qué secuencia de comandos usas para crear una VLAN con nombre en el switch?</div>
+        <div class="q-sub">Recuerda: primero el modo, luego el ID, luego el nombre.</div>
+      </div>
+      <div class="term">
+<span class="t-cmt">-- Entrar al CLI del switch --</span>
+<span class="t-cmd">Switch&gt; enable</span>
+<span class="t-cmd">Switch# configure terminal</span>
+
+<span class="t-cmt">-- Crear VLAN 10 --</span>
+<span class="t-cmd">Switch(config)# vlan 10</span>
+<span class="t-cmd">Switch(config-vlan)# name Administracion</span>
+<span class="t-cmd">Switch(config-vlan)# exit</span>
+
+<span class="t-cmt">-- Crear VLAN 20 y VLAN 30 de la misma forma --</span>
+<span class="t-hi">Switch(config)# vlan 20</span>
+<span class="t-hi">Switch(config-vlan)# name Operaciones</span>
+<span class="t-hi">Switch(config-vlan)# exit</span>
+<span class="t-hi">Switch(config)# vlan 30</span>
+<span class="t-hi">Switch(config-vlan)# name Gerencia</span>
+<span class="t-hi">Switch(config-vlan)# exit</span>
+      </div>
+      <div class="question" style="margin-top:14px">
+        <div class="q-label">Verifica</div>
+        <div class="q-text">Ejecuta <code style="font-family:var(--mono);color:#3fb950">show vlan brief</code> — ¿aparecen las 3 VLANs? ¿Tienen puertos asignados todavía?</div>
+        <div class="q-sub">Normal en este punto: las VLANs aparecen pero sin puertos. Todos siguen en VLAN 1.</div>
+      </div>
+      <div class="alert alert-err">Si el prompt NO cambia a (config-vlan)# al escribir vlan 10, estás en un switch no administrado. Usa el modelo 2960, no el genérico.</div>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="step" id="s3">
+    <div class="step-header" onclick="toggle('s3')">
+      <div class="step-num" style="background:rgba(8,145,178,.2);color:#38bdf8">03</div>
+      <div class="step-title">Asignar puertos a cada VLAN</div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-body">
+      <div class="question">
+        <div class="q-label">Pregunta</div>
+        <div class="q-text">¿Cuáles son los DOS comandos obligatorios para asignar un puerto a una VLAN? ¿Qué pasa si usas solo uno?</div>
+      </div>
+      <div class="term">
+<span class="t-cmt">-- Asignar Fa0/1, Fa0/2, Fa0/3 a VLAN 10 (usando range) --</span>
+<span class="t-cmd">Switch(config)# interface range fa0/1-3</span>
+<span class="t-cmd">Switch(config-if-range)# switchport mode access</span>
+<span class="t-cmd">Switch(config-if-range)# switchport access vlan 10</span>
+<span class="t-cmd">Switch(config-if-range)# exit</span>
+
+<span class="t-cmt">-- Fa0/4, Fa0/5 a VLAN 20 --</span>
+<span class="t-hi">Switch(config)# interface range fa0/4-5</span>
+<span class="t-hi">Switch(config-if-range)# switchport mode access</span>
+<span class="t-hi">Switch(config-if-range)# switchport access vlan 20</span>
+<span class="t-hi">Switch(config-if-range)# exit</span>
+
+<span class="t-cmt">-- Fa0/6, Fa0/7 a VLAN 30 --</span>
+<span class="t-hi">Switch(config)# interface range fa0/6-7</span>
+<span class="t-hi">Switch(config-if-range)# switchport mode access</span>
+<span class="t-hi">Switch(config-if-range)# switchport access vlan 30</span>
+<span class="t-hi">Switch(config-if-range)# exit</span>
+      </div>
+      <div class="question" style="margin-top:14px">
+        <div class="q-label">Verifica</div>
+        <div class="q-text">Ejecuta <code style="font-family:var(--mono);color:#3fb950">show vlan brief</code> — ¿aparecen los puertos correctos en cada VLAN?</div>
+        <div class="q-sub">VLAN 10: Fa0/1-3 · VLAN 20: Fa0/4-5 · VLAN 30: Fa0/6-7</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 4 -->
+  <div class="step" id="s4">
+    <div class="step-header" onclick="toggle('s4')">
+      <div class="step-num" style="background:rgba(22,163,74,.2);color:#4ade80">04</div>
+      <div class="step-title">Configurar IPs en las PCs</div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-body">
+      <div class="question">
+        <div class="q-label">Pregunta</div>
+        <div class="q-text">¿Dónde se configura la IP en Packet Tracer y qué diferencia hay entre DHCP y Static?</div>
+        <div class="q-sub">En esta práctica usamos Static — ¿por qué crees que preferimos asignar IPs a mano?</div>
+      </div>
+      <p style="font-size:13px;color:var(--text2);margin:10px 0 6px">Ruta en Packet Tracer:</p>
+      <div class="alert alert-info">Doble clic en cada PC → pestaña <strong>Desktop</strong> → <strong>IP Configuration</strong> → seleccionar <strong>Static</strong> → llenar IP, Subnet Mask y Default Gateway.</div>
+      <p style="font-size:13px;color:var(--text2);margin:12px 0 6px">Usa la tabla de referencia de arriba. Repite para las 7 PCs.</p>
+      <div class="note">El campo Gateway puedes dejarlo vacío por ahora — no tenemos router todavía. Se configura cuando agregues el router en la siguiente actividad.</div>
+    </div>
+  </div>
+
+  <!-- PASO 5 -->
+  <div class="step" id="s5">
+    <div class="step-header" onclick="toggle('s5')">
+      <div class="step-num" style="background:rgba(217,119,6,.2);color:#fbbf24">05</div>
+      <div class="step-title">Probar conectividad con ping</div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-body">
+      <div class="question">
+        <div class="q-label">Pregunta 1</div>
+        <div class="q-text">¿Qué resultado esperas al hacer ping entre dos PCs de la MISMA VLAN?</div>
+        <div class="q-sub">Desde PC-Admin1 → ping 10.10.10.2</div>
+      </div>
+      <div class="term">
+<span class="t-cmd">PC-Admin1&gt; ping 10.10.10.2</span>
+<span class="t-ok">Reply from 10.10.10.2: bytes=32 time=1ms TTL=128</span>
+<span class="t-ok">Reply from 10.10.10.2: bytes=32 time=1ms TTL=128</span>
+<span class="t-ok">Sent=4, Received=4, Lost=0 (0%)  ← CORRECTO</span>
+      </div>
+      <div class="question" style="margin-top:14px">
+        <div class="q-label">Pregunta 2 — IMPORTANTE</div>
+        <div class="q-text">¿Qué resultado esperas al hacer ping entre dos PCs de VLANs DIFERENTES?</div>
+        <div class="q-sub">Desde PC-Admin1 → ping 10.20.20.1 (Operaciones)</div>
+      </div>
+      <div class="term">
+<span class="t-cmd">PC-Admin1&gt; ping 10.20.20.1</span>
+<span class="t-err">Request timeout for icmp_seq 0</span>
+<span class="t-err">Request timeout for icmp_seq 1</span>
+<span class="t-err">Sent=4, Received=0, Lost=4 (100%)  ← TAMBIÉN CORRECTO</span>
+      </div>
+      <div class="alert alert-ok">El fallo entre VLANs distintas ES el objetivo. Significa que la segmentación funciona. Si responde, hay un error de configuración.</div>
+    </div>
+  </div>
+
+  <!-- PASO 6 -->
+  <div class="step" id="s6">
+    <div class="step-header" onclick="toggle('s6')">
+      <div class="step-num" style="background:rgba(220,38,38,.2);color:#f87171">06</div>
+      <div class="step-title">Agregar contraseñas al switch</div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-body">
+      <div class="question">
+        <div class="q-label">Pregunta</div>
+        <div class="q-text">¿Por qué usamos <code style="font-family:var(--mono);color:#f87171">enable secret</code> y no <code style="font-family:var(--mono);color:#f87171">enable password</code>?</div>
+        <div class="q-sub">Pista: ejecuta show running-config después de configurar cada uno y observa la diferencia.</div>
+      </div>
+      <div class="term">
+<span class="t-cmd">Switch(config)# enable secret Cisco2024</span>
+<span class="t-cmd">Switch(config)# service password-encryption</span>
+
+<span class="t-cmt">-- Proteger consola física --</span>
+<span class="t-cmd">Switch(config)# line console 0</span>
+<span class="t-cmd">Switch(config-line)# password ConsolaS1</span>
+<span class="t-cmd">Switch(config-line)# login</span>
+<span class="t-cmd">Switch(config-line)# exit</span>
+
+<span class="t-cmt">-- Proteger acceso remoto --</span>
+<span class="t-cmd">Switch(config)# line vty 0 4</span>
+<span class="t-cmd">Switch(config-line)# password VTY2024</span>
+<span class="t-cmd">Switch(config-line)# login</span>
+<span class="t-cmd">Switch(config-line)# exit</span>
+      </div>
+      <div class="alert alert-err">El comando <code style="font-family:var(--mono)">login</code> es obligatorio. Sin él la contraseña existe pero nunca se solicita.</div>
+    </div>
+  </div>
+
+  <!-- PASO 7 -->
+  <div class="step" id="s7">
+    <div class="step-header" onclick="toggle('s7')">
+      <div class="step-num" style="background:rgba(8,145,178,.2);color:#38bdf8">07</div>
+      <div class="step-title">Activar Port-Security en los puertos</div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-body">
+      <div class="question">
+        <div class="q-label">Pregunta</div>
+        <div class="q-text">¿Qué hace el parámetro <code style="font-family:var(--mono);color:#38bdf8">sticky</code> y por qué es útil en clase?</div>
+        <div class="q-sub">¿Cómo sabría el switch cuál es la MAC autorizada sin que la escribas a mano?</div>
+      </div>
+      <div class="term">
+<span class="t-cmd">Switch(config)# interface range fa0/1-7</span>
+<span class="t-cmd">Switch(config-if-range)# switchport port-security</span>
+<span class="t-cmd">Switch(config-if-range)# switchport port-security maximum 1</span>
+<span class="t-cmd">Switch(config-if-range)# switchport port-security violation shutdown</span>
+<span class="t-cmd">Switch(config-if-range)# switchport port-security mac-address sticky</span>
+<span class="t-cmd">Switch(config-if-range)# exit</span>
+      </div>
+      <div class="question" style="margin-top:14px">
+        <div class="q-label">Prueba visual</div>
+        <div class="q-text">Desconecta PC-Admin1 de Fa0/1 y conecta una PC nueva al mismo puerto. ¿Qué le pasa al puerto?</div>
+        <div class="q-sub">Si el puerto se pone rojo/naranja: port-security funciona perfectamente.</div>
+      </div>
+      <div class="alert alert-info">Para reactivar un puerto en err-disable: <code style="font-family:var(--mono)">interface fa0/1</code> → <code style="font-family:var(--mono)">shutdown</code> → <code style="font-family:var(--mono)">no shutdown</code></div>
+    </div>
+  </div>
+
+  <!-- PASO 8 -->
+  <div class="step" id="s8">
+    <div class="step-header" onclick="toggle('s8')">
+      <div class="step-num" style="background:rgba(22,163,74,.2);color:#4ade80">08</div>
+      <div class="step-title">Configurar SSH en el router</div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-body">
+      <div class="question">
+        <div class="q-label">Pregunta</div>
+        <div class="q-text">¿Cuál es la diferencia entre Telnet y SSH? ¿Por qué Telnet es un problema de seguridad?</div>
+        <div class="q-sub">Piensa: si alguien en la red captura el tráfico de Telnet, ¿qué ve?</div>
+      </div>
+      <div class="term">
+<span class="t-cmt">-- En el router 1941: 4 pasos para SSH --</span>
+<span class="t-cmd">Router(config)# ip domain-name logistica.local</span>
+<span class="t-cmd">Router(config)# username admin privilege 15 secret Admin1</span>
+<span class="t-cmd">Router(config)# crypto key generate rsa modulus 1024</span>
+<span class="t-cmd">Router(config)# ip ssh version 2</span>
+<span class="t-cmd">Router(config)# line vty 0 4</span>
+<span class="t-cmd">Router(config-line)# transport input ssh</span>
+<span class="t-cmd">Router(config-line)# login local</span>
+<span class="t-cmd">Router(config-line)# exit</span>
+      </div>
+      <div class="question" style="margin-top:14px">
+        <div class="q-label">Verifica</div>
+        <div class="q-text">Desde una PC: <code style="font-family:var(--mono);color:#3fb950">ssh -l admin 192.168.1.1</code> — ¿el prompt del router aparece en la PC?</div>
+      </div>
+      <div class="alert alert-err">Si SSH dice "disabled": falta el <code style="font-family:var(--mono)">ip domain-name</code> o la clave RSA. En Packet Tracer usa siempre modulus 1024, no 2048.</div>
+    </div>
+  </div>
+
+  <!-- PASO 9 — GUARDAR -->
+  <div class="step" id="s9">
+    <div class="step-header" onclick="toggle('s9')">
+      <div class="step-num" style="background:rgba(217,119,6,.2);color:#fbbf24">09</div>
+      <div class="step-title">Guardar la configuración</div>
+      <div class="step-arrow">▼</div>
+    </div>
+    <div class="step-body">
+      <div class="question">
+        <div class="q-label">Pregunta final</div>
+        <div class="q-text">¿Qué diferencia hay entre <code style="font-family:var(--mono);color:#fbbf24">running-config</code> y <code style="font-family:var(--mono);color:#fbbf24">startup-config</code>?</div>
+        <div class="q-sub">¿Qué pasa si cierras Packet Tracer sin ejecutar el siguiente comando?</div>
+      </div>
+      <div class="term">
+<span class="t-cmd">Switch# copy running-config startup-config</span>
+<span class="t-out">Destination filename [startup-config]?</span>
+<span class="t-cmt">&lt;- presiona Enter</span>
+<span class="t-ok">Building configuration... [OK]</span>
+
+<span class="t-cmt">-- Atajo equivalente: --</span>
+<span class="t-cmd">Switch# wr</span>
+      </div>
+      <div class="alert alert-ok">Repite este comando en el router también. Guarda siempre los dos dispositivos antes de cerrar Packet Tracer.</div>
+    </div>
+  </div>
+
+  <!-- Checklist final -->
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:24px;margin-top:32px">
+    <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:16px">✅ Checklist de entrega — marca lo que completaste</div>
+    <ul class="checklist">
+      <li>show vlan brief muestra VLAN 10, 20 y 30 con sus puertos</li>
+      <li>ping dentro de la misma VLAN responde (0% pérdida)</li>
+      <li>ping entre VLANs distintas falla (100% pérdida)</li>
+      <li>show running-config muestra contraseñas cifradas</li>
+      <li>Puerto Fa0/1 entra en err-disable al conectar PC intrusa</li>
+      <li>show ip ssh muestra SSH Enabled version 2.0</li>
+      <li>ssh -l admin [IP] entra al router desde una PC</li>
+      <li>copy running-config startup-config ejecutado en switch y router</li>
+    </ul>
+  </div>
+
+</section>
+
+<footer>
+  Soporte Opera una Red LAN · Unidad 3 · Logística Express S.A.<br>
+  <span style="color:var(--text3);font-size:11px">Solo los conceptos y comandos vistos en clase</span>
+</footer>
+
+<script>
+function toggle(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// Nav highlight on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const active = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
