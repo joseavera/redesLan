@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes LAN — Guía de Repaso</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+::selection{background:#00d4ff;color:#000;}
+:root{
+  --black:#08090c; --dark:#0d1117; --dark2:#111827; --dark3:#1a2235; --dark4:#1e293b;
+  --border:#1e2d45; --border2:#2d3f55;
+  --cyan:#00d4ff; --cyan-dim:rgba(0,212,255,.12); --cyan-glow:rgba(0,212,255,.25);
+  --amber:#f59e0b; --amber-dim:rgba(245,158,11,.12);
+  --green:#22c55e; --green-dim:rgba(34,197,94,.1);
+  --red:#ef4444; --red-dim:rgba(239,68,68,.1);
+  --purple:#a78bfa; --purple-dim:rgba(167,139,250,.1);
+  --teal:#2dd4bf; --teal-dim:rgba(45,212,191,.1);
+  --text:#e2e8f0; --text2:#94a3b8; --text3:#64748b;
+  --mono:'Barlow Condensed',sans-serif; --body:'Barlow',sans-serif;
+}
+body{background:var(--black);color:var(--text);font-family:var(--body);overflow-x:hidden;}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);
+  pointer-events:none;z-index:0;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,9,12,.95);
+  border-bottom:1px solid var(--border);backdrop-filter:blur(16px);height:52px;
+  display:flex;align-items:center;padding:0 28px;gap:0;}
+.nav-brand{font-family:var(--mono);font-size:15px;font-weight:800;letter-spacing:.06em;
+  color:var(--cyan);padding-right:20px;border-right:1px solid var(--border2);
+  margin-right:20px;display:flex;align-items:center;gap:8px;}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);
+  animation:pdot 2s ease-in-out infinite;}
+@keyframes pdot{0%,100%{opacity:1;}50%{opacity:.3;}}
+.nav-links{display:flex;gap:0;flex:1;overflow-x:auto;}
+.nav-links a{font-family:var(--mono);font-size:11px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--text3);
+  text-decoration:none;padding:0 14px;height:52px;
+  display:flex;align-items:center;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:color .2s,border-color .2s;}
+.nav-links a:hover,.nav-links a.on{color:var(--cyan);border-bottom-color:var(--cyan);}
+.nav-ctr{font-family:var(--mono);font-size:11px;color:var(--text3);white-space:nowrap;}
+
+/* SLIDE */
+.slide{position:relative;z-index:1;overflow:hidden;}
+.slide-inner{max-width:1100px;margin:0 auto;padding:0 48px;width:100%;}
+
+/* SECTION LABELS */
+.sec-tag{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;
+  gap:10px;margin-bottom:10px;}
+.sec-tag::before{content:'';width:28px;height:1px;background:var(--cyan);}
+.sec-h{font-family:var(--mono);font-size:clamp(28px,3.5vw,46px);font-weight:800;
+  color:#fff;line-height:1.05;margin-bottom:8px;letter-spacing:-.01em;}
+.sec-sub{font-size:15px;color:var(--text2);margin-bottom:36px;line-height:1.6;}
+
+/* HERO */
+#s0{min-height:100vh;display:flex;align-items:center;padding:52px 0 0;}
+.hero-bg{position:absolute;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse 70% 60% at 65% 50%,rgba(0,212,255,.07) 0%,transparent 65%),
+             radial-gradient(ellipse 40% 50% at 5% 90%,rgba(167,139,250,.05) 0%,transparent 55%);}
+.hero-grid{position:absolute;top:0;left:0;right:0;bottom:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:60px 60px;opacity:.25;}
+.hero-content{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 48px;
+  display:grid;grid-template-columns:1fr 340px;align-items:center;gap:60px;min-height:calc(100vh - 52px);}
+.hero-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;gap:10px;margin-bottom:24px;}
+.hero-label::before{content:'';width:32px;height:1px;background:var(--cyan);}
+.hero-h1{font-family:var(--mono);font-size:clamp(54px,7vw,96px);font-weight:800;
+  line-height:.9;color:#fff;margin-bottom:24px;letter-spacing:-.02em;}
+.hero-h1 .cy{color:var(--cyan);}
+.hero-h1 .tn{font-weight:300;color:var(--text2);}
+.hero-p{font-size:17px;color:var(--text2);line-height:1.7;max-width:500px;margin-bottom:32px;}
+.hero-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{font-family:var(--mono);font-size:11px;font-weight:700;padding:5px 13px;
+  border-radius:2px;letter-spacing:.04em;text-transform:uppercase;
+  border:1px solid;transition:all .2s;}
+.chip-c{border-color:rgba(0,212,255,.4);color:var(--cyan);background:var(--cyan-dim);}
+.chip-a{border-color:rgba(245,158,11,.4);color:var(--amber);background:var(--amber-dim);}
+.chip-g{border-color:rgba(34,197,94,.4);color:var(--green);background:var(--green-dim);}
+.chip-p{border-color:rgba(167,139,250,.4);color:var(--purple);background:var(--purple-dim);}
+
+/* Hero right panel */
+.hero-panel{background:var(--dark2);border:1px solid var(--border2);border-radius:8px;
+  overflow:hidden;font-family:var(--mono);}
+.hp-bar{background:var(--dark3);padding:10px 14px;display:flex;align-items:center;gap:6px;
+  border-bottom:1px solid var(--border);}
+.hp-dot{width:10px;height:10px;border-radius:50%;}
+.hp-title{font-size:10px;color:var(--text3);letter-spacing:.05em;margin-left:4px;}
+.hp-body{padding:16px 14px;font-size:11px;line-height:1.85;}
+.hpl{color:var(--green);}
+.hpc{color:var(--cyan);}
+.hpd{color:var(--text3);}
+.hpy{color:var(--amber);}
+.hpr{color:var(--red);}
+.hpw{color:#fff;}
+
+/* CONCEPT CARDS */
+#s1{background:var(--dark);padding:100px 0 80px;}
+.concepts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.cc{background:var(--dark2);border:1px solid var(--border);border-radius:8px;
+  padding:22px;position:relative;overflow:hidden;
+  transition:border-color .25s,transform .2s;cursor:default;}
+.cc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.cc:hover{transform:translateY(-3px);}
+.cc-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:20px;margin-bottom:14px;}
+.cc-title{font-family:var(--mono);font-size:15px;font-weight:800;color:#fff;margin-bottom:8px;
+  letter-spacing:.02em;}
+.cc-body{font-size:13px;color:var(--text2);line-height:1.65;}
+.cc-code{font-family:var(--mono);font-size:11px;margin-top:12px;padding:6px 10px;
+  border-radius:4px;display:inline-block;letter-spacing:.02em;}
+/* per color */
+.cc-cyan .cc::before{background:var(--cyan);}
+.cc-cyan .cc:hover{border-color:var(--cyan);}
+.cc-cyan .cc-icon{background:var(--cyan-dim);}
+.cc-cyan .cc-code{background:var(--cyan-dim);color:var(--cyan);}
+.cc-amber .cc::before{background:var(--amber);}
+.cc-amber .cc:hover{border-color:var(--amber);}
+.cc-amber .cc-icon{background:var(--amber-dim);}
+.cc-amber .cc-code{background:var(--amber-dim);color:var(--amber);}
+.cc-green .cc::before{background:var(--green);}
+.cc-green .cc:hover{border-color:var(--green);}
+.cc-green .cc-icon{background:var(--green-dim);}
+.cc-green .cc-code{background:var(--green-dim);color:var(--green);}
+.cc-red .cc::before{background:var(--red);}
+.cc-red .cc:hover{border-color:var(--red);}
+.cc-red .cc-icon{background:var(--red-dim);}
+.cc-red .cc-code{background:var(--red-dim);color:var(--red);}
+.cc-purple .cc::before{background:var(--purple);}
+.cc-purple .cc:hover{border-color:var(--purple);}
+.cc-purple .cc-icon{background:var(--purple-dim);}
+.cc-purple .cc-code{background:var(--purple-dim);color:var(--purple);}
+.cc-teal .cc::before{background:var(--teal);}
+.cc-teal .cc:hover{border-color:var(--teal);}
+.cc-teal .cc-icon{background:var(--teal-dim);}
+.cc-teal .cc-code{background:var(--teal-dim);color:var(--teal);}
+
+/* COMMAND CHEATSHEET */
+#s2{background:var(--black);padding:100px 0 80px;}
+.cmd-blocks{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.cmd-block{background:var(--dark2);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.cmd-block-hdr{padding:12px 16px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);}
+.cmd-block-hdr .bicon{font-size:16px;}
+.cmd-block-hdr .btitle{font-family:var(--mono);font-size:12px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;}
+.cmd-rows{}
+.cmd-row{display:grid;grid-template-columns:1fr 1fr;
+  border-bottom:1px solid var(--border);transition:background .15s;}
+.cmd-row:last-child{border-bottom:none;}
+.cmd-row:hover{background:var(--dark3);}
+.cmd-cell{padding:10px 14px;font-size:12.5px;}
+.cmd-cell.mono{font-family:var(--mono);font-size:11.5px;color:var(--green);}
+.cmd-cell.desc{color:var(--text2);}
+.cmd-prompt{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:3px;
+  margin-right:4px;font-weight:700;}
+.pr-priv{background:rgba(0,212,255,.15);color:var(--cyan);}
+.pr-cfg{background:rgba(34,197,94,.15);color:var(--green);}
+.pr-vlan{background:rgba(167,139,250,.15);color:var(--purple);}
+.pr-if{background:rgba(245,158,11,.15);color:var(--amber);}
+
+/* TERMINAL DEMO */
+#s3{background:var(--dark);padding:100px 0 80px;}
+.term-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.term-card{background:#0d1117;border:1px solid var(--border2);border-radius:8px;overflow:hidden;}
+.term-hdr{background:#161b22;padding:10px 14px;display:flex;align-items:center;gap:6px;
+  border-bottom:1px solid var(--border);}
+.term-dots{display:flex;gap:5px;}
+.tdot{width:11px;height:11px;border-radius:50%;}
+.term-title{font-family:var(--mono);font-size:10px;color:var(--text3);
+  margin-left:6px;letter-spacing:.04em;}
+.term-body{padding:14px 16px;font-family:'Barlow Condensed',monospace;font-size:12px;
+  line-height:1.9;overflow-x:auto;}
+.t-g{color:#3fb950;} .t-b{color:#58a6ff;} .t-y{color:#e3b341;}
+.t-r{color:#ff7b72;} .t-c{color:#6e7681;} .t-w{color:#fff;} .t-p{color:#d2a8ff;}
+.t-t{color:#2dd4bf;}
+.term-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:8px;font-family:var(--mono);}
+
+/* SCENARIOS STRIP */
+#s4{background:var(--black);padding:100px 0 80px;}
+.scenarios-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+.sc-card{background:var(--dark2);border:1px solid var(--border);border-radius:8px;
+  padding:0;overflow:hidden;transition:border-color .25s,transform .2s;}
+.sc-card:hover{transform:translateY(-3px);}
+.sc-top{padding:16px 18px 14px;border-bottom:1px solid var(--border);}
+.sc-num{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:6px;}
+.sc-title{font-family:var(--mono);font-size:15px;font-weight:800;color:#fff;
+  margin-bottom:6px;line-height:1.2;}
+.sc-company{font-size:12px;color:var(--text3);}
+.sc-body{padding:14px 18px 16px;}
+.sc-prob{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.sc-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.sc-tag{font-family:var(--mono);font-size:10px;font-weight:700;
+  padding:3px 8px;border-radius:3px;letter-spacing:.03em;}
+
+/* KEY RULES */
+#s5{background:var(--dark);padding:100px 0 80px;}
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.rule-card{background:var(--dark2);border:1px solid var(--border);
+  border-left:4px solid;border-radius:0 8px 8px 0;padding:20px 22px;}
+.rule-num{font-family:var(--mono);font-size:32px;font-weight:800;
+  line-height:1;margin-bottom:10px;opacity:.2;}
+.rule-title{font-family:var(--mono);font-size:15px;font-weight:800;
+  color:#fff;margin-bottom:8px;letter-spacing:.02em;}
+.rule-body{font-size:13px;color:var(--text2);line-height:1.65;}
+.rule-cmd{font-family:var(--mono);font-size:11px;margin-top:10px;
+  padding:5px 10px;border-radius:4px;display:inline-block;}
+
+/* EXAM BANNER */
+#s6{background:var(--black);padding:100px 0 80px;}
+.exam-banner{
+  background:linear-gradient(135deg,var(--dark2) 0%,#0a1628 100%);
+  border:1px solid rgba(0,212,255,.25);border-radius:12px;
+  padding:48px;position:relative;overflow:hidden;text-align:center;}
+.exam-banner::before{content:'';position:absolute;top:-60px;right:-60px;
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,212,255,.08) 0%,transparent 70%);}
+.exam-banner::after{content:'';position:absolute;bottom:-40px;left:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(167,139,250,.06) 0%,transparent 65%);}
+.eb-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:16px;}
+.eb-title{font-family:var(--mono);font-size:clamp(28px,4vw,52px);font-weight:800;
+  color:#fff;margin-bottom:16px;line-height:1.05;}
+.eb-sub{font-size:15px;color:var(--text2);margin-bottom:32px;
+  max-width:580px;margin-left:auto;margin-right:auto;line-height:1.65;}
+.eb-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;
+  max-width:700px;margin:0 auto 32px;}
+.eb-item{background:var(--dark3);border:1px solid var(--border2);
+  border-radius:6px;padding:14px 8px;text-align:center;}
+.eb-item .ei-icon{font-size:22px;margin-bottom:6px;}
+.eb-item .ei-label{font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--text3);}
+.eb-note{font-size:13px;color:var(--text3);
+  border:1px solid var(--border2);border-radius:6px;
+  padding:12px 20px;display:inline-block;}
+
+/* DIVIDER */
+.slide-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);}
+
+/* ANIM ENTRY */
+.fade-up{opacity:0;transform:translateY(24px);
+  animation:fadeUp .6s ease forwards;}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+.d1{animation-delay:.1s;}
+.d2{animation-delay:.2s;}
+.d3{animation-delay:.3s;}
+.d4{animation-delay:.4s;}
+.d5{animation-delay:.5s;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-content{grid-template-columns:1fr;gap:32px;}
+  .hero-panel{display:none;}
+  .concepts-grid{grid-template-columns:1fr 1fr;}
+  .cmd-blocks{grid-template-columns:1fr;}
+  .term-grid{grid-template-columns:1fr;}
+  .rules-grid{grid-template-columns:1fr;}
+  .eb-grid{grid-template-columns:repeat(3,1fr);}
+  .slide-inner{padding:0 24px;}
+  .hero-content{padding:0 24px;}
+}
+@media(max-width:600px){
+  .concepts-grid{grid-template-columns:1fr;}
+  .eb-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand"><div class="nav-dot"></div>REDES LAN</div>
+  <div class="nav-links">
+    <a href="#s0" class="on">Inicio</a>
+    <a href="#s1">Conceptos</a>
+    <a href="#s2">Comandos</a>
+    <a href="#s3">Práctica CLI</a>
+    <a href="#s4">Escenarios</a>
+    <a href="#s5">Reglas de oro</a>
+    <a href="#s6">Evaluación</a>
+  </div>
+  <div class="nav-ctr" id="navCtr">1 / 7</div>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 0 — HERO
+═══════════════════════════════════════ -->
+<section class="slide" id="s0">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-label fade-up d1">Unidad 3 · Guía de repaso</div>
+      <h1 class="hero-h1 fade-up d2">
+        REDES<br>
+        <span class="cy">LAN</span><br>
+        <span class="tn">Cisco IOS</span>
+      </h1>
+      <p class="hero-p fade-up d3">Todo lo que necesitas recordar antes de la evaluación: conceptos, comandos, escenarios empresariales y reglas de oro del técnico.</p>
+      <div class="hero-chips fade-up d4">
+        <span class="chip chip-c">Switch 2960</span>
+        <span class="chip chip-c">Router 1941</span>
+        <span class="chip chip-a">VLANs</span>
+        <span class="chip chip-g">Port-Security</span>
+        <span class="chip chip-p">SSH v2</span>
+        <span class="chip chip-a">ipconfig · ping · tracert</span>
+      </div>
+    </div>
+    <div class="hero-panel fade-up d5">
+      <div class="hp-bar">
+        <div class="hp-dot tdot" style="background:#ff5f57"></div>
+        <div class="hp-dot tdot" style="background:#ffbd2e"></div>
+        <div class="hp-dot tdot" style="background:#28c840"></div>
+        <span class="hp-title">Switch&nbsp;CLI&nbsp;—&nbsp;Cisco&nbsp;IOS</span>
+      </div>
+      <div class="hp-body">
+        <div><span class="hpc">Switch&gt;</span> <span class="hpl">enable</span></div>
+        <div><span class="hpc">Switch#</span> <span class="hpl">conf t</span></div>
+        <div><span class="hpd">Enter config commands...</span></div>
+        <div><span class="hpy">Switch(config)#</span> <span class="hpl">vlan 10</span></div>
+        <div><span class="hpy">Switch(config-vlan)#</span> <span class="hpl">name Admin</span></div>
+        <div><span class="hpy">Switch(config-vlan)#</span> <span class="hpl">exit</span></div>
+        <div><span class="hpy">Switch(config)#</span> <span class="hpl">int range fa0/1-3</span></div>
+        <div><span class="hpy">Switch(config-if-range)#</span></div>
+        <div>&nbsp;&nbsp;<span class="hpl">sw mode access</span></div>
+        <div><span class="hpy">Switch(config-if-range)#</span></div>
+        <div>&nbsp;&nbsp;<span class="hpl">sw access vlan 10</span></div>
+        <div><span class="hpy">Switch(config-if-range)#</span> <span class="hpl">exit</span></div>
+        <div><span class="hpy">Switch(config)#</span> <span class="hpl">end</span></div>
+        <div><span class="hpc">Switch#</span> <span class="hpl">show vlan brief</span></div>
+        <div><span class="hpd">VLAN  Name      Status  Ports</span></div>
+        <div><span class="hpd">----  --------  ------  -----</span></div>
+        <div><span class="hpw">10    Admin     active  Fa0/1-3</span></div>
+        <div><span class="hpc">Switch#</span> <span class="hpl">copy run start</span></div>
+        <div><span class="hpd">Building config... <span class="hpl">[OK]</span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="slide-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 1 — CONCEPTOS CLAVE
+═══════════════════════════════════════ -->
+<section class="slide" id="s1">
+  <div class="slide-inner">
+    <div class="sec-tag">Bloque 1</div>
+    <h2 class="sec-h">Conceptos clave</h2>
+    <p class="sec-sub">Lo que debes entender antes de tocar el teclado.</p>
+
+    <div class="concepts-grid">
+
+      <div class="cc-cyan">
+        <div class="cc">
+          <div class="cc-icon">🌐</div>
+          <div class="cc-title">Dirección IP</div>
+          <div class="cc-body">Identificador único de cada dispositivo. 32 bits en 4 octetos. La <strong style="color:#fff">red</strong> es la colonia y el <strong style="color:#fff">host</strong> es la casa. Dos equipos en la misma red deben tener los mismos primeros octetos.</div>
+          <div class="cc-code">192.168.1.10 / 24</div>
+        </div>
+      </div>
+
+      <div class="cc-cyan">
+        <div class="cc">
+          <div class="cc-icon">📏</div>
+          <div class="cc-title">Máscara de subred</div>
+          <div class="cc-body">Define qué parte de la IP es <strong style="color:#fff">red</strong> y qué parte es <strong style="color:#fff">host</strong>. /24 = 255.255.255.0 = 254 hosts usables. Si dos IPs están en subredes distintas, no se pueden comunicar sin router.</div>
+          <div class="cc-code">255.255.255.0 = /24</div>
+        </div>
+      </div>
+
+      <div class="cc-amber">
+        <div class="cc">
+          <div class="cc-icon">🚪</div>
+          <div class="cc-title">Gateway</div>
+          <div class="cc-body">Puerta de salida al exterior. Es la IP del router en la misma subred. Sin gateway correcto la PC puede hablar con la LAN pero <strong style="color:#fff">no puede salir a internet</strong>.</div>
+          <div class="cc-code">192.168.1.1</div>
+        </div>
+      </div>
+
+      <div class="cc-purple">
+        <div class="cc">
+          <div class="cc-icon">🏢</div>
+          <div class="cc-title">VLAN</div>
+          <div class="cc-body">Red lógica dentro de un switch físico. <strong style="color:#fff">Un switch = varios departamentos aislados</strong>. Sin VLAN todos comparten el mismo tráfico. Con VLAN cada departamento es su propio "piso" del edificio.</div>
+          <div class="cc-code">VLAN 10 / 20 / 30</div>
+        </div>
+      </div>
+
+      <div class="cc-amber">
+        <div class="cc">
+          <div class="cc-icon">🔌</div>
+          <div class="cc-title">Puerto Access</div>
+          <div class="cc-body">Conecta un dispositivo final a <strong style="color:#fff">UNA sola VLAN</strong>. Necesita <strong style="color:#fff">dos comandos</strong>: mode access primero, luego access vlan. Si falta uno, el puerto queda en VLAN 1 sin importar lo que escribas.</div>
+          <div class="cc-code">switchport mode access</div>
+        </div>
+      </div>
+
+      <div class="cc-red">
+        <div class="cc">
+          <div class="cc-icon">🔐</div>
+          <div class="cc-title">Enable Secret</div>
+          <div class="cc-body">Protege el modo privilegiado (#) con cifrado <strong style="color:#fff">MD5</strong>. Nunca usar <code style="color:#f87171">enable password</code> — guarda la clave en texto plano. Con <code style="color:#f87171">service password-encryption</code> se cifran las demás claves.</div>
+          <div class="cc-code">enable secret Cisco2024</div>
+        </div>
+      </div>
+
+      <div class="cc-teal">
+        <div class="cc">
+          <div class="cc-icon">🛡</div>
+          <div class="cc-title">Port-Security</div>
+          <div class="cc-body">Solo la <strong style="color:#fff">MAC autorizada</strong> puede usar el puerto. <code style="color:#2dd4bf">sticky</code> aprende automáticamente la MAC conectada. <code style="color:#2dd4bf">violation shutdown</code> apaga el puerto ante un intruso.</div>
+          <div class="cc-code">port-security + sticky</div>
+        </div>
+      </div>
+
+      <div class="cc-green">
+        <div class="cc">
+          <div class="cc-icon">🔒</div>
+          <div class="cc-title">SSH vs Telnet</div>
+          <div class="cc-body"><strong style="color:#ef4444">Telnet</strong>: texto plano — cualquiera con Wireshark ve tu contraseña. <strong style="color:#22c55e">SSH</strong>: cifrado RSA — tráfico ilegible. Necesita: domain-name → usuario → clave RSA → ip ssh version 2.</div>
+          <div class="cc-code">ssh -l admin [IP]</div>
+        </div>
+      </div>
+
+      <div class="cc-cyan">
+        <div class="cc">
+          <div class="cc-icon">📡</div>
+          <div class="cc-title">Herramientas de diagnóstico</div>
+          <div class="cc-body"><strong style="color:#fff">ipconfig /all</strong> — ver IP/MAC del equipo. <strong style="color:#fff">ping</strong> — verificar conectividad. <strong style="color:#fff">tracert</strong> — ver todos los saltos hasta el destino. <strong style="color:#fff">nslookup</strong> — probar resolución DNS.</div>
+          <div class="cc-code">ping · tracert · nslookup</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<div class="slide-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 2 — COMANDOS
+═══════════════════════════════════════ -->
+<section class="slide" id="s2">
+  <div class="slide-inner">
+    <div class="sec-tag">Bloque 2</div>
+    <h2 class="sec-h">Comandos de referencia</h2>
+    <p class="sec-sub">Solo los que hemos usado en clase. Memoriza los prompts — te dicen exactamente dónde estás.</p>
+
+    <div class="cmd-blocks">
+
+      <!-- Diagnóstico PC -->
+      <div class="cmd-block">
+        <div class="cmd-block-hdr" style="background:rgba(0,212,255,.08);border-bottom-color:rgba(0,212,255,.2)">
+          <span class="bicon">💻</span>
+          <span class="btitle" style="color:var(--cyan)">Diagnóstico desde la PC</span>
+        </div>
+        <div class="cmd-rows">
+          <div class="cmd-row"><div class="cmd-cell mono">ipconfig /all</div><div class="cmd-cell desc">Ver IP, máscara, gateway y MAC del equipo</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono">ping [IP]</div><div class="cmd-cell desc">Verificar conectividad. 0% pérdida = OK</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono">tracert 8.8.8.8</div><div class="cmd-cell desc">Ver ruta salto a salto hasta internet</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono">nslookup [dominio]</div><div class="cmd-cell desc">Probar si el DNS resuelve nombres</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono">ssh -l admin [IP]</div><div class="cmd-cell desc">Conectarse al router por SSH cifrado</div></div>
+        </div>
+      </div>
+
+      <!-- Modos CLI -->
+      <div class="cmd-block">
+        <div class="cmd-block-hdr" style="background:rgba(34,197,94,.08);border-bottom-color:rgba(34,197,94,.2)">
+          <span class="bicon">⌨</span>
+          <span class="btitle" style="color:var(--green)">Modos del CLI Cisco</span>
+        </div>
+        <div class="cmd-rows">
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt" style="background:rgba(100,116,139,.15);color:#94a3b8">Switch&gt;</span> enable</div><div class="cmd-cell desc">Entrar al modo privilegiado (#)</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> configure terminal</div><div class="cmd-cell desc">Modo configuración global (config)#</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-cfg">(config)#</span> end</div><div class="cmd-cell desc">Salir directo al modo privilegiado</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-cfg">(config)#</span> exit</div><div class="cmd-cell desc">Subir un nivel en la jerarquía</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> show running-config</div><div class="cmd-cell desc">Ver toda la configuración activa</div></div>
+        </div>
+      </div>
+
+      <!-- VLANs -->
+      <div class="cmd-block">
+        <div class="cmd-block-hdr" style="background:rgba(167,139,250,.08);border-bottom-color:rgba(167,139,250,.2)">
+          <span class="bicon">🏢</span>
+          <span class="btitle" style="color:var(--purple)">VLANs en el switch</span>
+        </div>
+        <div class="cmd-rows">
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-cfg">(config)#</span> vlan 10</div><div class="cmd-cell desc">Crear VLAN. Prompt → (config-vlan)#</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-vlan">(config-vlan)#</span> name Admin</div><div class="cmd-cell desc">Asignar nombre descriptivo</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> show vlan brief</div><div class="cmd-cell desc">Ver VLANs y sus puertos — primer diagnóstico</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-cfg">(config)#</span> int range fa0/1-3</div><div class="cmd-cell desc">Seleccionar varios puertos a la vez</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-if">(config-if)#</span> sw mode access</div><div class="cmd-cell desc">Puerto de acceso — obligatorio primero</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-if">(config-if)#</span> sw access vlan 10</div><div class="cmd-cell desc">Asignar el puerto a VLAN 10</div></div>
+        </div>
+      </div>
+
+      <!-- Seguridad -->
+      <div class="cmd-block">
+        <div class="cmd-block-hdr" style="background:rgba(239,68,68,.08);border-bottom-color:rgba(239,68,68,.2)">
+          <span class="bicon">🔐</span>
+          <span class="btitle" style="color:var(--red)">Seguridad</span>
+        </div>
+        <div class="cmd-rows">
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-cfg">(config)#</span> enable secret [pw]</div><div class="cmd-cell desc">Contraseña MD5 para modo privilegiado</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-cfg">(config)#</span> service pass-enc</div><div class="cmd-cell desc">Cifrar todas las contraseñas en texto plano</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-if">(config-if)#</span> sw port-security</div><div class="cmd-cell desc">Activar port-security en el puerto</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-if">(config-if)#</span> sw ps mac sticky</div><div class="cmd-cell desc">Aprender automáticamente la MAC</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-if">(config-if)#</span> sw ps viol shutdown</div><div class="cmd-cell desc">Apagar puerto ante MAC no autorizada</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> show port-security int</div><div class="cmd-cell desc">Ver estado de port-security</div></div>
+        </div>
+      </div>
+
+      <!-- SSH -->
+      <div class="cmd-block">
+        <div class="cmd-block-hdr" style="background:rgba(34,197,94,.08);border-bottom-color:rgba(34,197,94,.2)">
+          <span class="bicon">🔒</span>
+          <span class="btitle" style="color:var(--green)">SSH — 4 pasos obligatorios</span>
+        </div>
+        <div class="cmd-rows">
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-cfg">(config)#</span> ip domain-name x.local</div><div class="cmd-cell desc">1. Nombre de dominio — sin esto no hay RSA</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-cfg">(config)#</span> username admin sec [pw]</div><div class="cmd-cell desc">2. Usuario local con contraseña</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-cfg">(config)#</span> crypto key gen rsa mod 1024</div><div class="cmd-cell desc">3. Generar clave RSA (1024 en Packet Tracer)</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-cfg">(config)#</span> ip ssh version 2</div><div class="cmd-cell desc">4. Forzar SSH versión 2</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-if">(line vty)#</span> transport input ssh</div><div class="cmd-cell desc">Bloquear Telnet, solo SSH</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> show ip ssh</div><div class="cmd-cell desc">Verificar: SSH Enabled - version 2.0</div></div>
+        </div>
+      </div>
+
+      <!-- Verificar y guardar -->
+      <div class="cmd-block">
+        <div class="cmd-block-hdr" style="background:rgba(45,212,191,.08);border-bottom-color:rgba(45,212,191,.2)">
+          <span class="bicon">✅</span>
+          <span class="btitle" style="color:var(--teal)">Verificar y guardar</span>
+        </div>
+        <div class="cmd-rows">
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> show vlan brief</div><div class="cmd-cell desc">VLANs con sus puertos — primer diagnóstico</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> show ip interface brief</div><div class="cmd-cell desc">Estado de interfaces — busca up/up</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> show running-config</div><div class="cmd-cell desc">Toda la configuración activa en RAM</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> show port-security int</div><div class="cmd-cell desc">Estado del port-security por puerto</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> copy run start</div><div class="cmd-cell desc">Guardar — sin esto se pierde al reiniciar</div></div>
+          <div class="cmd-row"><div class="cmd-cell mono"><span class="cmd-prompt pr-priv">#</span> wr</div><div class="cmd-cell desc">Atajo equivalente a copy run start</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<div class="slide-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 3 — PRÁCTICA CLI VISUAL
+═══════════════════════════════════════ -->
+<section class="slide" id="s3">
+  <div class="slide-inner">
+    <div class="sec-tag">Bloque 3</div>
+    <h2 class="sec-h">Flujos completos en CLI</h2>
+    <p class="sec-sub">Secuencias exactas que aparecen en la evaluación. Estudia el orden de los prompts.</p>
+
+    <div class="term-grid">
+
+      <!-- VLAN flow -->
+      <div class="term-card">
+        <div class="term-hdr">
+          <div class="term-dots">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+          </div>
+          <span class="term-title">Crear VLANs y asignar puertos</span>
+        </div>
+        <div class="term-body">
+          <div class="term-label">Flujo A — Switch Catalyst 2960</div>
+          <div><span class="t-c">-- Entrar al modo config --</span></div>
+          <div><span class="t-b">Switch&gt;</span> <span class="t-g">enable</span></div>
+          <div><span class="t-b">Switch#</span> <span class="t-g">configure terminal</span></div>
+          <div><span class="t-c">-- Crear VLAN 10 --</span></div>
+          <div><span class="t-y">Switch(config)#</span> <span class="t-g">vlan 10</span></div>
+          <div><span class="t-p">Switch(config-vlan)#</span> <span class="t-g">name Administracion</span></div>
+          <div><span class="t-p">Switch(config-vlan)#</span> <span class="t-g">exit</span></div>
+          <div><span class="t-c">-- Crear VLAN 20 y 30 igual --</span></div>
+          <div><span class="t-y">Switch(config)#</span> <span class="t-g">vlan 20</span></div>
+          <div><span class="t-p">Switch(config-vlan)#</span> <span class="t-g">name Operaciones</span></div>
+          <div><span class="t-p">Switch(config-vlan)#</span> <span class="t-g">exit</span></div>
+          <div><span class="t-c">-- Asignar puertos con range --</span></div>
+          <div><span class="t-y">Switch(config)#</span> <span class="t-g">interface range fa0/1-3</span></div>
+          <div><span class="t-r">Switch(config-if-range)#</span> <span class="t-g">switchport mode access</span></div>
+          <div><span class="t-r">Switch(config-if-range)#</span> <span class="t-g">switchport access vlan 10</span></div>
+          <div><span class="t-r">Switch(config-if-range)#</span> <span class="t-g">exit</span></div>
+          <div><span class="t-c">-- Verificar --</span></div>
+          <div><span class="t-b">Switch#</span> <span class="t-p">show vlan brief</span></div>
+          <div><span class="t-c">VLAN  Name         Ports</span></div>
+          <div><span class="t-g">10    Admin        Fa0/1-3</span></div>
+          <div><span class="t-g">20    Operaciones  Fa0/4-5</span></div>
+        </div>
+      </div>
+
+      <!-- Security flow -->
+      <div class="term-card">
+        <div class="term-hdr">
+          <div class="term-dots">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+          </div>
+          <span class="term-title">Contraseñas + Port-Security</span>
+        </div>
+        <div class="term-body">
+          <div class="term-label">Flujo B — Seguridad en el switch</div>
+          <div><span class="t-c">-- Contraseñas --</span></div>
+          <div><span class="t-y">Switch(config)#</span> <span class="t-g">enable secret Cisco2024</span></div>
+          <div><span class="t-y">Switch(config)#</span> <span class="t-g">service password-encryption</span></div>
+          <div><span class="t-y">Switch(config)#</span> <span class="t-g">line console 0</span></div>
+          <div><span class="t-r">Switch(config-line)#</span> <span class="t-g">password ConsolaS1</span></div>
+          <div><span class="t-r">Switch(config-line)#</span> <span class="t-g">login</span></div>
+          <div><span class="t-r">Switch(config-line)#</span> <span class="t-g">exit</span></div>
+          <div><span class="t-c">-- Port-Security --</span></div>
+          <div><span class="t-y">Switch(config)#</span> <span class="t-g">interface range fa0/1-7</span></div>
+          <div><span class="t-r">Switch(config-if-range)#</span> <span class="t-g">sw port-security</span></div>
+          <div><span class="t-r">Switch(config-if-range)#</span> <span class="t-g">sw ps maximum 1</span></div>
+          <div><span class="t-r">Switch(config-if-range)#</span> <span class="t-g">sw ps violation shutdown</span></div>
+          <div><span class="t-r">Switch(config-if-range)#</span> <span class="t-g">sw ps mac-address sticky</span></div>
+          <div><span class="t-r">Switch(config-if-range)#</span> <span class="t-g">exit</span></div>
+          <div><span class="t-c">-- Verificar port-security --</span></div>
+          <div><span class="t-b">Switch#</span> <span class="t-p">show port-security int fa0/1</span></div>
+          <div><span class="t-g">Port Security : Enabled</span></div>
+          <div><span class="t-g">Port Status   : Secure-up</span></div>
+        </div>
+      </div>
+
+      <!-- SSH flow -->
+      <div class="term-card">
+        <div class="term-hdr">
+          <div class="term-dots">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+          </div>
+          <span class="term-title">SSH en el router — 4 pasos</span>
+        </div>
+        <div class="term-body">
+          <div class="term-label">Flujo C — Router 1941</div>
+          <div><span class="t-c">-- Paso 1: dominio (obligatorio) --</span></div>
+          <div><span class="t-y">Router(config)#</span> <span class="t-g">ip domain-name empresa.local</span></div>
+          <div><span class="t-c">-- Paso 2: usuario local --</span></div>
+          <div><span class="t-y">Router(config)#</span> <span class="t-g">username admin privilege 15</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-g">secret Admin2024</span></div>
+          <div><span class="t-c">-- Paso 3: clave RSA --</span></div>
+          <div><span class="t-y">Router(config)#</span> <span class="t-g">crypto key generate rsa</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-g">modulus 1024</span></div>
+          <div><span class="t-c">-- Paso 4: versión y VTY --</span></div>
+          <div><span class="t-y">Router(config)#</span> <span class="t-g">ip ssh version 2</span></div>
+          <div><span class="t-y">Router(config)#</span> <span class="t-g">line vty 0 4</span></div>
+          <div><span class="t-r">Router(config-line)#</span> <span class="t-g">transport input ssh</span></div>
+          <div><span class="t-r">Router(config-line)#</span> <span class="t-g">login local</span></div>
+          <div><span class="t-r">Router(config-line)#</span> <span class="t-g">exit</span></div>
+          <div><span class="t-c">-- Verificar --</span></div>
+          <div><span class="t-b">Router#</span> <span class="t-p">show ip ssh</span></div>
+          <div><span class="t-g">SSH Enabled - version 2.0</span></div>
+        </div>
+      </div>
+
+      <!-- Diagnostico PC -->
+      <div class="term-card">
+        <div class="term-hdr">
+          <div class="term-dots">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+          </div>
+          <span class="term-title">Diagnóstico desde la PC</span>
+        </div>
+        <div class="term-body">
+          <div class="term-label">Flujo D — Windows CMD / Packet Tracer</div>
+          <div><span class="t-c">-- Ver configuración de red --</span></div>
+          <div><span class="t-b">PC&gt;</span> <span class="t-g">ipconfig /all</span></div>
+          <div><span class="t-w">IPv4 Address:  192.168.1.10</span></div>
+          <div><span class="t-w">Subnet Mask:   255.255.255.0</span></div>
+          <div><span class="t-w">Default GW:    192.168.1.1</span></div>
+          <div><span class="t-c">-- Verificar conectividad --</span></div>
+          <div><span class="t-b">PC&gt;</span> <span class="t-g">ping 192.168.1.11</span></div>
+          <div><span class="t-g">Reply from 192.168.1.11 TTL=128 ← OK</span></div>
+          <div><span class="t-c">-- Entre VLANs (sin router) --</span></div>
+          <div><span class="t-b">PC&gt;</span> <span class="t-g">ping 10.20.20.1</span></div>
+          <div><span class="t-r">Request timeout ← CORRECTO si hay VLAN</span></div>
+          <div><span class="t-c">-- Ver ruta a internet --</span></div>
+          <div><span class="t-b">PC&gt;</span> <span class="t-g">tracert 8.8.8.8</span></div>
+          <div><span class="t-w">1   192.168.1.1  [gateway]</span></div>
+          <div><span class="t-w">2   201.x.x.x   [ISP]</span></div>
+          <div><span class="t-c">-- Verificar DNS --</span></div>
+          <div><span class="t-b">PC&gt;</span> <span class="t-g">nslookup dgeti.sep.gob.mx</span></div>
+          <div><span class="t-g">Address: 187.x.x.x  ← resuelve OK</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<div class="slide-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 4 — ESCENARIOS
+═══════════════════════════════════════ -->
+<section class="slide" id="s4">
+  <div class="slide-inner">
+    <div class="sec-tag">Bloque 4</div>
+    <h2 class="sec-h">Escenarios de la evaluación</h2>
+    <p class="sec-sub">Cinco contextos empresariales reales. Reconoce el problema, recuerda la solución.</p>
+
+    <div class="scenarios-grid">
+
+      <div class="sc-card" style="border-top:3px solid var(--cyan)">
+        <div class="sc-top">
+          <div class="sc-num" style="color:var(--cyan)">Escenario 01</div>
+          <div class="sc-title">Red sin contraseña</div>
+          <div class="sc-company">🛒 OXXO — Huejotzingo, Puebla</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-prob">Cualquier empleado accede al CLI del switch. VLANs borradas accidentalmente. Caja registradora sin segmentación.</div>
+          <div class="sc-tags">
+            <span class="sc-tag" style="background:var(--cyan-dim);color:var(--cyan)">enable secret</span>
+            <span class="sc-tag" style="background:var(--cyan-dim);color:var(--cyan)">vlan 10 / 20</span>
+            <span class="sc-tag" style="background:var(--cyan-dim);color:var(--cyan)">service pass-enc</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-card" style="border-top:3px solid var(--green)">
+        <div class="sc-top">
+          <div class="sc-num" style="color:var(--green)">Escenario 02</div>
+          <div class="sc-title">Dispositivo no autorizado</div>
+          <div class="sc-company">🏥 Clínica San Juan Bautista — Texmelucan</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-prob">Un teléfono personal conectado al puerto de enfermería genera tráfico que afecta el sistema de expedientes médicos.</div>
+          <div class="sc-tags">
+            <span class="sc-tag" style="background:var(--green-dim);color:var(--green)">port-security</span>
+            <span class="sc-tag" style="background:var(--green-dim);color:var(--green)">mac sticky</span>
+            <span class="sc-tag" style="background:var(--green-dim);color:var(--green)">violation shutdown</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-card" style="border-top:3px solid var(--amber)">
+        <div class="sc-top">
+          <div class="sc-num" style="color:var(--amber)">Escenario 03</div>
+          <div class="sc-title">Administración insegura</div>
+          <div class="sc-company">🏛 Ayuntamiento de San Martín Texmelucan</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-prob">Los admins acceden al router por Telnet. Alguien capturó la contraseña con Wireshark. Migración urgente a SSH.</div>
+          <div class="sc-tags">
+            <span class="sc-tag" style="background:var(--amber-dim);color:var(--amber)">ip domain-name</span>
+            <span class="sc-tag" style="background:var(--amber-dim);color:var(--amber)">crypto key rsa</span>
+            <span class="sc-tag" style="background:var(--amber-dim);color:var(--amber)">transport input ssh</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-card" style="border-top:3px solid var(--purple)">
+        <div class="sc-top">
+          <div class="sc-num" style="color:var(--purple)">Escenario 04</div>
+          <div class="sc-title">Sin conectividad entre equipos</div>
+          <div class="sc-company">🎓 Prepa UPAEP — San Martín Texmelucan</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-prob">PCs con IPs en diferentes subredes (192.168.1.x y 10.0.0.x). No se pueden hacer ping aunque estén en el mismo switch.</div>
+          <div class="sc-tags">
+            <span class="sc-tag" style="background:var(--purple-dim);color:var(--purple)">ipconfig /all</span>
+            <span class="sc-tag" style="background:var(--purple-dim);color:var(--purple)">ping</span>
+            <span class="sc-tag" style="background:var(--purple-dim);color:var(--purple)">tracert 8.8.8.8</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-card" style="border-top:3px solid var(--teal)">
+        <div class="sc-top">
+          <div class="sc-num" style="color:var(--teal)">Escenario 05 — Integrador</div>
+          <div class="sc-title">Red completa desde cero</div>
+          <div class="sc-company">🚚 Logística Express S.A. — Texmelucan</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-prob">Red plana sin segmentación. Operaciones accede a archivos de Gerencia. Router sin contraseña con Telnet. Se aplica todo lo aprendido.</div>
+          <div class="sc-tags">
+            <span class="sc-tag" style="background:var(--teal-dim);color:var(--teal)">VLANs 10/20/30</span>
+            <span class="sc-tag" style="background:var(--teal-dim);color:var(--teal)">port-security</span>
+            <span class="sc-tag" style="background:var(--teal-dim);color:var(--teal)">SSH v2</span>
+            <span class="sc-tag" style="background:var(--teal-dim);color:var(--teal)">show · verify · save</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<div class="slide-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 5 — REGLAS DE ORO
+═══════════════════════════════════════ -->
+<section class="slide" id="s5">
+  <div class="slide-inner">
+    <div class="sec-tag">Bloque 5</div>
+    <h2 class="sec-h">Reglas de oro del técnico</h2>
+    <p class="sec-sub">Memoriza estas 8 reglas. Responderlas en la evaluación marca la diferencia.</p>
+
+    <div class="rules-grid">
+
+      <div class="rule-card" style="border-left-color:var(--cyan)">
+        <div class="rule-num" style="color:var(--cyan)">01</div>
+        <div class="rule-title" style="color:var(--cyan)">enable secret, nunca enable password</div>
+        <div class="rule-body">enable password guarda la clave en texto plano. enable secret usa MD5. Si ves la contraseña legible en show running-config, el equipo está en riesgo.</div>
+        <div class="rule-cmd" style="background:var(--cyan-dim);color:var(--cyan)">enable secret Cisco2024</div>
+      </div>
+
+      <div class="rule-card" style="border-left-color:var(--purple)">
+        <div class="rule-num" style="color:var(--purple)">02</div>
+        <div class="rule-title" style="color:var(--purple)">Dos comandos para asignar VLAN a un puerto</div>
+        <div class="rule-body">switchport mode access PRIMERO, luego switchport access vlan X. Si falta el primero, el puerto puede ignorar la asignación de VLAN.</div>
+        <div class="rule-cmd" style="background:var(--purple-dim);color:var(--purple)">mode access → access vlan 10</div>
+      </div>
+
+      <div class="rule-card" style="border-left-color:var(--amber)">
+        <div class="rule-num" style="color:var(--amber)">03</div>
+        <div class="rule-title" style="color:var(--amber)">show vlan brief es el primer diagnóstico</div>
+        <div class="rule-body">Antes de tocar cualquier configuración de VLAN, ejecuta show vlan brief. Si el puerto no aparece en la VLAN correcta, ahí empieza el problema.</div>
+        <div class="rule-cmd" style="background:var(--amber-dim);color:var(--amber)">show vlan brief</div>
+      </div>
+
+      <div class="rule-card" style="border-left-color:var(--green)">
+        <div class="rule-num" style="color:var(--green)">04</div>
+        <div class="rule-title" style="color:var(--green)">El fallo entre VLANs distintas es correcto</div>
+        <div class="rule-body">Si ping entre VLAN 10 y VLAN 20 falla con 100% pérdida, la segmentación funciona perfectamente. Si responde, hay un error de configuración.</div>
+        <div class="rule-cmd" style="background:var(--green-dim);color:var(--green)">Request timeout ← CORRECTO</div>
+      </div>
+
+      <div class="rule-card" style="border-left-color:var(--teal)">
+        <div class="rule-num" style="color:var(--teal)">05</div>
+        <div class="rule-title" style="color:var(--teal)">SSH necesita domain-name primero</div>
+        <div class="rule-body">Sin ip domain-name, el comando crypto key generate rsa no puede ejecutarse. El nombre de dominio forma parte del identificador de la clave RSA.</div>
+        <div class="rule-cmd" style="background:var(--teal-dim);color:var(--teal)">ip domain-name → crypto key</div>
+      </div>
+
+      <div class="rule-card" style="border-left-color:var(--red)">
+        <div class="rule-num" style="color:var(--red)">06</div>
+        <div class="rule-title" style="color:var(--red)">Puerto err-disable no se arregla solo</div>
+        <div class="rule-body">Cuando port-security detecta un intruso, apaga el puerto en err-disable. Para reactivarlo: shutdown → no shutdown. Primero reconecta el dispositivo autorizado.</div>
+        <div class="rule-cmd" style="background:var(--red-dim);color:var(--red)">shutdown → no shutdown</div>
+      </div>
+
+      <div class="rule-card" style="border-left-color:var(--cyan)">
+        <div class="rule-num" style="color:var(--cyan)">07</div>
+        <div class="rule-title" style="color:var(--cyan)">login es obligatorio en line console y VTY</div>
+        <div class="rule-body">Si configuras la contraseña pero olvidas el comando login, la contraseña existe pero nunca se solicita al conectarse. El acceso queda abierto.</div>
+        <div class="rule-cmd" style="background:var(--cyan-dim);color:var(--cyan)">password X → login</div>
+      </div>
+
+      <div class="rule-card" style="border-left-color:var(--amber)">
+        <div class="rule-num" style="color:var(--amber)">08</div>
+        <div class="rule-title" style="color:var(--amber)">Guarda siempre antes de cerrar</div>
+        <div class="rule-body">running-config vive en RAM y se pierde al reiniciar. copy running-config startup-config (o simplemente wr) copia todo a la memoria flash permanente.</div>
+        <div class="rule-cmd" style="background:var(--amber-dim);color:var(--amber)">copy run start  /  wr</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<div class="slide-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 6 — CIERRE / EVALUACIÓN
+═══════════════════════════════════════ -->
+<section class="slide" id="s6" style="padding:100px 0 100px;background:var(--black)">
+  <div class="slide-inner">
+    <div class="exam-banner">
+      <div class="eb-label">Evaluación de comprensión</div>
+      <h2 class="eb-title">¿Estás listo?</h2>
+      <p class="eb-sub">La evaluación tiene 5 escenarios empresariales reales. En cada uno leerás un problema y responderás con lo que aprendiste. No hay respuestas únicas — lo que importa es que demuestres que entiendes el concepto.</p>
+
+      <div class="eb-grid">
+        <div class="eb-item">
+          <div class="ei-icon">🛒</div>
+          <div class="ei-label">OXXO</div>
+        </div>
+        <div class="eb-item">
+          <div class="ei-icon">🏥</div>
+          <div class="ei-label">Clínica</div>
+        </div>
+        <div class="eb-item">
+          <div class="ei-icon">🏛</div>
+          <div class="ei-label">Ayto.</div>
+        </div>
+        <div class="eb-item">
+          <div class="ei-icon">🎓</div>
+          <div class="ei-label">Prepa</div>
+        </div>
+        <div class="eb-item">
+          <div class="ei-icon">🚚</div>
+          <div class="ei-label">Logística</div>
+        </div>
+      </div>
+
+      <div class="eb-note">
+        🔒 La evaluación tiene medidas de seguridad activas — responde con tus propias palabras.<br>
+        Al final puedes generar tu PDF con todas las respuestas.
+      </div>
+    </div>
+
+    <!-- Quick recap chips -->
+    <div style="margin-top:40px">
+      <div style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:16px;text-align:center">Lo que debes dominar</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+        <span class="chip chip-c">Dirección IP / Máscara</span>
+        <span class="chip chip-c">show vlan brief</span>
+        <span class="chip chip-a">switchport mode access</span>
+        <span class="chip chip-a">switchport access vlan</span>
+        <span class="chip chip-g">enable secret</span>
+        <span class="chip chip-g">service password-encryption</span>
+        <span class="chip chip-p">port-security sticky</span>
+        <span class="chip chip-p">violation shutdown</span>
+        <span class="chip chip-c">ip domain-name</span>
+        <span class="chip chip-c">crypto key generate rsa</span>
+        <span class="chip chip-a">ip ssh version 2</span>
+        <span class="chip chip-a">transport input ssh</span>
+        <span class="chip chip-g">ipconfig · ping · tracert</span>
+        <span class="chip chip-p">copy run start</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+// NAV ACTIVE on scroll
+const sectionIds = ['s0','s1','s2','s3','s4','s5','s6'];
+const navLinks = document.querySelectorAll('.nav-links a');
+const ctr = document.getElementById('navCtr');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      navLinks.forEach(a => {
+        a.classList.toggle('on', a.getAttribute('href') === '#' + id);
+      });
+      const idx = sectionIds.indexOf(id);
+      if (idx >= 0) ctr.textContent = (idx + 1) + ' / ' + sectionIds.length;
+    }
+  });
+}, { threshold: 0.4 });
+
+sectionIds.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) observer.observe(el);
+});
+</script>
+</body>
+</html>
