@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación — Redes LAN Cisco</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ═══════════ RESET & BASE ═══════════ */
+*{margin:0;padding:0;box-sizing:border-box;}
+::selection{background:#1d4ed8;color:#fff;}
+
+:root{
+  --bg:#f5f4f0;
+  --bg2:#ece9e0;
+  --ink:#1a1612;
+  --ink2:#4a4540;
+  --ink3:#7a7570;
+  --rule:#d4cfc4;
+  --blue:#1d4ed8;
+  --blue-l:#dbeafe;
+  --teal:#0f766e;
+  --teal-l:#ccfbf1;
+  --amber:#b45309;
+  --amber-l:#fef3c7;
+  --red:#b91c1c;
+  --red-l:#fee2e2;
+  --green:#15803d;
+  --green-l:#dcfce7;
+  --paper:#fafaf7;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'DM Sans',sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.65;
+  min-height:100vh;
+}
+
+/* ═══════════ HEADER ═══════════ */
+.site-header{
+  background:var(--ink);
+  color:#fff;
+  padding:0 32px;
+  display:flex;align-items:center;gap:0;
+  height:56px;
+  position:sticky;top:0;z-index:200;
+}
+.site-header .logo{
+  font-family:var(--mono);
+  font-size:13px;font-weight:600;
+  letter-spacing:.02em;color:#fff;
+  padding-right:24px;
+  border-right:1px solid #333;
+  margin-right:24px;
+  white-space:nowrap;
+}
+.site-header .course{
+  font-size:12px;color:#999;
+  flex:1;
+}
+.site-header .badge{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  background:#1d4ed8;color:#fff;
+  padding:4px 12px;border-radius:2px;
+  letter-spacing:.05em;text-transform:uppercase;
+}
+
+/* ═══════════ MAIN LAYOUT ═══════════ */
+main{max-width:820px;margin:0 auto;padding:48px 24px 80px;}
+
+/* ═══════════ SECTION TITLE ═══════════ */
+.s-label{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:8px;
+  display:flex;align-items:center;gap:10px;
+}
+.s-label::after{content:'';flex:1;height:1px;background:var(--rule);}
+.s-title{font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.s-sub{font-size:14px;color:var(--ink3);margin-bottom:32px;}
+
+/* ═══════════ STUDENT FORM ═══════════ */
+#student-form{
+  background:var(--paper);
+  border:1.5px solid var(--rule);
+  border-radius:8px;
+  padding:32px;
+  margin-bottom:48px;
+  position:relative;
+}
+#student-form h2{font-size:18px;font-weight:700;margin-bottom:4px;}
+#student-form p{font-size:13px;color:var(--ink3);margin-bottom:24px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.form-group label{
+  font-size:11px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink2);
+}
+.form-group input{
+  background:var(--bg);
+  border:1.5px solid var(--rule);
+  border-radius:4px;
+  padding:10px 14px;
+  font-size:14px;font-family:var(--sans);
+  color:var(--ink);
+  outline:none;transition:border-color .15s;
+}
+.form-group input:focus{border-color:var(--blue);}
+.form-group input::placeholder{color:var(--ink3);}
+.btn-start{
+  display:block;width:100%;margin-top:24px;
+  background:var(--ink);color:#fff;
+  border:none;border-radius:6px;padding:14px;
+  font-family:var(--sans);font-size:15px;font-weight:600;
+  cursor:pointer;letter-spacing:.02em;
+  transition:background .15s;
+}
+.btn-start:hover{background:#2d2820;}
+.form-note{
+  font-size:11.5px;color:var(--ink3);
+  margin-top:14px;padding:10px 14px;
+  border-left:3px solid var(--rule);
+  line-height:1.5;
+}
+
+/* ═══════════ EXAM CONTENT ═══════════ */
+#exam-content{display:none;}
+
+/* ═══════════ IMPORTANCE BANNER ═══════════ */
+.importance-banner{
+  background:var(--ink);
+  border-radius:8px;
+  padding:28px 32px;
+  margin-bottom:40px;
+  position:relative;
+  overflow:hidden;
+}
+.importance-banner::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:repeating-linear-gradient(
+    45deg,
+    transparent,transparent 8px,
+    rgba(255,255,255,.02) 8px,rgba(255,255,255,.02) 9px
+  );
+}
+.importance-banner h3{
+  font-size:16px;font-weight:700;color:#fff;
+  margin-bottom:12px;position:relative;
+}
+.importance-banner p{
+  font-size:13.5px;color:#aaa;line-height:1.65;
+  max-width:660px;position:relative;
+}
+.importance-banner .ib-tags{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-top:16px;position:relative;
+}
+.ib-tag{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  padding:4px 10px;border-radius:20px;
+  border:1px solid rgba(255,255,255,.15);color:#ccc;
+  letter-spacing:.04em;
+}
+
+/* ═══════════ SCENARIO ═══════════ */
+.scenario{
+  background:var(--paper);
+  border:1.5px solid var(--rule);
+  border-radius:8px;
+  margin-bottom:40px;
+  overflow:hidden;
+}
+.scenario-head{
+  padding:20px 24px 16px;
+  border-bottom:1px solid var(--rule);
+  display:flex;align-items:flex-start;gap:16px;
+}
+.scenario-icon{
+  width:44px;height:44px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;margin-top:2px;
+}
+.scenario-meta{flex:1;}
+.scenario-num{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:4px;
+}
+.scenario-title{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.scenario-company{
+  font-size:12px;color:var(--ink3);
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.s-chip{
+  font-size:11px;font-weight:500;
+  padding:2px 8px;border-radius:20px;
+  border:1px solid var(--rule);
+  color:var(--ink2);background:var(--bg2);
+}
+
+.scenario-body{padding:24px;}
+.scenario-body .context{
+  font-size:14px;color:var(--ink2);
+  line-height:1.7;margin-bottom:20px;
+  padding:16px 18px;
+  background:var(--bg);
+  border-radius:6px;
+  border-left:4px solid;
+}
+.scenario-body .what-did{
+  font-size:13px;font-weight:600;
+  color:var(--ink);margin-bottom:10px;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.tools-used{
+  display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;
+}
+.tool-tag{
+  font-family:var(--mono);font-size:11px;
+  padding:3px 10px;border-radius:4px;
+  font-weight:600;
+}
+
+/* ═══════════ QUESTIONS ═══════════ */
+.questions{border-top:1px solid var(--rule);padding:24px;}
+.questions h4{
+  font-size:12px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:16px;
+}
+.question-item{margin-bottom:20px;}
+.q-num-title{
+  display:flex;align-items:flex-start;gap:12px;
+  margin-bottom:8px;
+}
+.q-num{
+  width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  flex-shrink:0;margin-top:1px;
+}
+.q-text{font-size:14px;font-weight:600;color:var(--ink);flex:1;line-height:1.5;}
+.q-hint{
+  font-size:12px;color:var(--ink3);
+  margin:0 0 8px 36px;font-style:italic;
+}
+.q-answer{
+  width:100%;min-height:72px;
+  background:var(--bg);border:1.5px solid var(--rule);
+  border-radius:6px;padding:12px 14px;
+  font-family:var(--sans);font-size:13.5px;color:var(--ink);
+  resize:vertical;outline:none;
+  transition:border-color .15s;
+  line-height:1.6;
+  margin-left:0;
+}
+.q-answer:focus{border-color:var(--blue);}
+
+/* MCQ */
+.mcq-options{
+  display:flex;flex-direction:column;gap:8px;
+  margin-left:36px;
+}
+.mcq-option{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 14px;
+  background:var(--bg);border:1.5px solid var(--rule);
+  border-radius:6px;cursor:pointer;
+  transition:border-color .15s,background .15s;
+  font-size:13.5px;color:var(--ink2);
+}
+.mcq-option:hover{border-color:var(--blue);background:#eff6ff;}
+.mcq-option.selected{
+  border-color:var(--blue);
+  background:var(--blue-l);color:var(--ink);font-weight:500;
+}
+.mcq-option input[type=radio]{accent-color:var(--blue);flex-shrink:0;margin-top:3px;}
+
+/* ═══════════ PDF BUTTON ═══════════ */
+.pdf-section{
+  background:var(--paper);border:1.5px solid var(--rule);
+  border-radius:8px;padding:32px;
+  text-align:center;margin-top:48px;
+}
+.pdf-section h3{font-size:18px;font-weight:700;margin-bottom:8px;}
+.pdf-section p{font-size:13.5px;color:var(--ink3);margin-bottom:24px;}
+.btn-pdf{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--blue);color:#fff;
+  border:none;border-radius:6px;
+  padding:14px 32px;
+  font-family:var(--sans);font-size:15px;font-weight:600;
+  cursor:pointer;letter-spacing:.02em;
+  transition:background .15s,transform .1s;
+}
+.btn-pdf:hover{background:#1e40af;transform:translateY(-1px);}
+.btn-pdf:active{transform:translateY(0);}
+.btn-pdf svg{width:18px;height:18px;}
+.pdf-note{
+  font-size:12px;color:var(--ink3);margin-top:14px;
+}
+
+/* ═══════════ TOAST ═══════════ */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:#fff;
+  padding:10px 20px;border-radius:6px;
+  font-size:13px;font-weight:500;
+  pointer-events:none;
+  transition:transform .3s ease;
+  z-index:999;white-space:nowrap;
+  max-width:90vw;text-align:center;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ═══════════ SECURITY OVERLAY ═══════════ */
+.security-warning{
+  position:fixed;top:0;left:0;right:0;
+  background:#b91c1c;color:#fff;
+  padding:10px 20px;text-align:center;
+  font-size:13px;font-weight:600;
+  z-index:500;
+  transform:translateY(-100%);
+  transition:transform .3s;
+}
+.security-warning.show{transform:translateY(0);}
+
+/* ═══════════ MISC ═══════════ */
+.divider{height:1px;background:var(--rule);margin:40px 0;}
+.answer-counter{
+  font-family:var(--mono);font-size:11px;color:var(--ink3);
+  text-align:right;margin-top:4px;
+}
+.progress-bar{
+  height:3px;background:var(--rule);
+  border-radius:2px;margin-bottom:40px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;background:var(--blue);
+  width:0%;transition:width .3s;border-radius:2px;
+}
+
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr;}
+  main{padding:32px 16px 60px;}
+}
+</style>
+</head>
+<body>
+
+<div class="security-warning" id="secWarn">
+  ⚠ Acción no permitida durante la evaluación. Tus respuestas deben ser propias.
+</div>
+
+<div class="toast" id="toast"></div>
+
+<header class="site-header">
+  <div class="logo">REDES LAN</div>
+  <div class="course">Evaluación de Comprensión · Unidad 3 · Soporte Opera una Red LAN</div>
+  <div class="badge">Cisco IOS</div>
+</header>
+
+<main>
+
+<!-- ═══ DATOS DEL ALUMNO ═══ -->
+<div id="student-form">
+  <h2>Evaluación de Comprensión — Redes LAN</h2>
+  <p>Completa tus datos antes de comenzar. Una vez iniciada la evaluación, no podrás regresar a esta sección.</p>
+  <div class="form-grid">
+    <div class="form-group full">
+      <label>Nombre completo</label>
+      <input type="text" id="f-nombre" placeholder="Apellido Paterno Apellido Materno Nombre(s)" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Número de control / Lista</label>
+      <input type="text" id="f-control" placeholder="Ej. 2024-1234" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Grupo</label>
+      <input type="text" id="f-grupo" placeholder="Ej. 3°A" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Fecha</label>
+      <input type="text" id="f-fecha" placeholder="dd/mm/aaaa" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Nombre del docente</label>
+      <input type="text" id="f-docente" placeholder="Mtro. José Armando Vera Rodríguez" autocomplete="off">
+    </div>
+  </div>
+  <button class="btn-start" onclick="startExam()">Iniciar evaluación →</button>
+  <div class="form-note">
+    🔒 Medidas de seguridad activas: copiar/pegar deshabilitado · detección de cambio de pestaña · respuestas protegidas contra IA.<br>
+    Escribe con tus propias palabras. Las respuestas serán revisadas manualmente por el docente.
+  </div>
+</div>
+
+<!-- ═══ CONTENIDO EXAMEN ═══ -->
+<div id="exam-content">
+
+  <!-- BARRA DE PROGRESO -->
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <!-- IMPORTANCIA DE PACKET TRACER -->
+  <div class="importance-banner">
+    <h3>¿Por qué aprender Cisco Packet Tracer?</h3>
+    <p>Packet Tracer es el simulador oficial de Cisco Systems usado en más de 180 países. Permite construir, configurar y depurar redes completas sin necesidad de hardware físico. Un técnico que domina Packet Tracer puede simular fallos, probar configuraciones y certificarse para trabajar en empresas reales. Las habilidades que practicas ahí son exactamente las que se usan en routers y switches reales el primer día de trabajo.</p>
+    <div class="ib-tags">
+      <span class="ib-tag">Cisco Catalyst 2960</span>
+      <span class="ib-tag">Router 1941</span>
+      <span class="ib-tag">IOS CLI</span>
+      <span class="ib-tag">VLANs</span>
+      <span class="ib-tag">Port-Security</span>
+      <span class="ib-tag">SSH v2</span>
+      <span class="ib-tag">CCNA Ready</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       ESCENARIO 1 — WALMART / TIENDA RETAIL
+  ════════════════════════════════════════ -->
+  <div class="s-label" style="margin-bottom:16px">Escenarios empresariales</div>
+
+  <div class="scenario">
+    <div class="scenario-head">
+      <div class="scenario-icon" style="background:#dbeafe">🛒</div>
+      <div class="scenario-meta">
+        <div class="scenario-num" style="color:#1d4ed8">Escenario 01</div>
+        <div class="scenario-title">Red sin contraseña — Tienda de conveniencia</div>
+        <div class="scenario-company">
+          <span>Empresa: Tiendas Oxxo, sucursal Huejotzingo, Puebla</span>
+          <span class="s-chip">Retail</span>
+          <span class="s-chip">50 empleados</span>
+        </div>
+      </div>
+    </div>
+    <div class="scenario-body">
+      <div class="context" style="border-color:#1d4ed8">
+        <strong>Situación:</strong> El técnico de soporte llega a una sucursal porque "la caja registradora no se conecta". Al revisar el switch, descubre que cualquier empleado puede conectarse al CLI del equipo desde su laptop sin contraseña. La semana pasada alguien borró accidentalmente la tabla de VLANs. La caja registradora está en VLAN 10 y los dispositivos de los empleados en VLAN 20, pero ambas están mezcladas en el mismo switch sin separación real.
+      </div>
+      <div class="what-did">El técnico hace:</div>
+      <div class="tools-used">
+        <span class="tool-tag" style="background:#dbeafe;color:#1e40af">enable secret</span>
+        <span class="tool-tag" style="background:#dcfce7;color:#166534">show vlan brief</span>
+        <span class="tool-tag" style="background:#fef3c7;color:#92400e">vlan 10 / vlan 20</span>
+        <span class="tool-tag" style="background:#e0e7ff;color:#3730a3">switchport access vlan</span>
+        <span class="tool-tag" style="background:#fce7f3;color:#9d174d">service password-encryption</span>
+      </div>
+      <ol style="font-size:13.5px;color:var(--ink2);padding-left:20px;line-height:2">
+        <li>Entrar al switch sin contraseña con <code style="font-family:var(--mono);font-size:12px">enable</code></li>
+        <li>Ejecutar <code style="font-family:var(--mono);font-size:12px">show vlan brief</code> para ver el estado real</li>
+        <li>Recrear VLAN 10 (Cajas) y VLAN 20 (Empleados) con sus nombres</li>
+        <li>Asignar los puertos correctos a cada VLAN</li>
+        <li>Poner contraseña con <code style="font-family:var(--mono);font-size:12px">enable secret</code> y activar cifrado</li>
+        <li>Guardar con <code style="font-family:var(--mono);font-size:12px">copy running-config startup-config</code></li>
+      </ol>
+    </div>
+    <div class="questions">
+      <h4>Preguntas de comprensión</h4>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#dbeafe;color:#1d4ed8">1</div>
+          <div class="q-text">¿Por qué es un problema de seguridad que el switch no tenga contraseña? Explica qué puede hacer alguien con acceso al CLI.</div>
+        </div>
+        <div class="q-hint">Piensa: si cualquier persona puede escribir comandos en el switch, ¿qué podría cambiar o borrar?</div>
+        <textarea class="q-answer" id="q1_1" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q1_1c">0</span>/800</div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#dbeafe;color:#1d4ed8">2</div>
+          <div class="q-text">¿Qué diferencia hay entre <code style="font-family:var(--mono);font-size:12px">enable password</code> y <code style="font-family:var(--mono);font-size:12px">enable secret</code>? ¿Cuál debes usar siempre y por qué?</div>
+        </div>
+        <textarea class="q-answer" id="q1_2" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q1_2c">0</span>/800</div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#dbeafe;color:#1d4ed8">3</div>
+          <div class="q-text">Escribe los comandos exactos para: (a) crear VLAN 10 con nombre "Cajas", (b) asignar el puerto fa0/1 a esa VLAN.</div>
+        </div>
+        <div class="q-hint">Recuerda que son 2 comandos para asignar un puerto: primero el modo, luego la VLAN.</div>
+        <textarea class="q-answer" id="q1_3" placeholder="Escribe los comandos aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q1_3c">0</span>/800</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       ESCENARIO 2 — HOSPITAL / SALUD
+  ════════════════════════════════════════ -->
+  <div class="scenario">
+    <div class="scenario-head">
+      <div class="scenario-icon" style="background:#dcfce7">🏥</div>
+      <div class="scenario-meta">
+        <div class="scenario-num" style="color:#15803d">Escenario 02</div>
+        <div class="scenario-title">Dispositivo desconocido en la red — Clínica médica</div>
+        <div class="scenario-company">
+          <span>Empresa: Clínica San Juan Bautista, San Martín Texmelucan, Puebla</span>
+          <span class="s-chip">Salud</span>
+          <span class="s-chip">Red crítica</span>
+        </div>
+      </div>
+    </div>
+    <div class="scenario-body">
+      <div class="context" style="border-color:#15803d">
+        <strong>Situación:</strong> El técnico recibe un reporte: el sistema de expedientes médicos se vuelve lento cada tarde. Al revisar el switch, descubre que alguien conectó un dispositivo personal (un teléfono) al puerto de una computadora de enfermería. El dispositivo está generando tráfico que afecta toda la VLAN de registros médicos. El técnico necesita bloquear que cualquier dispositivo no autorizado pueda conectarse a esos puertos.
+      </div>
+      <div class="what-did">El técnico hace:</div>
+      <div class="tools-used">
+        <span class="tool-tag" style="background:#dcfce7;color:#166534">port-security</span>
+        <span class="tool-tag" style="background:#fef3c7;color:#92400e">mac-address sticky</span>
+        <span class="tool-tag" style="background:#fee2e2;color:#991b1b">violation shutdown</span>
+        <span class="tool-tag" style="background:#dbeafe;color:#1e40af">show port-security</span>
+        <span class="tool-tag" style="background:#e0e7ff;color:#3730a3">show vlan brief</span>
+      </div>
+      <ol style="font-size:13.5px;color:var(--ink2);padding-left:20px;line-height:2">
+        <li>Ejecutar <code style="font-family:var(--mono);font-size:12px">show vlan brief</code> para identificar los puertos de enfermería</li>
+        <li>Entrar a cada interfaz con <code style="font-family:var(--mono);font-size:12px">interface fa0/x</code></li>
+        <li>Activar <code style="font-family:var(--mono);font-size:12px">switchport port-security</code></li>
+        <li>Configurar <code style="font-family:var(--mono);font-size:12px">mac-address sticky</code> para que aprenda la MAC autorizada</li>
+        <li>Establecer <code style="font-family:var(--mono);font-size:12px">violation shutdown</code> para apagar el puerto ante intrusos</li>
+        <li>Verificar con <code style="font-family:var(--mono);font-size:12px">show port-security interface fa0/x</code></li>
+      </ol>
+    </div>
+    <div class="questions">
+      <h4>Preguntas de comprensión</h4>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#dcfce7;color:#15803d">1</div>
+          <div class="q-text">¿Qué es una dirección MAC y por qué el switch la usa para identificar dispositivos autorizados?</div>
+        </div>
+        <div class="q-hint">Piensa: ¿puede cambiar la MAC de un dispositivo físico? ¿Por qué eso la hace útil para seguridad?</div>
+        <textarea class="q-answer" id="q2_1" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q2_1c">0</span>/800</div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#dcfce7;color:#15803d">2</div>
+          <div class="q-text">¿Qué hace exactamente el parámetro <code style="font-family:var(--mono);font-size:12px">mac-address sticky</code>? ¿Por qué es conveniente en un ambiente real?</div>
+        </div>
+        <textarea class="q-answer" id="q2_2" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q2_2c">0</span>/800</div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#dcfce7;color:#15803d">3</div>
+          <div class="q-text">El técnico encuentra el puerto en estado <strong>err-disable</strong>. ¿Qué significa y qué comandos usa para reactivarlo?</div>
+        </div>
+        <textarea class="q-answer" id="q2_3" placeholder="Escribe los comandos aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q2_3c">0</span>/800</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       ESCENARIO 3 — MUNICIPIO / GOBIERNO
+  ════════════════════════════════════════ -->
+  <div class="scenario">
+    <div class="scenario-head">
+      <div class="scenario-icon" style="background:#fef3c7">🏛</div>
+      <div class="scenario-meta">
+        <div class="scenario-num" style="color:#b45309">Escenario 03</div>
+        <div class="scenario-title">Administración remota insegura — Gobierno municipal</div>
+        <div class="scenario-company">
+          <span>Empresa: H. Ayuntamiento de San Martín Texmelucan, Puebla</span>
+          <span class="s-chip">Gobierno</span>
+          <span class="s-chip">Datos públicos</span>
+        </div>
+      </div>
+    </div>
+    <div class="scenario-body">
+      <div class="context" style="border-color:#b45309">
+        <strong>Situación:</strong> El técnico de sistemas del ayuntamiento descubre que los administradores de red acceden al router central usando Telnet desde sus oficinas. Alguien del área de sistemas capturó el tráfico de red con Wireshark y pudo ver en texto plano la contraseña del router. El director de informática ordena migrar inmediatamente a SSH. El técnico tiene 30 minutos antes de que empiece la sesión de cabildo.
+      </div>
+      <div class="what-did">El técnico hace:</div>
+      <div class="tools-used">
+        <span class="tool-tag" style="background:#fef3c7;color:#92400e">ip domain-name</span>
+        <span class="tool-tag" style="background:#dcfce7;color:#166534">crypto key generate rsa</span>
+        <span class="tool-tag" style="background:#dbeafe;color:#1e40af">ip ssh version 2</span>
+        <span class="tool-tag" style="background:#fee2e2;color:#991b1b">transport input ssh</span>
+        <span class="tool-tag" style="background:#e0e7ff;color:#3730a3">show ip ssh</span>
+      </div>
+      <ol style="font-size:13.5px;color:var(--ink2);padding-left:20px;line-height:2">
+        <li>Configurar <code style="font-family:var(--mono);font-size:12px">ip domain-name ayuntamiento.local</code></li>
+        <li>Crear usuario: <code style="font-family:var(--mono);font-size:12px">username admin privilege 15 secret Clave2024</code></li>
+        <li>Generar clave RSA: <code style="font-family:var(--mono);font-size:12px">crypto key generate rsa modulus 1024</code></li>
+        <li>Activar SSH v2: <code style="font-family:var(--mono);font-size:12px">ip ssh version 2</code></li>
+        <li>Bloquear Telnet en VTY: <code style="font-family:var(--mono);font-size:12px">transport input ssh</code> + <code style="font-family:var(--mono);font-size:12px">login local</code></li>
+        <li>Verificar: <code style="font-family:var(--mono);font-size:12px">show ip ssh</code> debe decir "SSH Enabled - version 2.0"</li>
+      </ol>
+    </div>
+    <div class="questions">
+      <h4>Preguntas de comprensión</h4>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#fef3c7;color:#b45309">1</div>
+          <div class="q-text">¿Por qué Telnet es un problema de seguridad grave? Explica qué puede ver un atacante si captura el tráfico.</div>
+        </div>
+        <div class="q-hint">Recuerda: Telnet envía todo en texto plano. ¿Qué herramienta se usa para "escuchar" el tráfico de red?</div>
+        <textarea class="q-answer" id="q3_1" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q3_1c">0</span>/800</div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#fef3c7;color:#b45309">2</div>
+          <div class="q-text">¿Por qué SSH necesita un <code style="font-family:var(--mono);font-size:12px">ip domain-name</code> antes de generar la clave RSA? ¿Qué pasaría si lo olvidas?</div>
+        </div>
+        <textarea class="q-answer" id="q3_2" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q3_2c">0</span>/800</div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#fef3c7;color:#b45309">3</div>
+          <div class="q-text">Escribe el comando que ejecutarías desde una PC para conectarte al router por SSH, sabiendo que el usuario es "admin" y la IP del router es 192.168.1.1.</div>
+        </div>
+        <textarea class="q-answer" id="q3_3" placeholder="Escribe el comando exacto..." onkeyup="updateProgress()" maxlength="400"></textarea>
+        <div class="answer-counter"><span id="q3_3c">0</span>/400</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       ESCENARIO 4 — PREPARATORIA / EDUCACIÓN
+  ════════════════════════════════════════ -->
+  <div class="scenario">
+    <div class="scenario-head">
+      <div class="scenario-icon" style="background:#f3e8ff">🎓</div>
+      <div class="scenario-meta">
+        <div class="scenario-num" style="color:#7c3aed">Escenario 04</div>
+        <div class="scenario-title">Sin conectividad entre equipos — Laboratorio de cómputo</div>
+        <div class="scenario-company">
+          <span>Empresa: Prepa UPAEP, San Martín Texmelucan, Puebla</span>
+          <span class="s-chip">Educación</span>
+          <span class="s-chip">30 equipos</span>
+        </div>
+      </div>
+    </div>
+    <div class="scenario-body">
+      <div class="context" style="border-color:#7c3aed">
+        <strong>Situación:</strong> El docente de informática reporta que las computadoras del laboratorio no pueden hacerse ping entre sí. Todas tienen IPs asignadas manualmente. El técnico revisa y encuentra que varias PCs tienen IPs en diferentes subredes: algunas con 192.168.1.x y otras con 10.0.0.x, todas conectadas al mismo switch. Además, ninguna puede salir a internet porque el gateway está mal configurado.
+      </div>
+      <div class="what-did">El técnico hace:</div>
+      <div class="tools-used">
+        <span class="tool-tag" style="background:#f3e8ff;color:#6d28d9">ipconfig /all</span>
+        <span class="tool-tag" style="background:#dbeafe;color:#1e40af">ping</span>
+        <span class="tool-tag" style="background:#fef3c7;color:#92400e">tracert</span>
+        <span class="tool-tag" style="background:#dcfce7;color:#166534">show ip interface brief</span>
+        <span class="tool-tag" style="background:#fee2e2;color:#991b1b">IP Configuration (PT)</span>
+      </div>
+      <ol style="font-size:13.5px;color:var(--ink2);padding-left:20px;line-height:2">
+        <li>Ejecutar <code style="font-family:var(--mono);font-size:12px">ipconfig /all</code> en varias PCs para ver sus IPs actuales</li>
+        <li>Detectar que las IPs están en subredes distintas (el problema)</li>
+        <li>Estandarizar todas las PCs a 192.168.1.x con máscara 255.255.255.0</li>
+        <li>Configurar el gateway correcto: 192.168.1.1</li>
+        <li>Verificar con <code style="font-family:var(--mono);font-size:12px">ping</code> entre todas las máquinas</li>
+        <li>Confirmar salida a internet con <code style="font-family:var(--mono);font-size:12px">tracert 8.8.8.8</code></li>
+      </ol>
+    </div>
+    <div class="questions">
+      <h4>Preguntas de comprensión</h4>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#f3e8ff;color:#7c3aed">1</div>
+          <div class="q-text">¿Por qué dos computadoras con IPs en subredes diferentes NO pueden hacerse ping aunque estén conectadas al mismo switch?</div>
+        </div>
+        <div class="q-hint">Usa la analogía de la colonia y la casa: si dos personas viven en colonias distintas, ¿pueden visitarse sin salir al exterior?</div>
+        <textarea class="q-answer" id="q4_1" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q4_1c">0</span>/800</div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#f3e8ff;color:#7c3aed">2</div>
+          <div class="q-text">Una PC tiene IP 192.168.1.50, máscara 255.255.255.0. ¿Cuántos hosts puede tener esta red? ¿Cuál es el rango de IPs válidas?</div>
+        </div>
+        <textarea class="q-answer" id="q4_2" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="600"></textarea>
+        <div class="answer-counter"><span id="q4_2c">0</span>/600</div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#f3e8ff;color:#7c3aed">3</div>
+          <div class="q-text">¿Para qué sirve el comando <code style="font-family:var(--mono);font-size:12px">tracert 8.8.8.8</code> y qué información te da que el <code style="font-family:var(--mono);font-size:12px">ping</code> no te da?</div>
+        </div>
+        <textarea class="q-answer" id="q4_3" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="600"></textarea>
+        <div class="answer-counter"><span id="q4_3c">0</span>/600</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       ESCENARIO 5 — EMPRESA LOGÍSTICA
+  ════════════════════════════════════════ -->
+  <div class="scenario">
+    <div class="scenario-head">
+      <div class="scenario-icon" style="background:#ccfbf1">🚚</div>
+      <div class="scenario-meta">
+        <div class="scenario-num" style="color:#0f766e">Escenario 05</div>
+        <div class="scenario-title">Red sin segmentación — Empresa de logística</div>
+        <div class="scenario-company">
+          <span>Empresa: Logística Express S.A., Texmelucan — Caso integrador</span>
+          <span class="s-chip">Logística</span>
+          <span class="s-chip">Caso integrador</span>
+        </div>
+      </div>
+    </div>
+    <div class="scenario-body">
+      <div class="context" style="border-color:#0f766e">
+        <strong>Situación:</strong> Logística Express acaba de abrir oficinas nuevas. Tienen 3 departamentos: Administración, Operaciones y Gerencia, todos en el mismo switch. Un empleado de Operaciones accidentalmente borró un archivo del servidor de Gerencia porque todos comparten la misma red plana. El director exige que cada departamento esté aislado. Además, el router no tiene contraseña y se administra desde cualquier PC con Telnet.
+      </div>
+      <div class="what-did">El técnico aplica TODO lo aprendido:</div>
+      <div class="tools-used">
+        <span class="tool-tag" style="background:#ccfbf1;color:#134e4a">VLANs 10/20/30</span>
+        <span class="tool-tag" style="background:#dbeafe;color:#1e40af">switchport access</span>
+        <span class="tool-tag" style="background:#fef3c7;color:#92400e">enable secret</span>
+        <span class="tool-tag" style="background:#dcfce7;color:#166534">port-security sticky</span>
+        <span class="tool-tag" style="background:#fee2e2;color:#991b1b">SSH v2</span>
+        <span class="tool-tag" style="background:#f3e8ff;color:#6d28d9">ping / show vlan brief</span>
+      </div>
+      <ol style="font-size:13.5px;color:var(--ink2);padding-left:20px;line-height:2">
+        <li>Crear VLANs 10 (Administracion), 20 (Operaciones), 30 (Gerencia) en el switch</li>
+        <li>Asignar fa0/1-3 → VLAN10, fa0/4-5 → VLAN20, fa0/6-7 → VLAN30</li>
+        <li>Asignar IPs estáticas a cada PC según su VLAN y subred</li>
+        <li>Configurar port-security con sticky en todos los puertos</li>
+        <li>Poner enable secret y contraseñas en consola y VTY del switch</li>
+        <li>Configurar SSH en el router y bloquear Telnet</li>
+        <li>Verificar: ping dentro de VLANs OK · ping entre VLANs falla (correcto)</li>
+      </ol>
+    </div>
+    <div class="questions">
+      <h4>Preguntas de comprensión — Caso integrador</h4>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#ccfbf1;color:#0f766e">1</div>
+          <div class="q-text">Describe con tus palabras qué es una VLAN y cómo resuelve el problema de que Operaciones pueda acceder a los archivos de Gerencia.</div>
+        </div>
+        <textarea class="q-answer" id="q5_1" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q5_1c">0</span>/800</div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#ccfbf1;color:#0f766e">2</div>
+          <div class="q-text">Después de configurar las VLANs, el técnico hace ping de PC-Admin1 (10.10.10.1) a PC-Ger1 (10.30.30.1) y falla. ¿Eso es un error o es correcto? Explica por qué.</div>
+        </div>
+        <textarea class="q-answer" id="q5_2" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q5_2c">0</span>/800</div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#ccfbf1;color:#0f766e">3</div>
+          <div class="q-text">Menciona 3 cosas que el técnico debe verificar con comandos <code style="font-family:var(--mono);font-size:12px">show</code> antes de declarar que la red está lista. ¿Qué muestra cada uno?</div>
+        </div>
+        <div class="q-hint">Piensa en show vlan brief, show port-security, show ip ssh, show running-config...</div>
+        <textarea class="q-answer" id="q5_3" placeholder="Escribe tu respuesta aquí..." onkeyup="updateProgress()" maxlength="800"></textarea>
+        <div class="answer-counter"><span id="q5_3c">0</span>/800</div>
+      </div>
+
+      <!-- MCQ -->
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#ccfbf1;color:#0f766e">4</div>
+          <div class="q-text">¿Cuál es el primer comando que ejecuta un técnico al conectarse al CLI de un switch Cisco para entrar al modo privilegiado?</div>
+        </div>
+        <div class="mcq-options" id="mcq5_4">
+          <label class="mcq-option"><input type="radio" name="mcq5_4" value="a" onchange="selectMCQ('mcq5_4','a')"> configure terminal</label>
+          <label class="mcq-option"><input type="radio" name="mcq5_4" value="b" onchange="selectMCQ('mcq5_4','b')"> enable</label>
+          <label class="mcq-option"><input type="radio" name="mcq5_4" value="c" onchange="selectMCQ('mcq5_4','c')"> login</label>
+          <label class="mcq-option"><input type="radio" name="mcq5_4" value="d" onchange="selectMCQ('mcq5_4','d')"> show running-config</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="q-num-title">
+          <div class="q-num" style="background:#ccfbf1;color:#0f766e">5</div>
+          <div class="q-text">¿Por qué es importante ejecutar <code style="font-family:var(--mono);font-size:12px">copy running-config startup-config</code> al final de toda configuración?</div>
+        </div>
+        <div class="mcq-options" id="mcq5_5">
+          <label class="mcq-option"><input type="radio" name="mcq5_5" value="a" onchange="selectMCQ('mcq5_5','a')"> Para ver la configuración actual</label>
+          <label class="mcq-option"><input type="radio" name="mcq5_5" value="b" onchange="selectMCQ('mcq5_5','b')"> Para que los cambios sobrevivan un reinicio del equipo</label>
+          <label class="mcq-option"><input type="radio" name="mcq5_5" value="c" onchange="selectMCQ('mcq5_5','c')"> Para activar las VLANs creadas</label>
+          <label class="mcq-option"><input type="radio" name="mcq5_5" value="d" onchange="selectMCQ('mcq5_5','d')"> Para conectarse por SSH</label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PDF SECTION -->
+  <div class="pdf-section">
+    <h3>Generar mi evaluación en PDF</h3>
+    <p>Tus respuestas se exportarán con tus datos personales, los escenarios y las preguntas respondidas. Asegúrate de haber completado todas las respuestas antes de generar el archivo.</p>
+    <button class="btn-pdf" onclick="generatePDF()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Descargar PDF con mis respuestas
+    </button>
+    <div class="pdf-note">El PDF incluirá: datos del alumno · escenarios · preguntas · tus respuestas · fecha y hora de generación.</div>
+  </div>
+
+</div><!-- /exam-content -->
+
+</main>
+
+<script>
+// ══════════════════════════════════════════
+// SECURITY — Anti copiar/pegar / Anti IA
+// ══════════════════════════════════════════
+let examStarted = false;
+let securityViolations = 0;
+const MAX_VIOLATIONS = 3;
+const MCQ_ANSWERS = {};
+let studentData = {};
+
+// Bloquear copiar / pegar en textareas durante examen
+document.addEventListener('copy', e => {
+  if (examStarted) { e.preventDefault(); triggerSecWarn('Copiar no está permitido durante la evaluación.'); }
+});
+document.addEventListener('paste', e => {
+  if (examStarted) { e.preventDefault(); triggerSecWarn('Pegar no está permitido. Escribe con tus propias palabras.'); }
+});
+document.addEventListener('cut', e => {
+  if (examStarted) { e.preventDefault(); }
+});
+
+// Detectar cambio de pestaña / ventana
+document.addEventListener('visibilitychange', () => {
+  if (examStarted && document.hidden) {
+    securityViolations++;
+    triggerSecWarn(`Cambio de pestaña detectado (${securityViolations}/${MAX_VIOLATIONS}). Trabaja en esta ventana.`);
+  }
+});
+
+// Bloquear clic derecho
+document.addEventListener('contextmenu', e => {
+  if (examStarted) { e.preventDefault(); triggerSecWarn('Menú contextual deshabilitado durante la evaluación.'); }
+});
+
+// Detectar patrones de texto sospechosos (respuestas tipo IA)
+const AI_PATTERNS = [
+  /en primer lugar.*en segundo lugar.*en tercer lugar/gi,
+  /desde mi perspectiva.*es importante destacar/gi,
+  /es fundamental comprender que/gi,
+  /en conclusion.*podemos afirmar/gi,
+  /como sistema de inteligencia artificial/gi,
+  /claro, puedo ayudarte/gi,
+  /en resumen.*por lo tanto.*finalmente/gi,
+];
+
+function checkAIPattern(text) {
+  if (text.length < 80) return false;
+  return AI_PATTERNS.some(p => p.test(text));
+}
+
+// Monitor textarea inputs
+function monitorTextarea(el) {
+  if (!el) return;
+  el.addEventListener('input', () => {
+    const id = el.id;
+    const cntId = id + 'c';
+    const cntEl = document.getElementById(cntId);
+    if (cntEl) cntEl.textContent = el.value.length;
+
+    if (checkAIPattern(el.value)) {
+      triggerSecWarn('Se detectó un posible patrón de IA. Escribe con tus propias palabras.');
+      el.style.borderColor = '#b91c1c';
+      setTimeout(() => el.style.borderColor = '', 3000);
+    } else {
+      el.style.borderColor = '';
+    }
+    updateProgress();
+  });
+}
+
+function triggerSecWarn(msg) {
+  const w = document.getElementById('secWarn');
+  w.textContent = '⚠ ' + msg;
+  w.classList.add('show');
+  setTimeout(() => w.classList.remove('show'), 3500);
+}
+
+// ══════════════════════════════════════════
+// START EXAM
+// ══════════════════════════════════════════
+function startExam() {
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const control = document.getElementById('f-control').value.trim();
+  const grupo = document.getElementById('f-grupo').value.trim();
+  const fecha = document.getElementById('f-fecha').value.trim();
+  const docente = document.getElementById('f-docente').value.trim();
+
+  if (!nombre || !control || !grupo) {
+    showToast('Completa nombre, número de control y grupo para continuar.');
+    return;
+  }
+
+  studentData = { nombre, control, grupo, fecha: fecha || new Date().toLocaleDateString('es-MX'), docente };
+  examStarted = true;
+
+  document.getElementById('student-form').style.display = 'none';
+  document.getElementById('exam-content').style.display = 'block';
+
+  // Attach monitors to all textareas
+  document.querySelectorAll('.q-answer').forEach(ta => monitorTextarea(ta));
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showToast('Evaluación iniciada. Tus datos fueron registrados.');
+}
+
+// ══════════════════════════════════════════
+// MCQ
+// ══════════════════════════════════════════
+function selectMCQ(groupId, value) {
+  MCQ_ANSWERS[groupId] = value;
+  document.querySelectorAll(`#${groupId} .mcq-option`).forEach(opt => {
+    const radio = opt.querySelector('input');
+    opt.classList.toggle('selected', radio.value === value);
+  });
+  updateProgress();
+}
+
+// ══════════════════════════════════════════
+// PROGRESS
+// ══════════════════════════════════════════
+const ALL_QUESTIONS = [
+  'q1_1','q1_2','q1_3',
+  'q2_1','q2_2','q2_3',
+  'q3_1','q3_2','q3_3',
+  'q4_1','q4_2','q4_3',
+  'q5_1','q5_2','q5_3',
+];
+const ALL_MCQ = ['mcq5_4','mcq5_5'];
+const TOTAL = ALL_QUESTIONS.length + ALL_MCQ.length;
+
+function updateProgress() {
+  let filled = 0;
+  ALL_QUESTIONS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value.trim().length > 15) filled++;
+  });
+  ALL_MCQ.forEach(id => {
+    if (MCQ_ANSWERS[id]) filled++;
+  });
+  const pct = (filled / TOTAL) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════
+// PDF GENERATOR
+// ══════════════════════════════════════════
+function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+
+  const PW = 215.9, PH = 279.4;
+  const ML = 18, MR = 18, MT = 18;
+  const CW = PW - ML - MR;
+  let y = MT;
+
+  // Colors
+  const NAVY  = [26, 22, 18];
+  const BLUE  = [29, 78, 216];
+  const GRAY  = [74, 69, 64];
+  const LGRAY = [245, 244, 240];
+  const WHITE = [255, 255, 255];
+  const RULE  = [212, 207, 196];
+
+  function checkPage(needed = 20) {
+    if (y + needed > PH - 18) {
+      doc.addPage();
+      y = MT;
+      // mini header
+      doc.setFillColor(...NAVY);
+      doc.rect(0, 0, PW, 10, 'F');
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(7);
+      doc.setTextColor(...WHITE);
+      doc.text('EVALUACIÓN — REDES LAN CISCO  |  ' + studentData.nombre.toUpperCase(), ML, 6.5);
+      y = 16;
+    }
+  }
+
+  function hRule(yy, color = RULE) {
+    doc.setDrawColor(...color);
+    doc.setLineWidth(0.2);
+    doc.line(ML, yy, ML + CW, yy);
+  }
+
+  function wrappedText(text, x, startY, maxW, lineH, color = NAVY, fontSize = 9.5, fontStyle = 'normal') {
+    doc.setFont('helvetica', fontStyle);
+    doc.setFontSize(fontSize);
+    doc.setTextColor(...color);
+    const lines = doc.splitTextToSize(text || '(Sin respuesta)', maxW);
+    let cy = startY;
+    lines.forEach(line => {
+      checkPage(lineH + 2);
+      doc.text(line, x, cy);
+      cy += lineH;
+    });
+    return cy;
+  }
+
+  // ── COVER ────────────────────────────────
+  doc.setFillColor(...NAVY);
+  doc.rect(0, 0, PW, 55, 'F');
+  doc.setFillColor(...BLUE);
+  doc.rect(0, 0, 6, 55, 'F');
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(10);
+  doc.setTextColor(150, 190, 255);
+  doc.text('SOPORTE OPERA UNA RED LAN · UNIDAD 3', ML + 4, 18);
+
+  doc.setFontSize(22);
+  doc.setTextColor(...WHITE);
+  doc.text('Evaluación de Comprensión', ML + 4, 30);
+  doc.setFontSize(13);
+  doc.setTextColor(180, 200, 230);
+  doc.text('Redes LAN — Cisco IOS · Escenarios empresariales', ML + 4, 40);
+
+  // Timestamp
+  doc.setFontSize(7.5);
+  doc.setTextColor(100, 140, 180);
+  const ts = new Date().toLocaleString('es-MX');
+  doc.text('Generado: ' + ts, PW - MR, 50, { align: 'right' });
+
+  y = 65;
+
+  // ── STUDENT DATA ────────────────────────────────
+  doc.setFillColor(245, 244, 240);
+  doc.rect(ML, y, CW, 38, 'F');
+  doc.setDrawColor(...RULE);
+  doc.setLineWidth(0.3);
+  doc.rect(ML, y, CW, 38, 'S');
+  doc.setFillColor(...BLUE);
+  doc.rect(ML, y, 4, 38, 'F');
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(8);
+  doc.setTextColor(...GRAY);
+
+  const fields = [
+    ['Nombre', studentData.nombre],
+    ['No. Control', studentData.control],
+    ['Grupo', studentData.grupo],
+    ['Fecha', studentData.fecha],
+    ['Docente', studentData.docente || 'Mtro. José Armando Vera Rodríguez'],
+  ];
+  let fy = y + 8;
+  fields.forEach(([lbl, val], i) => {
+    const cx = i % 2 === 0 ? ML + 8 : ML + CW / 2 + 4;
+    if (i % 2 === 0 && i > 0) fy += 10;
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(7);
+    doc.setTextColor(...GRAY);
+    doc.text(lbl.toUpperCase() + ':', cx, fy);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...NAVY);
+    doc.text(val || '—', cx + doc.getTextWidth(lbl.toUpperCase() + ':') + 3, fy);
+  });
+
+  y += 46;
+
+  // ── SCENARIOS + ANSWERS ──────────────────────
+  const scenarios = [
+    {
+      num: '01', title: 'Red sin contraseña — Tiendas OXXO',
+      qs: [
+        { label: '¿Por qué es peligroso un switch sin contraseña?', id: 'q1_1' },
+        { label: '¿Diferencia entre enable password y enable secret?', id: 'q1_2' },
+        { label: 'Comandos para crear VLAN 10 "Cajas" y asignar fa0/1', id: 'q1_3' },
+      ]
+    },
+    {
+      num: '02', title: 'Dispositivo no autorizado — Clínica San Juan Bautista',
+      qs: [
+        { label: '¿Qué es una dirección MAC y por qué sirve para seguridad?', id: 'q2_1' },
+        { label: '¿Qué hace mac-address sticky?', id: 'q2_2' },
+        { label: 'Puerto en err-disable: ¿qué es y cómo se reactiva?', id: 'q2_3' },
+      ]
+    },
+    {
+      num: '03', title: 'Administración insegura — Ayuntamiento de Texmelucan',
+      qs: [
+        { label: '¿Por qué Telnet es un riesgo grave de seguridad?', id: 'q3_1' },
+        { label: '¿Por qué SSH necesita ip domain-name primero?', id: 'q3_2' },
+        { label: 'Comando para conectarse al router por SSH', id: 'q3_3' },
+      ]
+    },
+    {
+      num: '04', title: 'Sin conectividad entre equipos — Prepa UPAEP',
+      qs: [
+        { label: '¿Por qué IPs en subredes distintas no pueden hacerse ping?', id: 'q4_1' },
+        { label: 'Hosts disponibles y rango para 192.168.1.50/24', id: 'q4_2' },
+        { label: '¿Qué da tracert que ping no da?', id: 'q4_3' },
+      ]
+    },
+    {
+      num: '05', title: 'Caso integrador — Logística Express S.A.',
+      qs: [
+        { label: '¿Qué es una VLAN y cómo resuelve el problema?', id: 'q5_1' },
+        { label: 'Ping Admin→Gerencia falla: ¿error o correcto? ¿Por qué?', id: 'q5_2' },
+        { label: '3 comandos show antes de declarar la red lista', id: 'q5_3' },
+        { label: 'Primer comando al conectarse al CLI de un switch [MCQ]', id: 'mcq5_4', mcq: true },
+        { label: '¿Por qué copy running-config startup-config? [MCQ]', id: 'mcq5_5', mcq: true },
+      ]
+    },
+  ];
+
+  const MCQ_LABELS = { a: 'A', b: 'B', c: 'C', d: 'd' };
+  const MCQ_TEXTS = {
+    mcq5_4: { a: 'configure terminal', b: 'enable', c: 'login', d: 'show running-config' },
+    mcq5_5: { a: 'Para ver la configuración', b: 'Para que los cambios sobrevivan reinicio', c: 'Para activar las VLANs', d: 'Para conectarse por SSH' },
+  };
+
+  scenarios.forEach(sc => {
+    checkPage(30);
+
+    // Scenario header
+    doc.setFillColor(...NAVY);
+    doc.rect(ML, y, CW, 10, 'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(7);
+    doc.setTextColor(130, 170, 220);
+    doc.text('ESCENARIO ' + sc.num, ML + 4, y + 4);
+    doc.setFontSize(10);
+    doc.setTextColor(...WHITE);
+    doc.text(sc.title, ML + 4, y + 8.5);
+    y += 14;
+
+    sc.qs.forEach((q, qi) => {
+      checkPage(30);
+
+      // Question label
+      doc.setFillColor(235, 240, 255);
+      doc.rect(ML, y, CW, 7, 'F');
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(...BLUE);
+      doc.text(`Pregunta ${qi + 1} — ${q.label}`, ML + 4, y + 5);
+      y += 10;
+
+      if (q.mcq) {
+        const sel = MCQ_ANSWERS[q.id];
+        const selText = sel ? `${MCQ_LABELS[sel]}) ${MCQ_TEXTS[q.id][sel]}` : '(Sin respuesta)';
+        y = wrappedText('Seleccionó: ' + selText, ML + 4, y, CW - 8, 5, NAVY, 9.5, 'normal');
+      } else {
+        const answer = document.getElementById(q.id)?.value?.trim() || '';
+        y = wrappedText(answer || '(Sin respuesta)', ML + 4, y, CW - 8, 5, answer ? NAVY : [150, 130, 120], 9.5, answer ? 'normal' : 'italic');
+      }
+
+      hRule(y + 2);
+      y += 8;
+    });
+
+    y += 6;
+  });
+
+  // ── FOOTER ──────────────────────────────────
+  checkPage(30);
+  doc.setFillColor(...LGRAY);
+  doc.rect(ML, y, CW, 18, 'F');
+  doc.setDrawColor(...RULE);
+  doc.setLineWidth(0.2);
+  doc.rect(ML, y, CW, 18, 'S');
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...GRAY);
+  doc.text('Soporte Opera una Red LAN  ·  Unidad 3  ·  Generado: ' + ts, ML + 4, y + 7);
+  doc.setFont('helvetica','bold');
+  doc.text(studentData.nombre + '  ·  ' + studentData.grupo, ML + 4, y + 13);
+
+  // Page numbers
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...GRAY);
+    doc.text(`${i} / ${totalPages}`, PW - MR, PH - 8, { align: 'right' });
+  }
+
+  const fname = `Evaluacion_RedesLAN_${studentData.nombre.replace(/\s+/g,'_')}_${studentData.grupo}.pdf`;
+  doc.save(fname);
+  showToast('PDF generado correctamente.');
+}
+</script>
+</body>
+</html>
