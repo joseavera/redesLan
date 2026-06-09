@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teoría — Redes LAN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Source+Serif+4:wght@400;600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+
+/* ══════════ EXTRAS SOBRE BASE.CSS ══════════ */
+
+/* Navegación sticky */
+.toc-nav {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--white);
+  border-bottom: 2px solid var(--guinda);
+  padding: .55rem 2rem;
+  display: flex; gap: 0; overflow-x: auto;
+}
+.toc-nav a {
+  font-family: var(--font-ui); font-size: .78rem;
+  font-weight: 600; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--ink-muted);
+  text-decoration: none; padding: .4rem 1rem;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap; transition: color .15s, border-color .15s;
+}
+.toc-nav a:hover, .toc-nav a.activo {
+  color: var(--guinda); border-bottom-color: var(--guinda);
+}
+
+/* Teoría: sección con número grande */
+.teoria-section {
+  padding: 3.5rem 0 2.5rem; border-top: 1px solid var(--border);
+}
+.teoria-section:first-of-type { border-top: none; }
+
+.t-num {
+  font-family: var(--font-display); font-size: 5rem;
+  font-weight: 700; color: var(--guinda-light);
+  line-height: 1; margin-bottom: -.5rem;
+  user-select: none;
+}
+.t-title {
+  font-family: var(--font-display); font-size: 1.9rem;
+  color: var(--guinda); font-weight: 700;
+  margin-bottom: .4rem; line-height: 1.15;
+}
+.t-lead {
+  font-size: 1.05rem; color: var(--ink-secondary);
+  line-height: 1.75; margin-bottom: 2rem;
+  max-width: 680px;
+}
+
+/* ── ANALOGÍA BOX ── */
+.analogia {
+  background: var(--guinda); color: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem; margin: 1.5rem 0;
+  position: relative; overflow: hidden;
+}
+.analogia::before {
+  content: '"'; font-family: var(--font-display);
+  font-size: 8rem; color: rgba(255,255,255,.08);
+  position: absolute; top: -.5rem; left: .75rem;
+  line-height: 1; pointer-events: none;
+}
+.analogia .a-label {
+  font-family: var(--font-ui); font-size: .7rem;
+  font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.6);
+  display: block; margin-bottom: .6rem;
+}
+.analogia p {
+  font-size: 1rem; line-height: 1.7;
+  color: rgba(255,255,255,.92); margin: 0;
+  position: relative;
+}
+.analogia strong { color: var(--white); }
+
+/* ── DIAGRAMA SVG CONTAINER ── */
+.diagrama {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem; margin: 1.5rem 0;
+  overflow-x: auto;
+}
+.diagrama svg { display: block; margin: 0 auto; max-width: 100%; }
+
+/* ── COMPARATIVA DOS COLUMNAS ── */
+.compare-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1rem; margin: 1.5rem 0;
+}
+.compare-card {
+  border-radius: var(--radius-lg); padding: 1.4rem;
+  border: 1.5px solid;
+}
+.compare-card.bueno {
+  background: #f0fdf4; border-color: #86efac;
+}
+.compare-card.malo {
+  background: #fef2f2; border-color: #fca5a5;
+}
+.compare-card .cc-label {
+  font-family: var(--font-ui); font-size: .72rem;
+  font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; display: block;
+  margin-bottom: .75rem;
+}
+.compare-card.bueno .cc-label { color: #15803d; }
+.compare-card.malo  .cc-label { color: #b91c1c; }
+.compare-card ul { padding-left: 1.2rem; margin: 0; }
+.compare-card li {
+  font-size: .9rem; color: var(--ink);
+  margin-bottom: .45rem; line-height: 1.5;
+}
+
+/* ── TABLA DE CAPAS / CONCEPTOS ── */
+.concept-row {
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding: .9rem 1rem; border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+.concept-row:hover { background: var(--guinda-light); }
+.concept-row:last-child { border-bottom: none; }
+.cr-badge {
+  font-family: var(--font-mono); font-size: .75rem;
+  font-weight: 600; padding: .25rem .65rem;
+  border-radius: var(--radius-sm);
+  white-space: nowrap; flex-shrink: 0; margin-top: .1rem;
+}
+.cr-title {
+  font-family: var(--font-ui); font-size: .95rem;
+  font-weight: 600; color: var(--ink); margin-bottom: .2rem;
+}
+.cr-desc { font-size: .88rem; color: var(--ink-secondary); line-height: 1.55; }
+
+/* ── MINI TERMINAL DE EJEMPLO ── */
+.mini-cli {
+  background: #0d1117; border-radius: var(--radius-md);
+  padding: .9rem 1.1rem; margin: .75rem 0;
+  font-family: var(--font-mono); font-size: .84rem;
+  line-height: 2;
+}
+.mc-p { color: #58a6ff; }
+.mc-c { color: #3fb950; }
+.mc-a { color: #e3b341; }
+.mc-o { color: #7ee787; }
+.mc-x { color: #ff7b72; }
+.mc-d { color: #484f58; font-style: italic; }
+.mc-w { color: #e2e8f0; }
+
+/* ── CHIP DE DATO ── */
+.data-chip {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-family: var(--font-mono); font-size: .82rem;
+  padding: .2rem .65rem; border-radius: var(--radius-sm);
+  background: var(--guinda-light);
+  border: 1px solid #d8a8ba;
+  color: var(--guinda-dark);
+  margin: .1rem;
+}
+
+/* ── CARD DISPOSITIVO ── */
+.device-cards {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+  gap: 1rem; margin: 1.5rem 0;
+}
+.device-card {
+  background: var(--off-white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.3rem;
+  text-align: center;
+  transition: border-color .2s, transform .15s, box-shadow .15s;
+}
+.device-card:hover {
+  border-color: var(--guinda-rule);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.device-card .dc-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+.device-card .dc-name {
+  font-family: var(--font-ui); font-size: .95rem;
+  font-weight: 700; color: var(--ink); margin-bottom: .4rem;
+}
+.device-card .dc-model {
+  font-family: var(--font-mono); font-size: .75rem;
+  color: var(--guinda); display: block; margin-bottom: .6rem;
+}
+.device-card .dc-desc {
+  font-size: .83rem; color: var(--ink-secondary); line-height: 1.55;
+}
+
+/* ── FLUJO DE PROMPTS ── */
+.prompt-flow {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: .5rem; margin: 1.25rem 0; padding: 1.1rem 1.4rem;
+  background: var(--surface); border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+.pf-step {
+  display: flex; flex-direction: column; align-items: center;
+  gap: .3rem;
+}
+.pf-prompt {
+  font-family: var(--font-mono); font-size: .82rem;
+  padding: .35rem .8rem; border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+.pf-label {
+  font-family: var(--font-ui); font-size: .68rem;
+  color: var(--ink-muted); text-align: center;
+}
+.pf-arrow {
+  font-size: 1.2rem; color: var(--ink-muted);
+  margin-top: -.75rem;
+}
+
+/* ── HIGHLIGHT KEYWORD ── */
+.kw {
+  background: var(--guinda-light); color: var(--guinda-dark);
+  font-family: var(--font-mono); font-size: .82em;
+  padding: .1em .4em; border-radius: 3px;
+  border: 1px solid #d8a8ba;
+}
+
+/* ── REGLA DE ORO ── */
+.golden-rules { margin: 1.5rem 0; }
+.gr-item {
+  display: flex; gap: 1rem; align-items: flex-start;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+.gr-item:last-child { border-bottom: none; }
+.gr-item:hover { background: var(--guinda-light); }
+.gr-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--guinda); color: var(--white);
+  font-family: var(--font-ui); font-size: .8rem;
+  font-weight: 700; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; margin-top: .1rem;
+}
+.gr-text { flex: 1; }
+.gr-rule {
+  font-family: var(--font-ui); font-size: .98rem;
+  font-weight: 600; color: var(--ink); margin-bottom: .25rem;
+}
+.gr-why { font-size: .87rem; color: var(--ink-secondary); line-height: 1.6; }
+
+@media (max-width: 600px) {
+  .compare-grid { grid-template-columns: 1fr; }
+  .t-num { font-size: 3rem; }
+  .t-title { font-size: 1.45rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="logo-wrap">
+    <div style="width:64px;height:64px;background:var(--guinda);border-radius:var(--radius-md);
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-ui);font-size:.65rem;font-weight:700;
+      color:white;text-align:center;letter-spacing:.04em;line-height:1.3;">IEDEP</div>
+  </div>
+  <div class="header-text">
+    <span class="inst-name">Instituto de Educación Digital del Estado de Puebla</span>
+    <span class="doc-title">Soporte Opera una Red LAN · Unidad 3 — Teoría de aula</span>
+  </div>
+</header>
+
+<!-- NAV STICKY -->
+<nav class="toc-nav" id="mainNav">
+  <a href="#s1" class="activo">Dispositivos</a>
+  <a href="#s2">La IP</a>
+  <a href="#s3">Topologías</a>
+  <a href="#s4">VLANs</a>
+  <a href="#s5">Modos CLI</a>
+  <a href="#s6">Seguridad</a>
+  <a href="#s7">SSH</a>
+  <a href="#s8">Diagnóstico</a>
+  <a href="#s9">Reglas de oro</a>
+</nav>
+
+<!-- HERO -->
+<div class="class-hero">
+  <span class="class-label">Sesión teórica · Aula</span>
+  <h1>Redes LAN — Conceptos<br>y Topologías</h1>
+  <span class="class-subtitle">
+    Todo lo que necesitas entender antes de tocar un cable.<br>
+    Esquemas visuales, analogías y ejemplos del mundo real.
+  </span>
+  <div class="meta-row">
+    <div class="meta-item">Curso<span>Soporte Opera una Red LAN</span></div>
+    <div class="meta-item">Unidad<span>3</span></div>
+    <div class="meta-item">Empresa<span>Logística Express S.A.</span></div>
+  </div>
+</div>
+
+<div class="page-wrapper">
+
+<!-- ════════════════════════════════════════
+     S1 — DISPOSITIVOS
+════════════════════════════════════════ -->
+<section class="teoria-section" id="s1">
+  <div class="t-num">01</div>
+  <h2 class="t-title">Los dispositivos de la red</h2>
+  <p class="t-lead">Antes de configurar cualquier cosa, necesitas reconocer con qué estás trabajando. Cada dispositivo tiene un rol específico — no son intercambiables.</p>
+
+  <div class="device-cards">
+    <div class="device-card">
+      <div class="dc-icon">🖥</div>
+      <div class="dc-name">PC / Host</div>
+      <span class="dc-model">End device</span>
+      <div class="dc-desc">Genera y consume tráfico. Necesita IP, máscara y gateway para comunicarse. No enruta, no segmenta.</div>
+    </div>
+    <div class="device-card">
+      <div class="dc-icon">⬛</div>
+      <div class="dc-name">Switch</div>
+      <span class="dc-model">Cisco Catalyst 2960</span>
+      <div class="dc-desc">Conecta dispositivos en la misma red. Opera en capa 2 (MAC). Con VLANs puede crear redes lógicas separadas.</div>
+    </div>
+    <div class="device-card">
+      <div class="dc-icon">🟧</div>
+      <div class="dc-name">Router</div>
+      <span class="dc-model">Cisco 1941</span>
+      <div class="dc-desc">Conecta redes distintas. Opera en capa 3 (IP). Es el gateway — la puerta de salida de la LAN hacia internet.</div>
+    </div>
+    <div class="device-card">
+      <div class="dc-icon">📡</div>
+      <div class="dc-name">Access Point</div>
+      <span class="dc-model">Wireless</span>
+      <div class="dc-desc">Extiende la red por WiFi. Conecta dispositivos inalámbricos al mismo switch como si usaran cable.</div>
+    </div>
+    <div class="device-card">
+      <div class="dc-icon">🌐</div>
+      <div class="dc-name">Servidor DNS</div>
+      <span class="dc-model">8.8.8.8 / Google</span>
+      <div class="dc-desc">Traduce nombres de dominio (google.com) a IPs (142.250.x.x). Sin DNS navegas por IP, no por nombre.</div>
+    </div>
+    <div class="device-card">
+      <div class="dc-icon">☁️</div>
+      <div class="dc-name">Nube / Internet</div>
+      <span class="dc-model">ISP → exterior</span>
+      <div class="dc-desc">Todo lo que está fuera de tu LAN. Accedes a través del router. El tráfico sale por el gateway configurado.</div>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <span class="concept-title">Regla de capas</span>
+    El <strong>switch</strong> trabaja con direcciones <strong>MAC</strong> (físicas, únicas por tarjeta).<br>
+    El <strong>router</strong> trabaja con direcciones <strong>IP</strong> (lógicas, configurables).<br>
+    La <strong>PC</strong> tiene los dos. Cuando haces ping, la PC usa la IP; cuando el paquete llega al switch, este usa la MAC.
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     S2 — DIRECCIÓN IP
+════════════════════════════════════════ -->
+<section class="teoria-section" id="s2">
+  <div class="t-num">02</div>
+  <h2 class="t-title">La dirección IP — cómo funciona</h2>
+  <p class="t-lead">Una IP es la dirección postal de un dispositivo en la red. Para que dos equipos se comuniquen, ambos deben estar en la misma "colonia". Si no, necesitan un router.</p>
+
+  <div class="analogia">
+    <span class="a-label">Analogía del día</span>
+    <p>
+      La <strong>dirección IP</strong> es como la dirección de una casa: <strong>Calle Reforma 42, Col. Centro, CP 74000</strong>.<br>
+      La <strong>colonia</strong> es la red (todos los que empiezan con 192.168.1.).<br>
+      El <strong>número de casa</strong> es el host (.10, .20, .100…).<br>
+      La <strong>máscara</strong> define dónde termina la colonia y empieza el número de casa.<br>
+      El <strong>gateway</strong> es la caseta de salida al exterior — sin ella no puedes salir de tu colonia.
+    </p>
+  </div>
+
+  <!-- Diagrama binario SVG -->
+  <div class="diagrama">
+    <p style="font-family:var(--font-ui);font-size:.8rem;color:var(--ink-muted);text-align:center;margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:.08em;">Anatomía de una dirección IP — 192.168.1.10 / 24</p>
+    <svg width="700" height="220" viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, monospace">
+
+      <!-- Octetos decimales -->
+      <g>
+        <rect x="10" y="10" width="155" height="44" rx="6" fill="#5e162e" />
+        <text x="87" y="37" text-anchor="middle" fill="white" font-size="22" font-weight="600">192</text>
+        <rect x="175" y="10" width="155" height="44" rx="6" fill="#5e162e" />
+        <text x="252" y="37" text-anchor="middle" fill="white" font-size="22" font-weight="600">168</text>
+        <rect x="340" y="10" width="155" height="44" rx="6" fill="#5e162e" />
+        <text x="417" y="37" text-anchor="middle" fill="white" font-size="22" font-weight="600">1</text>
+        <rect x="505" y="10" width="155" height="44" rx="6" fill="#7e3a55" />
+        <text x="582" y="37" text-anchor="middle" fill="white" font-size="22" font-weight="600">10</text>
+        <!-- Puntos separadores -->
+        <text x="166" y="37" text-anchor="middle" fill="#5e162e" font-size="20" font-weight="700">.</text>
+        <text x="331" y="37" text-anchor="middle" fill="#5e162e" font-size="20" font-weight="700">.</text>
+        <text x="496" y="37" text-anchor="middle" fill="#5e162e" font-size="20" font-weight="700">.</text>
+      </g>
+
+      <!-- Etiquetas debajo de decimales -->
+      <text x="87"  y="70" text-anchor="middle" fill="#8c7880" font-size="11" font-family="Inter, sans-serif">1er octeto</text>
+      <text x="252" y="70" text-anchor="middle" fill="#8c7880" font-size="11" font-family="Inter, sans-serif">2do octeto</text>
+      <text x="417" y="70" text-anchor="middle" fill="#8c7880" font-size="11" font-family="Inter, sans-serif">3er octeto</text>
+      <text x="582" y="70" text-anchor="middle" fill="#8c7880" font-size="11" font-family="Inter, sans-serif">4to octeto</text>
+
+      <!-- Bits de RED (primeros 24 bits) -->
+      <rect x="10"  y="90" width="480" height="34" rx="4" fill="#e8f5e9" stroke="#86efac" stroke-width="1"/>
+      <text x="250" y="112" text-anchor="middle" fill="#15803d" font-size="12" font-family="Inter, sans-serif" font-weight="600">◀ 24 bits de RED — identifican la colonia ▶</text>
+
+      <!-- Bits de HOST (últimos 8 bits) -->
+      <rect x="500" y="90" width="160" height="34" rx="4" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+      <text x="580" y="112" text-anchor="middle" fill="#92400e" font-size="12" font-family="Inter, sans-serif" font-weight="600">8 bits de HOST</text>
+
+      <!-- Barra de máscara -->
+      <rect x="10" y="140" width="480" height="24" rx="4" fill="#5e162e" opacity=".15"/>
+      <text x="250" y="156" text-anchor="middle" fill="#5e162e" font-size="11" font-family="Inter, sans-serif" font-weight="700">255 . 255 . 255 . 0   →   /24</text>
+      <rect x="500" y="140" width="160" height="24" rx="4" fill="#e5e7eb"/>
+      <text x="580" y="156" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Inter, sans-serif">0</text>
+
+      <!-- Etiqueta máscara -->
+      <text x="350" y="185" text-anchor="middle" fill="#5c4850" font-size="11" font-family="Inter, sans-serif">Máscara de subred: los unos marcan la parte de RED, los ceros la parte de HOST</text>
+
+      <!-- Resultado -->
+      <text x="100" y="210" text-anchor="middle" fill="#15803d" font-size="12" font-family="Inter, sans-serif" font-weight="600">Red: 192.168.1.0</text>
+      <text x="580" y="210" text-anchor="middle" fill="#92400e" font-size="12" font-family="Inter, sans-serif" font-weight="600">Host: .10 (de .1 a .254)</text>
+    </svg>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="card-title">IPs privadas — solo en LAN</span>
+      <div class="concept-row" style="padding:.5rem 0;">
+        <span class="cr-badge" style="background:#e0f2fe;color:#0369a1;">Clase A</span>
+        <div><div class="cr-title">10.0.0.0 — 10.255.255.255</div><div class="cr-desc">16 millones de hosts</div></div>
+      </div>
+      <div class="concept-row" style="padding:.5rem 0;">
+        <span class="cr-badge" style="background:#f0fdf4;color:#15803d;">Clase B</span>
+        <div><div class="cr-title">172.16.0.0 — 172.31.255.255</div><div class="cr-desc">65,534 hosts</div></div>
+      </div>
+      <div class="concept-row" style="padding:.5rem 0;">
+        <span class="cr-badge" style="background:#fdf4ff;color:#7e22ce;">Clase C</span>
+        <div><div class="cr-title">192.168.0.0 — 192.168.255.255</div><div class="cr-desc">254 hosts ← usamos esta</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="card-title">¿Cuántos hosts caben? — /24</span>
+      <p style="font-size:.93rem;color:var(--ink-secondary);margin-bottom:.75rem;">Con máscara /24 (255.255.255.0):</p>
+      <div class="formula-block">
+        <code class="formula">2⁸ = 256 direcciones totales</code>
+        <code class="formula">256 − 2 = 254 hosts usables</code>
+        <div class="formula-note">Se restan 2: la dirección de red (.0) y la de broadcast (.255)</div>
+      </div>
+      <p style="font-size:.87rem;color:var(--ink-secondary);margin-top:.75rem;">Para Logística Express usamos subredes diferentes por VLAN: <span class="data-chip">10.10.10.0/24</span> <span class="data-chip">10.20.20.0/24</span> <span class="data-chip">10.30.30.0/24</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     S3 — TOPOLOGÍAS
+════════════════════════════════════════ -->
+<section class="teoria-section" id="s3">
+  <div class="t-num">03</div>
+  <h2 class="t-title">Topologías de red</h2>
+  <p class="t-lead">La topología es cómo se conectan físicamente los dispositivos. En el laboratorio siempre usamos estrella — con un switch en el centro.</p>
+
+  <div class="diagrama">
+    <p style="font-family:var(--font-ui);font-size:.8rem;color:var(--ink-muted);text-align:center;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:.08em;">Topología estrella — Logística Express S.A.</p>
+    <svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M1 1L9 5L1 9" fill="none" stroke="#c85070" stroke-width="1.5"/>
+        </marker>
+      </defs>
+
+      <!-- Router arriba -->
+      <rect x="255" y="15" width="130" height="48" rx="8" fill="#5e162e"/>
+      <text x="320" y="35" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">ROUTER 1941</text>
+      <text x="320" y="52" text-anchor="middle" fill="rgba(255,255,255,.65)" font-family="JetBrains Mono,monospace" font-size="9">192.168.1.1</text>
+
+      <!-- Línea router → switch -->
+      <line x1="320" y1="63" x2="320" y2="130" stroke="#c85070" stroke-width="2.5" marker-end="url(#arr)"/>
+      <text x="334" y="100" fill="#8c7880" font-family="Inter,sans-serif" font-size="9">Gi0/0 → Fa0/24</text>
+
+      <!-- Switch centro -->
+      <rect x="238" y="130" width="164" height="48" rx="8" fill="#1a2235"/>
+      <text x="320" y="150" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">SWITCH 2960</text>
+      <text x="320" y="166" text-anchor="middle" fill="rgba(255,255,255,.55)" font-family="JetBrains Mono,monospace" font-size="9">24 puertos FastEthernet</text>
+
+      <!-- PCs y líneas — VLAN 10 -->
+      <line x1="280" y1="178" x2="80" y2="240" stroke="#1d4ed8" stroke-width="1.5"/>
+      <line x1="300" y1="178" x2="160" y2="255" stroke="#1d4ed8" stroke-width="1.5"/>
+      <line x1="310" y1="178" x2="210" y2="265" stroke="#1d4ed8" stroke-width="1.5"/>
+
+      <!-- PC Admin 1 -->
+      <rect x="30" y="240" width="100" height="52" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="80" y="260" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#1e40af">PC-Admin1</text>
+      <text x="80" y="274" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1e40af">10.10.10.1</text>
+      <text x="80" y="285" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#6b7280">VLAN 10 · Fa0/1</text>
+
+      <!-- PC Admin 2 -->
+      <rect x="110" y="255" width="100" height="52" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="160" y="275" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#1e40af">PC-Admin2</text>
+      <text x="160" y="289" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1e40af">10.10.10.2</text>
+      <text x="160" y="300" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#6b7280">VLAN 10 · Fa0/2</text>
+
+      <!-- PC Admin 3 -->
+      <rect x="165" y="265" width="100" height="52" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="215" y="285" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#1e40af">PC-Admin3</text>
+      <text x="215" y="299" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1e40af">10.10.10.3</text>
+      <text x="215" y="310" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#6b7280">VLAN 10 · Fa0/3</text>
+
+      <!-- PCs VLAN 20 -->
+      <line x1="330" y1="178" x2="360" y2="265" stroke="#0f766e" stroke-width="1.5"/>
+      <line x1="345" y1="178" x2="440" y2="255" stroke="#0f766e" stroke-width="1.5"/>
+
+      <rect x="305" y="265" width="100" height="52" rx="6" fill="#ccfbf1" stroke="#5eead4" stroke-width="1.5"/>
+      <text x="355" y="285" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#134e4a">PC-Op1</text>
+      <text x="355" y="299" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#134e4a">10.20.20.1</text>
+      <text x="355" y="310" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#6b7280">VLAN 20 · Fa0/4</text>
+
+      <rect x="390" y="255" width="100" height="52" rx="6" fill="#ccfbf1" stroke="#5eead4" stroke-width="1.5"/>
+      <text x="440" y="275" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#134e4a">PC-Op2</text>
+      <text x="440" y="289" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#134e4a">10.20.20.2</text>
+      <text x="440" y="300" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#6b7280">VLAN 20 · Fa0/5</text>
+
+      <!-- PCs VLAN 30 -->
+      <line x1="365" y1="178" x2="510" y2="240" stroke="#7c3aed" stroke-width="1.5"/>
+      <line x1="375" y1="178" x2="570" y2="240" stroke="#7c3aed" stroke-width="1.5"/>
+
+      <rect x="455" y="240" width="100" height="52" rx="6" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+      <text x="505" y="260" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#4c1d95">PC-Ger1</text>
+      <text x="505" y="274" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#4c1d95">10.30.30.1</text>
+      <text x="505" y="285" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#6b7280">VLAN 30 · Fa0/6</text>
+
+      <rect x="520" y="240" width="100" height="52" rx="6" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+      <text x="570" y="260" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#4c1d95">PC-Ger2</text>
+      <text x="570" y="274" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#4c1d95">10.30.30.2</text>
+      <text x="570" y="285" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#6b7280">VLAN 30 · Fa0/7</text>
+
+      <!-- Leyenda VLANs -->
+      <rect x="20" y="325" width="12" height="12" rx="2" fill="#1d4ed8"/>
+      <text x="37" y="336" font-family="Inter,sans-serif" font-size="10" fill="#1e40af" font-weight="600">VLAN 10 — Administración</text>
+      <rect x="210" y="325" width="12" height="12" rx="2" fill="#0f766e"/>
+      <text x="227" y="336" font-family="Inter,sans-serif" font-size="10" fill="#134e4a" font-weight="600">VLAN 20 — Operaciones</text>
+      <rect x="400" y="325" width="12" height="12" rx="2" fill="#7c3aed"/>
+      <text x="417" y="336" font-family="Inter,sans-serif" font-size="10" fill="#4c1d95" font-weight="600">VLAN 30 — Gerencia</text>
+    </svg>
+  </div>
+
+  <div class="callout note">
+    <p><strong>¿Por qué estrella?</strong> Si un cable falla, solo ese dispositivo pierde conexión. Los demás siguen funcionando. En una topología en bus o anillo, una falla puede derribar toda la red.</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     S4 — VLANs
+════════════════════════════════════════ -->
+<section class="teoria-section" id="s4">
+  <div class="t-num">04</div>
+  <h2 class="t-title">VLANs — Redes dentro de un switch</h2>
+  <p class="t-lead">Una VLAN crea una red lógica separada dentro del mismo switch físico. Es como dividir un edificio en departamentos: todos comparten el edificio, pero cada familia tiene su puerta.</p>
+
+  <div class="analogia">
+    <span class="a-label">Analogía del edificio</span>
+    <p>
+      El <strong>switch</strong> es el edificio. Tiene muchos cuartos (puertos).<br>
+      Las <strong>VLANs</strong> son los departamentos: Piso 1 = Administración, Piso 2 = Operaciones, Piso 3 = Gerencia.<br>
+      Los vecinos del Piso 1 <strong>no pueden entrar al Piso 2</strong> aunque compartan el mismo edificio.<br>
+      Si quieres que los pisos se hablen, necesitas un <strong>elevador (router)</strong>.
+    </p>
+  </div>
+
+  <!-- Diagrama SIN VLAN vs CON VLAN -->
+  <div class="diagrama">
+    <p style="font-family:var(--font-ui);font-size:.8rem;color:var(--ink-muted);text-align:center;margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:.08em;">Sin VLANs vs Con VLANs — el mismo switch, diferente configuración</p>
+    <svg width="640" height="280" viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+
+      <!-- SIN VLANs — izquierda -->
+      <text x="150" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#b91c1c">❌ SIN VLANs — Red plana</text>
+      <rect x="90" y="35" width="120" height="38" rx="6" fill="#1a2235"/>
+      <text x="150" y="58" text-anchor="middle" fill="white" font-size="11" font-weight="700">SWITCH</text>
+
+      <!-- PCs sin separación -->
+      <line x1="110" y1="73" x2="50"  y2="115" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <line x1="130" y1="73" x2="110" y2="115" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <line x1="165" y1="73" x2="185" y2="115" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <line x1="185" y1="73" x2="240" y2="115" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+      <rect x="20"  y="115" width="70" height="40" rx="5" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+      <text x="55"  y="132" text-anchor="middle" font-size="9" font-weight="600" fill="#b91c1c">Admin</text>
+      <text x="55"  y="145" text-anchor="middle" font-size="8" fill="#9a3412">192.168.1.2</text>
+
+      <rect x="80"  y="115" width="70" height="40" rx="5" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+      <text x="115" y="132" text-anchor="middle" font-size="9" font-weight="600" fill="#b91c1c">Contab.</text>
+      <text x="115" y="145" text-anchor="middle" font-size="8" fill="#9a3412">192.168.1.3</text>
+
+      <rect x="155" y="115" width="70" height="40" rx="5" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+      <text x="190" y="132" text-anchor="middle" font-size="9" font-weight="600" fill="#b91c1c">Gerencia</text>
+      <text x="190" y="145" text-anchor="middle" font-size="8" fill="#9a3412">192.168.1.4</text>
+
+      <rect x="215" y="115" width="70" height="40" rx="5" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+      <text x="250" y="132" text-anchor="middle" font-size="9" font-weight="600" fill="#b91c1c">Bod.</text>
+      <text x="250" y="145" text-anchor="middle" font-size="8" fill="#9a3412">192.168.1.5</text>
+
+      <!-- Flecha de tráfico entre todos -->
+      <path d="M55 155 Q150 200 250 155" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3" opacity=".6"/>
+      <text x="152" y="220" text-anchor="middle" font-size="10" fill="#b91c1c" font-weight="600">Todo el tráfico llega a todos.</text>
+      <text x="152" y="235" text-anchor="middle" font-size="10" fill="#b91c1c">Gerencia puede ver a Bodega.</text>
+      <text x="152" y="250" text-anchor="middle" font-size="10" fill="#b91c1c">Un virus infecta a todos.</text>
+
+      <!-- Divisor -->
+      <line x1="315" y1="10" x2="315" y2="270" stroke="#e2d8da" stroke-width="1" stroke-dasharray="4,4"/>
+
+      <!-- CON VLANs — derecha -->
+      <text x="480" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#15803d">✓ CON VLANs — Segmentado</text>
+      <rect x="420" y="35" width="120" height="38" rx="6" fill="#1a2235"/>
+      <text x="480" y="58" text-anchor="middle" fill="white" font-size="11" font-weight="700">SWITCH + VLANs</text>
+
+      <!-- VLAN 10 -->
+      <line x1="435" y1="73" x2="370" y2="115" stroke="#1d4ed8" stroke-width="1.5"/>
+      <line x1="450" y1="73" x2="430" y2="115" stroke="#1d4ed8" stroke-width="1.5"/>
+      <rect x="340" y="115" width="70" height="40" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="375" y="132" text-anchor="middle" font-size="9" font-weight="700" fill="#1e40af">Admin</text>
+      <text x="375" y="145" text-anchor="middle" font-size="8" fill="#1e40af">VLAN 10</text>
+      <rect x="400" y="115" width="70" height="40" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="435" y="132" text-anchor="middle" font-size="9" font-weight="700" fill="#1e40af">Contab.</text>
+      <text x="435" y="145" text-anchor="middle" font-size="8" fill="#1e40af">VLAN 10</text>
+
+      <!-- VLAN 30 -->
+      <line x1="510" y1="73" x2="530" y2="115" stroke="#7c3aed" stroke-width="1.5"/>
+      <line x1="525" y1="73" x2="570" y2="115" stroke="#7c3aed" stroke-width="1.5"/>
+      <rect x="500" y="115" width="70" height="40" rx="5" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+      <text x="535" y="132" text-anchor="middle" font-size="9" font-weight="700" fill="#4c1d95">Gerencia</text>
+      <text x="535" y="145" text-anchor="middle" font-size="8" fill="#4c1d95">VLAN 30</text>
+      <rect x="560" y="115" width="70" height="40" rx="5" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+      <text x="595" y="132" text-anchor="middle" font-size="9" font-weight="700" fill="#4c1d95">Bodega</text>
+      <text x="595" y="145" text-anchor="middle" font-size="8" fill="#4c1d95">VLAN 30</text>
+
+      <!-- Barrera visual entre VLANs -->
+      <line x1="480" y1="115" x2="480" y2="160" stroke="#dc2626" stroke-width="2" stroke-dasharray="3,2"/>
+      <text x="480" y="175" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="700">BARRERA</text>
+
+      <text x="480" y="210" text-anchor="middle" font-size="10" fill="#15803d" font-weight="600">VLAN 10 no puede ver VLAN 30.</text>
+      <text x="480" y="225" text-anchor="middle" font-size="10" fill="#15803d">Tráfico queda en su segmento.</text>
+      <text x="480" y="240" text-anchor="middle" font-size="10" fill="#15803d">Un virus en VLAN 10 no pasa.</text>
+    </svg>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card bueno">
+      <span class="cc-label">✓ Ventajas de las VLANs</span>
+      <ul>
+        <li>Seguridad: Gerencia y Bodega no se ven</li>
+        <li>Rendimiento: menos tráfico de broadcast</li>
+        <li>Flexibilidad: cambias la red sin mover cables</li>
+        <li>Un switch vale por varios switches físicos</li>
+        <li>Si hay un virus, queda en su VLAN</li>
+      </ul>
+    </div>
+    <div class="compare-card malo">
+      <span class="cc-label">✗ Sin VLANs los problemas son...</span>
+      <ul>
+        <li>Todo el tráfico llega a todos los equipos</li>
+        <li>Gerencia puede capturar tráfico de Bodega</li>
+        <li>Un broadcast llega a las 50 PCs al mismo tiempo</li>
+        <li>Un malware se propaga por toda la red</li>
+        <li>Necesitas un switch físico por departamento</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     S5 — MODOS DEL CLI
+════════════════════════════════════════ -->
+<section class="teoria-section" id="s5">
+  <div class="t-num">05</div>
+  <h2 class="t-title">Modos del CLI de Cisco</h2>
+  <p class="t-lead">El CLI de Cisco IOS tiene niveles jerárquicos. El prompt (lo que aparece antes del cursor) te dice exactamente en qué nivel estás y qué puedes hacer.</p>
+
+  <div class="diagrama">
+    <p style="font-family:var(--font-ui);font-size:.8rem;color:var(--ink-muted);text-align:center;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:.08em;">Jerarquía de modos — Cisco IOS</p>
+    <svg width="620" height="310" viewBox="0 0 620 310" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+
+      <!-- Modo usuario -->
+      <rect x="220" y="10" width="180" height="52" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="310" y="31" text-anchor="middle" font-size="11" font-weight="700" fill="#475569">Modo Usuario</text>
+      <text x="310" y="47" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#64748b">Switch&gt;</text>
+      <text x="310" y="75" text-anchor="middle" font-size="9" fill="#94a3b8">Solo ver información básica · no puede configurar</text>
+
+      <!-- Flecha usuario → privilegiado -->
+      <line x1="310" y1="62" x2="310" y2="95" stroke="#5e162e" stroke-width="2"/>
+      <polygon points="310,100 305,90 315,90" fill="#5e162e"/>
+      <rect x="330" y="70" width="85" height="18" rx="3" fill="#f5e8ee"/>
+      <text x="372" y="83" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#5e162e">enable</text>
+
+      <!-- Modo privilegiado -->
+      <rect x="190" y="100" width="240" height="52" rx="8" fill="#fef3c7" stroke="#fcd34d" stroke-width="1.5"/>
+      <text x="310" y="121" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">Modo Privilegiado</text>
+      <text x="310" y="137" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#92400e">Switch#</text>
+      <text x="310" y="163" text-anchor="middle" font-size="9" fill="#94a3b8">Ver configuración · recargar · guardar · show commands</text>
+
+      <!-- Flecha privilegiado → config global -->
+      <line x1="310" y1="152" x2="310" y2="185" stroke="#5e162e" stroke-width="2"/>
+      <polygon points="310,190 305,180 315,180" fill="#5e162e"/>
+      <rect x="330" y="160" width="140" height="18" rx="3" fill="#f5e8ee"/>
+      <text x="400" y="173" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#5e162e">configure terminal</text>
+
+      <!-- Modo config global -->
+      <rect x="160" y="190" width="300" height="52" rx="8" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+      <text x="310" y="211" text-anchor="middle" font-size="11" font-weight="700" fill="#15803d">Modo Config. Global</text>
+      <text x="310" y="227" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#15803d">Switch(config)#</text>
+      <text x="310" y="252" text-anchor="middle" font-size="9" fill="#94a3b8">Crear VLANs · contraseñas · hostname · route</text>
+
+      <!-- Sub-modos -->
+      <line x1="220" y1="242" x2="100" y2="278" stroke="#15803d" stroke-width="1.5"/>
+      <line x1="310" y1="242" x2="310" y2="278" stroke="#15803d" stroke-width="1.5"/>
+      <line x1="400" y1="242" x2="510" y2="278" stroke="#15803d" stroke-width="1.5"/>
+
+      <rect x="30"  y="278" width="145" height="28" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+      <text x="102" y="294" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#15803d">(config-if)# interfaz</text>
+
+      <rect x="230" y="278" width="160" height="28" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+      <text x="310" y="294" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#15803d">(config-vlan)# VLAN</text>
+
+      <rect x="430" y="278" width="160" height="28" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+      <text x="510" y="294" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#15803d">(config-line)# consola</text>
+    </svg>
+  </div>
+
+  <div class="prompt-flow">
+    <div class="pf-step">
+      <div class="pf-prompt" style="background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;">Switch&gt;</div>
+      <div class="pf-label">Usuario<br>solo ver</div>
+    </div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-step">
+      <div class="pf-prompt" style="background:#fef3c7;color:#92400e;border:1px solid #fcd34d;">Switch#</div>
+      <div class="pf-label">Privilegiado<br>enable</div>
+    </div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-step">
+      <div class="pf-prompt" style="background:#dcfce7;color:#15803d;border:1px solid #86efac;">Switch(config)#</div>
+      <div class="pf-label">Config global<br>conf t</div>
+    </div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-step">
+      <div class="pf-prompt" style="background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;">Switch(config-if)#</div>
+      <div class="pf-label">Interfaz<br>int fa0/1</div>
+    </div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-step">
+      <div class="pf-prompt" style="background:#ede9fe;color:#4c1d95;border:1px solid #c4b5fd;">Switch(config-vlan)#</div>
+      <div class="pf-label">VLAN<br>vlan 10</div>
+    </div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-step">
+      <div class="pf-prompt" style="background:#fce7f3;color:#831843;border:1px solid #f9a8d4;">Switch(config-line)#</div>
+      <div class="pf-label">Línea<br>line con 0</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><strong>Salidas de emergencia:</strong> <span class="kw">exit</span> sube un nivel. <span class="kw">end</span> te regresa directo al modo privilegiado desde cualquier sub-modo. <span class="kw">Ctrl+Z</span> hace lo mismo que end.</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     S6 — SEGURIDAD
+════════════════════════════════════════ -->
+<section class="teoria-section" id="s6">
+  <div class="t-num">06</div>
+  <h2 class="t-title">Seguridad — Contraseñas y Port-Security</h2>
+  <p class="t-lead">Un switch sin contraseña es una puerta abierta. Cualquiera con cable de consola puede borrar toda la configuración en segundos. Port-Security agrega una segunda capa controlando qué dispositivos pueden conectarse.</p>
+
+  <!-- Esquema niveles de contraseña -->
+  <div class="diagrama">
+    <p style="font-family:var(--font-ui);font-size:.8rem;color:var(--ink-muted);text-align:center;margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:.08em;">Tres niveles de protección de acceso</p>
+    <svg width="600" height="210" viewBox="0 0 600 210" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+
+      <!-- Nivel 1: Enable secret -->
+      <rect x="30" y="15" width="540" height="50" rx="8" fill="#5e162e"/>
+      <text x="60" y="38" font-size="12" font-weight="700" fill="white">🔐  enable secret</text>
+      <text x="60" y="54" font-size="10" fill="rgba(255,255,255,.65)">Protege el modo privilegiado (#). Cifrado MD5. Obligatorio en todo equipo Cisco.</text>
+      <rect x="498" y="25" width="62" height="30" rx="5" fill="rgba(255,255,255,.12)"/>
+      <text x="529" y="44" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="white">Switch#</text>
+
+      <!-- Nivel 2: Console -->
+      <rect x="30" y="85" width="255" height="50" rx="8" fill="#1e2d4a" stroke="#3b5280" stroke-width="1"/>
+      <text x="55" y="107" font-size="12" font-weight="700" fill="white">🖥  line console 0</text>
+      <text x="55" y="123" font-size="10" fill="rgba(255,255,255,.65)">Acceso físico con cable de consola.</text>
+      <text x="55" y="135" font-size="9" fill="rgba(255,255,255,.45)">password + login (ambos obligatorios)</text>
+
+      <!-- Nivel 3: VTY -->
+      <rect x="315" y="85" width="255" height="50" rx="8" fill="#134e4a" stroke="#5eead4" stroke-width="1"/>
+      <text x="340" y="107" font-size="12" font-weight="700" fill="white">🌐  line vty 0 4</text>
+      <text x="340" y="123" font-size="10" fill="rgba(255,255,255,.65)">Acceso remoto (Telnet / SSH).</text>
+      <text x="340" y="135" font-size="9" fill="rgba(255,255,255,.45)">password + login (ambos obligatorios)</text>
+
+      <!-- Cifrado global -->
+      <rect x="30" y="155" width="540" height="40" rx="8" fill="#f5e8ee" stroke="#d8a8ba" stroke-width="1"/>
+      <text x="300" y="175" text-anchor="middle" font-size="11" font-weight="700" fill="#5e162e">service password-encryption</text>
+      <text x="300" y="190" text-anchor="middle" font-size="10" fill="#8c7880">Cifra TODAS las contraseñas en texto plano del running-config</text>
+    </svg>
+  </div>
+
+  <!-- Port-Security -->
+  <div class="example-block" style="margin-top:1.5rem">
+    <div class="example-header">Port-Security — cómo funciona paso a paso</div>
+    <div class="example-body">
+      <p style="margin-bottom:1rem;color:var(--ink-secondary);font-size:.93rem;">Cada puerto del switch puede "memorizar" qué dispositivo tiene derecho a conectarse, basándose en su dirección MAC. Si entra un desconocido, el puerto reacciona.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div>
+          <div style="font-family:var(--font-ui);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--guinda);margin-bottom:.6rem;">El flujo</div>
+          <ul class="step-list">
+            <li><div class="step-n">1</div><div class="step-content">PC autorizada se conecta al puerto Fa0/1</div></li>
+            <li><div class="step-n">2</div><div class="step-content"><span class="kw">mac-address sticky</span> memoriza su MAC automáticamente</div></li>
+            <li><div class="step-n">3</div><div class="step-content">Se desconecta la PC y alguien conecta otra diferente</div></li>
+            <li><div class="step-n">4</div><div class="step-content">El switch detecta una MAC diferente a la memorizada</div></li>
+            <li><div class="step-n">5</div><div class="step-content"><span class="kw">violation shutdown</span> apaga el puerto (err-disable)</div></li>
+            <li><div class="step-n">6</div><div class="step-content">Para reactivar: <span class="kw">shutdown</span> → <span class="kw">no shutdown</span></div></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-family:var(--font-ui);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--guinda);margin-bottom:.6rem;">Modos de violación</div>
+          <div class="concept-row">
+            <span class="cr-badge" style="background:#fce7f3;color:#be185d;">shutdown</span>
+            <div><div class="cr-title">Apaga el puerto</div><div class="cr-desc">El intruso queda completamente bloqueado. El más seguro.</div></div>
+          </div>
+          <div class="concept-row">
+            <span class="cr-badge" style="background:#fef3c7;color:#92400e;">restrict</span>
+            <div><div class="cr-title">Descarta el tráfico</div><div class="cr-desc">Bloquea pero no apaga. Registra en el log del sistema.</div></div>
+          </div>
+          <div class="concept-row">
+            <span class="cr-badge" style="background:#f0fdf4;color:#15803d;">protect</span>
+            <div><div class="cr-title">Descarta silencioso</div><div class="cr-desc">Bloquea sin registrar. No se recomienda en producción.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     S7 — SSH
+════════════════════════════════════════ -->
+<section class="teoria-section" id="s7">
+  <div class="t-num">07</div>
+  <h2 class="t-title">SSH — Administración remota segura</h2>
+  <p class="t-lead">Telnet y SSH hacen lo mismo: acceder al CLI de un router o switch desde otra PC. La diferencia es radical: Telnet envía todo en texto plano, SSH cifra todo el tráfico.</p>
+
+  <div class="compare-grid">
+    <div class="compare-card malo">
+      <span class="cc-label">❌ Telnet — Puerto 23 — inseguro</span>
+      <ul>
+        <li>Todo el tráfico viaja en <strong>texto plano</strong></li>
+        <li>La contraseña es legible con Wireshark</li>
+        <li>Cualquier PC en la red puede interceptarlo</li>
+        <li>El ayuntamiento de Texmelucan usaba esto</li>
+        <li>Se bloquea con <span class="kw">transport input ssh</span></li>
+      </ul>
+    </div>
+    <div class="compare-card bueno">
+      <span class="cc-label">✓ SSH v2 — Puerto 22 — cifrado</span>
+      <ul>
+        <li>Todo el tráfico viaja <strong>cifrado con RSA</strong></li>
+        <li>La contraseña es ilegible en la red</li>
+        <li>Autentica con usuario local (base de datos)</li>
+        <li>Necesita: dominio → usuario → RSA → version 2</li>
+        <li>Se conecta con <span class="kw">ssh -l admin [IP]</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Diagrama Telnet vs SSH -->
+  <div class="diagrama">
+    <p style="font-family:var(--font-ui);font-size:.8rem;color:var(--ink-muted);text-align:center;margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:.08em;">¿Qué ve un atacante con Wireshark?</p>
+    <svg width="620" height="170" viewBox="0 0 620 170" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+      <!-- Telnet -->
+      <text x="155" y="18" text-anchor="middle" font-size="11" font-weight="700" fill="#b91c1c">Telnet — tráfico visible</text>
+      <rect x="30" y="28" width="90" height="36" rx="6" fill="#1a2235"/>
+      <text x="75" y="50" text-anchor="middle" fill="white" font-size="10" font-weight="600">Laptop admin</text>
+      <line x1="120" y1="46" x2="195" y2="46" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,3"/>
+      <rect x="195" y="28" width="90" height="36" rx="6" fill="#1a2235"/>
+      <text x="240" y="50" text-anchor="middle" fill="white" font-size="10" font-weight="600">Router</text>
+      <!-- Atacante escucha -->
+      <rect x="100" y="75" width="120" height="50" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
+      <text x="160" y="96" text-anchor="middle" font-size="9" font-weight="700" fill="#b91c1c">😈 Atacante</text>
+      <text x="160" y="110" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#b91c1c">User: admin</text>
+      <text x="160" y="122" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#b91c1c">Pass: Cisco2024</text>
+      <line x1="160" y1="75" x2="155" y2="64" stroke="#dc2626" stroke-width="1.5"/>
+
+      <!-- Divisor -->
+      <line x1="310" y1="15" x2="310" y2="155" stroke="#e2d8da" stroke-width="1" stroke-dasharray="4,4"/>
+
+      <!-- SSH -->
+      <text x="467" y="18" text-anchor="middle" font-size="11" font-weight="700" fill="#15803d">SSH — tráfico cifrado</text>
+      <rect x="340" y="28" width="90" height="36" rx="6" fill="#1a2235"/>
+      <text x="385" y="50" text-anchor="middle" fill="white" font-size="10" font-weight="600">Laptop admin</text>
+      <line x1="430" y1="46" x2="505" y2="46" stroke="#15803d" stroke-width="2.5"/>
+      <rect x="505" y="28" width="90" height="36" rx="6" fill="#1a2235"/>
+      <text x="550" y="50" text-anchor="middle" fill="white" font-size="10" font-weight="600">Router</text>
+      <!-- Candado -->
+      <text x="467" y="44" text-anchor="middle" font-size="16">🔒</text>
+      <!-- Atacante frustrado -->
+      <rect x="405" y="75" width="120" height="50" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+      <text x="465" y="96" text-anchor="middle" font-size="9" font-weight="700" fill="#15803d">😤 Atacante</text>
+      <text x="465" y="110" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#15803d">x7K#9!mP2@qR...</text>
+      <text x="465" y="122" text-anchor="middle" font-size="9" fill="#15803d">ilegible / cifrado</text>
+      <line x1="465" y1="75" x2="462" y2="64" stroke="#86efac" stroke-width="1.5"/>
+
+      <!-- Conclusión -->
+      <text x="155" y="148" text-anchor="middle" font-size="10" fill="#b91c1c">Contraseña expuesta en texto plano</text>
+      <text x="467" y="148" text-anchor="middle" font-size="10" fill="#15803d">Contraseña cifrada — ilegible</text>
+    </svg>
+  </div>
+
+  <div class="concept-box">
+    <span class="concept-title">Los 4 pasos de SSH — en este orden exacto</span>
+    <ol style="padding-left:1.4rem;margin:0;font-size:.95rem;line-height:2;">
+      <li><strong>ip domain-name [nombre]</strong> — sin esto no se puede generar la clave RSA</li>
+      <li><strong>username admin privilege 15 secret [clave]</strong> — usuario local cifrado</li>
+      <li><strong>crypto key generate rsa modulus 1024</strong> — genera el par de claves</li>
+      <li><strong>ip ssh version 2</strong> + <strong>transport input ssh</strong> en VTY — activa y bloquea Telnet</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     S8 — DIAGNÓSTICO
+════════════════════════════════════════ -->
+<section class="teoria-section" id="s8">
+  <div class="t-num">08</div>
+  <h2 class="t-title">Herramientas de diagnóstico</h2>
+  <p class="t-lead">Antes de cambiar cualquier configuración, el técnico diagnostica. Estos comandos te dicen qué está pasando sin modificar nada.</p>
+
+  <div style="background:var(--off-white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin:1.5rem 0;">
+    <div class="concept-row" style="background:var(--guinda);">
+      <span style="font-family:var(--font-ui);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:white;min-width:80px;">Desde PC</span>
+      <span style="font-family:var(--font-ui);font-size:.78rem;font-weight:700;color:rgba(255,255,255,.7);">Command Prompt / Desktop en Packet Tracer</span>
+    </div>
+    <div class="concept-row">
+      <span class="cr-badge" style="background:#dbeafe;color:#1e40af;min-width:120px;">ipconfig /all</span>
+      <div>
+        <div class="cr-title">Ver la configuración de red del equipo</div>
+        <div class="cr-desc">Muestra IP, máscara, gateway y dirección MAC. Es el primer comando que ejecuta un técnico al llegar a un equipo con problemas.</div>
+      </div>
+    </div>
+    <div class="concept-row">
+      <span class="cr-badge" style="background:#dcfce7;color:#15803d;min-width:120px;">ping [IP]</span>
+      <div>
+        <div class="cr-title">Verificar conectividad con otro dispositivo</div>
+        <div class="cr-desc">Envía 4 paquetes ICMP. <strong>0% pérdida = conexión OK.</strong> 100% pérdida = sin ruta o VLAN incorrecta. Entre VLANs distintas sin router: el fallo es correcto.</div>
+      </div>
+    </div>
+    <div class="concept-row">
+      <span class="cr-badge" style="background:#fef3c7;color:#92400e;min-width:120px;">tracert 8.8.8.8</span>
+      <div>
+        <div class="cr-title">Ver la ruta salto a salto hasta internet</div>
+        <div class="cr-desc">Lista cada router que atraviesa el paquete. El <strong>primer salto</strong> siempre debe ser tu gateway. Si falla en el salto 2, el problema está en el ISP, no en tu LAN.</div>
+      </div>
+    </div>
+    <div class="concept-row">
+      <span class="cr-badge" style="background:#ede9fe;color:#4c1d95;min-width:120px;">nslookup</span>
+      <div>
+        <div class="cr-title">Verificar que el DNS resuelve nombres</div>
+        <div class="cr-desc">Si puedes hacer ping a 8.8.8.8 pero no abrir google.com, el DNS está fallando. <code>nslookup google.com</code> confirma si el servidor DNS responde.</div>
+      </div>
+    </div>
+
+    <div class="concept-row" style="background:var(--guinda);margin-top:.5rem;">
+      <span style="font-family:var(--font-ui);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:white;min-width:80px;">Desde Switch / Router</span>
+      <span style="font-family:var(--font-ui);font-size:.78rem;font-weight:700;color:rgba(255,255,255,.7);">CLI Cisco IOS</span>
+    </div>
+    <div class="concept-row">
+      <span class="cr-badge" style="background:#f5e8ee;color:#5e162e;min-width:120px;">show vlan brief</span>
+      <div>
+        <div class="cr-title">Ver VLANs y sus puertos</div>
+        <div class="cr-desc">El primer diagnóstico al configurar VLANs. Si un puerto no aparece en la VLAN correcta, el problema está en la asignación de ese puerto.</div>
+      </div>
+    </div>
+    <div class="concept-row">
+      <span class="cr-badge" style="background:#f5e8ee;color:#5e162e;min-width:120px;">show ip int brief</span>
+      <div>
+        <div class="cr-title">Estado de todas las interfaces del router</div>
+        <div class="cr-desc">Busca que la interfaz diga <code>up / up</code>. Si dice <code>administratively down</code>, falta ejecutar <code>no shutdown</code> en esa interfaz.</div>
+      </div>
+    </div>
+    <div class="concept-row">
+      <span class="cr-badge" style="background:#f5e8ee;color:#5e162e;min-width:120px;">show run</span>
+      <div>
+        <div class="cr-title">Ver toda la configuración activa</div>
+        <div class="cr-desc">Muestra todo lo configurado en este momento (en RAM). Aquí verificas contraseñas, VLANs, SSH, IP de interfaces. Úsalo para auditar antes de guardar.</div>
+      </div>
+    </div>
+    <div class="concept-row">
+      <span class="cr-badge" style="background:#f5e8ee;color:#5e162e;min-width:120px;">show port-security</span>
+      <div>
+        <div class="cr-title">Estado del port-security por puerto</div>
+        <div class="cr-desc">Muestra si el puerto está Secure-up (activo) o en err-disable (bloqueado por violación). Indica la MAC aprendida y el modo de violación configurado.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="example-block">
+    <div class="example-header">Flujo de diagnóstico — PC no tiene internet</div>
+    <div class="example-body">
+      <div class="example-statement">
+        Reporte: "PC-Admin1 no puede abrir páginas web, pero el cable está conectado."
+      </div>
+      <ul class="step-list">
+        <li><div class="step-n">1</div><div class="step-content">Ejecuta <span class="kw">ipconfig /all</span> — ¿tiene IP válida y gateway correcto?</div></li>
+        <li><div class="step-n">2</div><div class="step-content">Ejecuta <span class="kw">ping 10.10.10.2</span> — ¿responde otra PC de la misma VLAN?</div></li>
+        <li><div class="step-n">3</div><div class="step-content">Ejecuta <span class="kw">ping 192.168.1.1</span> — ¿responde el gateway (router)?</div></li>
+        <li><div class="step-n">4</div><div class="step-content">Ejecuta <span class="kw">ping 8.8.8.8</span> — ¿hay salida a internet por IP?</div></li>
+        <li><div class="step-n">5</div><div class="step-content">Si el paso 4 funciona pero no abre webs → <span class="kw">nslookup google.com</span> → problema de DNS</div></li>
+        <li><div class="step-n">6</div><div class="step-content">Si el paso 4 falla → <span class="kw">tracert 8.8.8.8</span> → ¿en qué salto se pierde?</div></li>
+      </ul>
+      <div class="result-line">Si falla en salto 1 → problema en tu LAN. Si falla en salto 2+ → problema en el ISP.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     S9 — REGLAS DE ORO
+════════════════════════════════════════ -->
+<section class="teoria-section" id="s9">
+  <div class="t-num">09</div>
+  <h2 class="t-title">Reglas de oro del técnico de redes</h2>
+  <p class="t-lead">Estas reglas distinguen a quien sabe de quien adivina. Memorízalas — aparecen en la evaluación.</p>
+
+  <div class="card golden-rules" style="padding:0;">
+    <div class="gr-item">
+      <div class="gr-num">1</div>
+      <div class="gr-text">
+        <div class="gr-rule">enable secret, nunca enable password</div>
+        <div class="gr-why"><span class="kw">enable password</span> guarda la clave en texto plano visible en <span class="kw">show running-config</span>. <span class="kw">enable secret</span> usa hash MD5 — ilegible. Si ves la contraseña legible en pantalla, el equipo está en riesgo.</div>
+      </div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-num">2</div>
+      <div class="gr-text">
+        <div class="gr-rule">Dos comandos para asignar VLAN a un puerto</div>
+        <div class="gr-why"><span class="kw">switchport mode access</span> primero, luego <span class="kw">switchport access vlan 10</span>. Si falta el primero, el puerto puede ignorar la asignación. Si falla el <span class="kw">show vlan brief</span>, verifica que ejecutaste los dos.</div>
+      </div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-num">3</div>
+      <div class="gr-text">
+        <div class="gr-rule">login es obligatorio junto a password</div>
+        <div class="gr-why">Si configuras <span class="kw">password ConsolaS1</span> pero no escribes <span class="kw">login</span>, la contraseña existe pero nunca se solicita. El acceso queda abierto sin que te des cuenta.</div>
+      </div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-num">4</div>
+      <div class="gr-text">
+        <div class="gr-rule">no shutdown — el paso más olvidado del router</div>
+        <div class="gr-why">Los puertos del router vienen apagados de fábrica. Sin <span class="kw">no shutdown</span> el cable puede estar conectado pero la interfaz no responde. Si el enlace router-switch se ve rojo en el canvas, ese es el problema.</div>
+      </div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-num">5</div>
+      <div class="gr-text">
+        <div class="gr-rule">El fallo entre VLANs distintas es CORRECTO</div>
+        <div class="gr-why">Si ping de VLAN 10 a VLAN 20 da 100% de pérdida, la segmentación funciona perfectamente. Si responde, hay un error de configuración — las VLANs no están aisladas.</div>
+      </div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-num">6</div>
+      <div class="gr-text">
+        <div class="gr-rule">SSH necesita ip domain-name primero</div>
+        <div class="gr-why">Sin nombre de dominio, el comando <span class="kw">crypto key generate rsa</span> no puede ejecutarse. El dominio forma parte del identificador de la clave RSA. Si SSH dice "disabled", lo primero que verificas es el domain-name.</div>
+      </div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-num">7</div>
+      <div class="gr-text">
+        <div class="gr-rule">show vlan brief antes de cualquier diagnóstico de VLAN</div>
+        <div class="gr-why">Es tu radiografía de la red. Lista todas las VLANs, sus nombres y sus puertos asignados. Un puerto que no aparece en su VLAN es el origen del 90% de los problemas de conectividad.</div>
+      </div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-num">8</div>
+      <div class="gr-text">
+        <div class="gr-rule">copy running-config startup-config — siempre al final</div>
+        <div class="gr-why"><span class="kw">running-config</span> vive en RAM y se borra al reiniciar. <span class="kw">startup-config</span> es la memoria flash permanente. Sin este comando, todo tu trabajo desaparece si el switch pierde energía. Atajo: <span class="kw">wr</span>.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /page-wrapper -->
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <span>Instituto de Educación Digital del Estado de Puebla — IEDEP</span>
+  <span><strong>Soporte Opera una Red LAN</strong> · Unidad 3 · Sesión teórica de aula</span>
+</footer>
+
+<script>
+/* Nav activo en scroll */
+const secs = document.querySelectorAll('.teoria-section[id]');
+const links = document.querySelectorAll('.toc-nav a');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('activo'));
+      const l = document.querySelector('.toc-nav a[href="#' + e.target.id + '"]');
+      if (l) l.classList.add('activo');
+    }
+  });
+}, { threshold: 0.35 });
+secs.forEach(s => io.observe(s));
+</script>
+</body>
+</html>
