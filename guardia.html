@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Técnico de Guardia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+/* ── extras sobre base.css ── */
+
+/* Pantalla de inicio */
+#screen-inicio {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--white);
+}
+.inicio-wrap {
+  max-width: 520px; width: 100%;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+.inicio-icon {
+  font-size: 3.5rem; margin-bottom: 1rem;
+  animation: pulse-icon 3s ease-in-out infinite;
+}
+@keyframes pulse-icon {
+  0%,100%{transform:scale(1);} 50%{transform:scale(1.08);}
+}
+.inicio-kicker {
+  font-family: var(--font-ui); font-size: .75rem;
+  font-weight: 700; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--guinda);
+  display: block; margin-bottom: .6rem;
+}
+.inicio-h1 {
+  font-family: var(--font-display); font-size: 2.2rem;
+  color: var(--ink); font-weight: 700;
+  line-height: 1.15; margin-bottom: .75rem;
+}
+.inicio-sub {
+  font-size: .95rem; color: var(--ink-secondary);
+  line-height: 1.7; margin-bottom: 1.75rem;
+}
+.form-field {
+  display: flex; flex-direction: column;
+  gap: .45rem; margin-bottom: 1rem; text-align: left;
+}
+.form-field label {
+  font-family: var(--font-ui); font-size: .72rem;
+  font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--guinda);
+}
+.form-field input {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: .7rem 1rem;
+  font-family: var(--font-ui); font-size: .95rem;
+  color: var(--ink); background: var(--off-white);
+  outline: none; transition: border-color .15s;
+}
+.form-field input:focus { border-color: var(--guinda); }
+.btn-primary {
+  display: block; width: 100%;
+  background: var(--guinda); color: var(--white);
+  border: none; border-radius: var(--radius-md);
+  padding: .85rem 1rem;
+  font-family: var(--font-ui); font-size: 1rem;
+  font-weight: 600; cursor: pointer;
+  transition: background .15s; margin-top: .5rem;
+}
+.btn-primary:hover { background: var(--guinda-dark); }
+.nota-seguridad {
+  font-family: var(--font-ui); font-size: .76rem;
+  color: var(--ink-muted); margin-top: 1rem;
+  line-height: 1.55; padding: .65rem .9rem;
+  background: var(--surface); border-radius: var(--radius-sm);
+  border-left: 3px solid var(--guinda-rule);
+}
+
+/* ── PANTALLA EXAMEN ── */
+#screen-examen { display: none; }
+
+/* Barra superior */
+.exam-topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--guinda);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: .65rem 1.5rem;
+  border-bottom: 3px solid var(--guinda-dark);
+}
+.etb-left {
+  font-family: var(--font-ui); font-size: .82rem;
+  font-weight: 600; color: rgba(255,255,255,.85);
+  display: flex; align-items: center; gap: .6rem;
+}
+.etb-left .dot-on {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #4ade80;
+  animation: blink 1.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+.etb-right {
+  font-family: var(--font-mono); font-size: .8rem;
+  color: rgba(255,255,255,.7);
+  display: flex; align-items: center; gap: 1.2rem;
+}
+.progress-chips {
+  display: flex; gap: .35rem;
+}
+.pc { width: 14px; height: 14px; border-radius: 3px;
+  background: rgba(255,255,255,.2); }
+.pc.done { background: #4ade80; }
+.pc.cur  { background: #fbbf24; }
+
+/* Progreso lineal */
+.progress-bar-line {
+  height: 3px; background: var(--guinda-light);
+}
+.progress-fill {
+  height: 100%; background: var(--guinda);
+  transition: width .4s ease; width: 0%;
+}
+
+/* Tickets / Chat */
+.tickets-feed {
+  max-width: 680px; margin: 0 auto;
+  padding: 2rem 1.5rem 6rem;
+}
+
+/* Mensaje recibido (empleado) */
+.msg-in {
+  display: flex; gap: .75rem; margin-bottom: 1.5rem;
+  align-items: flex-end;
+}
+.msg-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--guinda); color: var(--white);
+  font-family: var(--font-ui); font-size: .8rem;
+  font-weight: 700; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.bubble-in {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px 12px 12px 2px;
+  padding: .9rem 1.1rem;
+  max-width: 90%;
+}
+.bubble-sender {
+  font-family: var(--font-ui); font-size: .7rem;
+  font-weight: 700; color: var(--guinda);
+  text-transform: uppercase; letter-spacing: .08em;
+  display: block; margin-bottom: .35rem;
+}
+.bubble-text { font-size: .93rem; color: var(--ink); line-height: 1.65; }
+.bubble-time {
+  font-size: .68rem; color: var(--ink-muted);
+  margin-top: .4rem; display: block; text-align: right;
+}
+
+/* Terminal dentro de burbuja */
+.bubble-cli {
+  background: #0d1117;
+  border-radius: 6px; padding: .75rem 1rem;
+  margin-top: .65rem;
+  font-family: var(--font-mono); font-size: .8rem;
+  line-height: 1.85; overflow-x: auto;
+}
+.bc-bar {
+  display: flex; gap: 5px; margin-bottom: .5rem;
+}
+.bc-dot { width: 8px; height: 8px; border-radius: 50%; }
+.t-p{color:#58a6ff;} .t-c{color:#3fb950;} .t-y{color:#e3b341;}
+.t-r{color:#ff7b72;} .t-g{color:#6e7681;} .t-w{color:#e2e8f0;}
+.t-o{color:#7ee787;}
+
+/* Pregunta del ticket */
+.ticket-question {
+  background: var(--guinda-light);
+  border: 1px solid #d8a8ba;
+  border-radius: 8px; padding: 1rem 1.15rem;
+  margin-top: .65rem;
+}
+.tq-label {
+  font-family: var(--font-ui); font-size: .7rem;
+  font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--guinda);
+  display: block; margin-bottom: .4rem;
+}
+.tq-text { font-size: .93rem; color: var(--ink); font-weight: 500; }
+
+/* Respuesta: opciones múltiples */
+.opciones { margin-top: .75rem; display: flex; flex-direction: column; gap: .45rem; }
+.opcion {
+  display: flex; align-items: flex-start; gap: .65rem;
+  padding: .7rem .9rem;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-md); cursor: pointer;
+  transition: border-color .15s, background .15s;
+  font-size: .88rem; color: var(--ink); line-height: 1.5;
+  user-select: none;
+}
+.opcion:hover { border-color: var(--guinda-rule); background: var(--guinda-light); }
+.opcion.sel { border-color: var(--guinda); background: var(--guinda-light); }
+.opcion.cor { border-color: #22c55e; background: #f0fdf4; color: #15803d; font-weight: 600; }
+.opcion.inc { border-color: #ef4444; background: #fef2f2; color: #991b1b; }
+.opcion.dis { pointer-events: none; opacity: .55; }
+.opcion-letra {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--border); color: var(--ink-muted);
+  font-family: var(--font-mono); font-size: .75rem;
+  font-weight: 600; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.opcion.sel .opcion-letra { background: var(--guinda); color: var(--white); }
+.opcion.cor .opcion-letra { background: #22c55e; color: white; }
+.opcion.inc .opcion-letra { background: #ef4444; color: white; }
+
+/* Abierta — textarea */
+.resp-abierta {
+  margin-top: .55rem;
+  width: 100%; min-height: 80px; resize: vertical;
+  border: 1.5px solid var(--border); border-radius: var(--radius-md);
+  padding: .75rem 1rem;
+  font-family: var(--font-ui); font-size: .9rem;
+  color: var(--ink); background: var(--white);
+  outline: none; transition: border-color .15s;
+  line-height: 1.6;
+}
+.resp-abierta:focus { border-color: var(--guinda); }
+
+/* Botón confirmar */
+.btn-confirmar {
+  margin-top: .65rem;
+  padding: .6rem 1.4rem;
+  background: var(--guinda); color: var(--white);
+  border: none; border-radius: var(--radius-md);
+  font-family: var(--font-ui); font-size: .85rem;
+  font-weight: 600; cursor: pointer;
+  transition: background .15s;
+}
+.btn-confirmar:hover { background: var(--guinda-dark); }
+.btn-confirmar:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Feedback tras responder */
+.feedback {
+  margin-top: .65rem; padding: .85rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: .88rem; line-height: 1.6;
+  display: none;
+}
+.feedback.show { display: block; }
+.feedback.ok { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; }
+.feedback.fail { background: #fef2f2; border: 1px solid #fca5a5; color: #7f1d1d; }
+
+/* Botón siguiente ticket */
+.btn-siguiente {
+  display: none; margin-top: .75rem;
+  padding: .6rem 1.4rem;
+  background: var(--ink); color: var(--white);
+  border: none; border-radius: var(--radius-md);
+  font-family: var(--font-ui); font-size: .85rem;
+  font-weight: 600; cursor: pointer;
+  transition: background .15s;
+}
+.btn-siguiente.show { display: inline-block; }
+.btn-siguiente:hover { background: #2d2820; }
+
+/* Mensaje propio (el técnico responde) */
+.msg-out { display: flex; justify-content: flex-end; margin-bottom: 1.5rem; }
+.bubble-out {
+  background: var(--guinda); color: var(--white);
+  border-radius: 12px 12px 2px 12px;
+  padding: .7rem 1rem; max-width: 75%;
+  font-size: .88rem; line-height: 1.6;
+  display: none;
+}
+.bubble-out.show { display: block; }
+
+/* Separador de hora */
+.time-sep {
+  text-align: center;
+  font-family: var(--font-ui); font-size: .72rem;
+  color: var(--ink-muted); margin: 1rem 0;
+  display: flex; align-items: center; gap: .75rem;
+}
+.time-sep::before, .time-sep::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* Pantalla de resultados */
+#screen-result {
+  display: none; min-height: 100vh;
+  background: var(--white);
+}
+.result-wrap {
+  max-width: 620px; margin: 0 auto;
+  padding: 4rem 2rem;
+}
+.result-score-box {
+  background: var(--guinda); color: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem; text-align: center;
+  margin-bottom: 2rem;
+  position: relative; overflow: hidden;
+}
+.result-score-box::before {
+  content: ''; position: absolute;
+  top: -40px; right: -40px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: rgba(255,255,255,.05);
+}
+.rs-label {
+  font-family: var(--font-ui); font-size: .72rem;
+  font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.6);
+  display: block; margin-bottom: .75rem;
+}
+.rs-score {
+  font-family: var(--font-display); font-size: 5rem;
+  font-weight: 700; line-height: 1; color: var(--white);
+  display: block; margin-bottom: .5rem;
+}
+.rs-total { font-size: 1rem; color: rgba(255,255,255,.65); }
+.rs-name {
+  font-family: var(--font-ui); font-size: 1rem;
+  font-weight: 600; color: rgba(255,255,255,.85);
+  margin-top: 1rem; display: block;
+}
+.result-list { list-style: none; padding: 0; }
+.result-list li {
+  display: flex; align-items: flex-start; gap: .75rem;
+  padding: .75rem 0; border-bottom: 1px solid var(--border);
+  font-size: .88rem;
+}
+.result-list li:last-child { border-bottom: none; }
+.ri-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .05rem; }
+.ri-q { color: var(--ink); flex: 1; }
+.ri-pts {
+  font-family: var(--font-mono); font-size: .78rem;
+  color: var(--ink-muted); white-space: nowrap;
+}
+.btn-pdf-res {
+  display: flex; align-items: center; justify-content: center; gap: .6rem;
+  width: 100%; margin-top: 2rem;
+  padding: .9rem; background: var(--guinda); color: var(--white);
+  border: none; border-radius: var(--radius-md);
+  font-family: var(--font-ui); font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: background .15s;
+}
+.btn-pdf-res:hover { background: var(--guinda-dark); }
+
+/* Typing indicator */
+.typing {
+  display: flex; gap: .75rem; margin-bottom: 1.25rem;
+  align-items: flex-end;
+}
+.typing-bubble {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px 12px 12px 2px;
+  padding: .65rem 1rem;
+  display: flex; gap: .35rem; align-items: center;
+}
+.typing-bubble span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--guinda-rule);
+  animation: type-dot .9s ease-in-out infinite;
+}
+.typing-bubble span:nth-child(2){animation-delay:.15s;}
+.typing-bubble span:nth-child(3){animation-delay:.3s;}
+@keyframes type-dot{0%,80%,100%{transform:scale(.7);}40%{transform:scale(1);}}
+
+/* Alerta de seguridad */
+.sec-alert {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: #dc2626; color: white;
+  text-align: center; padding: .65rem 1rem;
+  font-family: var(--font-ui); font-size: .85rem; font-weight: 600;
+  z-index: 999; transform: translateY(-100%);
+  transition: transform .3s;
+}
+.sec-alert.show { transform: translateY(0); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--ink); color: white;
+  padding: .6rem 1.4rem; border-radius: 20px;
+  font-family: var(--font-ui); font-size: .85rem;
+  z-index: 998; transition: transform .3s;
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@media(max-width:560px){
+  .tickets-feed{padding:1.25rem 1rem 5rem;}
+  .bubble-in{max-width:98%;}
+}
+</style>
+</head>
+<body>
+
+<div class="sec-alert" id="secAlert">⚠ Acción no permitida durante la evaluación.</div>
+<div class="toast" id="toast"></div>
+
+<!-- ════ PANTALLA INICIO ════ -->
+<div id="screen-inicio">
+  <div class="inicio-wrap">
+    <div class="inicio-icon">📟</div>
+    <span class="inicio-kicker">Evaluación práctica · Soporte Opera una Red LAN</span>
+    <h1 class="inicio-h1">El Técnico<br>de Guardia</h1>
+    <p class="inicio-sub">
+      Son las 10 pm. Eres el único técnico disponible esta noche.<br>
+      Comenzarán a llegarte reportes de fallas en la red de <strong>Logística Express S.A.</strong><br>
+      Cada reporte incluye la salida real de comandos Cisco.<br>
+      Léelos bien y responde con lo que sabes.
+    </p>
+    <div class="form-field">
+      <label>Nombre completo</label>
+      <input type="text" id="fi-nombre" placeholder="Apellido Paterno Apellido Materno Nombre(s)" autocomplete="off">
+    </div>
+    <div class="form-field">
+      <label>Número de control</label>
+      <input type="text" id="fi-control" placeholder="2024-0001" autocomplete="off">
+    </div>
+    <div class="form-field">
+      <label>Grupo</label>
+      <input type="text" id="fi-grupo" placeholder="3°A" autocomplete="off">
+    </div>
+    <button class="btn-primary" onclick="iniciarExamen()">Entrar al turno de guardia →</button>
+    <div class="nota-seguridad">
+      🔒 Medidas activas: copiar/pegar bloqueado · cambio de pestaña detectado · patrones de IA detectados · respuestas propias únicamente.
+    </div>
+  </div>
+</div>
+
+<!-- ════ PANTALLA EXAMEN ════ -->
+<div id="screen-examen">
+
+  <div class="exam-topbar">
+    <div class="etb-left">
+      <div class="dot-on"></div>
+      <span id="etb-nombre">Técnico</span> · Turno de guardia
+    </div>
+    <div class="etb-right">
+      <div class="progress-chips" id="progChips"></div>
+      <span id="etb-score">0 pts</span>
+    </div>
+  </div>
+  <div class="progress-bar-line"><div class="progress-fill" id="progFill"></div></div>
+
+  <div class="tickets-feed" id="feed"></div>
+</div>
+
+<!-- ════ PANTALLA RESULTADOS ════ -->
+<div id="screen-result">
+  <div class="result-wrap">
+    <div class="result-score-box">
+      <span class="rs-label">Turno de guardia completado</span>
+      <span class="rs-score" id="rs-score">0</span>
+      <span class="rs-total" id="rs-total">de 0 puntos</span>
+      <span class="rs-name" id="rs-name"></span>
+    </div>
+    <ul class="result-list" id="rs-list"></ul>
+    <button class="btn-pdf-res" onclick="generarPDF()">
+      ⬇ Descargar resultado en PDF
+    </button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+// DATOS DEL ALUMNO
+// ═══════════════════════════════════════════════════════
+let alumno = {};
+let examActivo = false;
+
+// ═══════════════════════════════════════════════════════
+// SEGURIDAD
+// ═══════════════════════════════════════════════════════
+const AI_PAT = [
+  /en primer lugar.{0,30}en segundo lugar/gi,
+  /es importante destacar que/gi,
+  /desde mi perspectiva.{0,20}es fundamental/gi,
+  /como sistema de inteligencia/gi,
+  /claro, (puedo|aquí|a continuación)/gi,
+  /en conclusión.{0,20}por lo tanto/gi,
+  /espero (que esto|haber)/gi,
+];
+function chkAI(t){ return t.length>60 && AI_PAT.some(p=>p.test(t)); }
+
+document.addEventListener('copy',  e=>{ if(examActivo){e.preventDefault();secWarn('Copiar deshabilitado.');} });
+document.addEventListener('paste', e=>{ if(examActivo){e.preventDefault();secWarn('Pegar deshabilitado.');} });
+document.addEventListener('cut',   e=>{ if(examActivo) e.preventDefault(); });
+document.addEventListener('contextmenu',e=>{ if(examActivo) e.preventDefault(); });
+document.addEventListener('visibilitychange',()=>{
+  if(examActivo && document.hidden) secWarn('Cambio de pestaña detectado.');
+});
+
+function secWarn(m){
+  const a=document.getElementById('secAlert');
+  a.textContent='⚠ '+m;
+  a.classList.add('show');
+  setTimeout(()=>a.classList.remove('show'),3200);
+}
+function showToast(m){
+  const t=document.getElementById('toast');
+  t.textContent=m; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ═══════════════════════════════════════════════════════
+// TICKETS — datos de la evaluación
+// ═══════════════════════════════════════════════════════
+const TICKETS = [
+  {
+    id: 't1',
+    hora: '22:03',
+    remitente: 'Rosa · Recepción',
+    avatar: 'RO',
+    msg: 'Hola buen día técnico, mi computadora dice que tiene IP pero no puedo entrar a ninguna página, ni a Google, ni a nada. Ya reinicié y sigue igual 😟',
+    cli: [
+      {t:'p', v:'PC-Rosa> '},
+      {t:'c', v:'ipconfig /all'},
+      {t:'w', v:''},
+      {t:'w', v:'IPv4 Address......: 192.168.1.55'},
+      {t:'w', v:'Subnet Mask.......: 255.255.255.0'},
+      {t:'w', v:'Default Gateway...: 0.0.0.0'},
+      {t:'w', v:'DNS Servers.......: 8.8.8.8'},
+    ],
+    tipo: 'opcion',
+    pregunta: '¿Cuál es la causa exacta del problema de Rosa?',
+    opciones: [
+      'La IP está duplicada con otra PC',
+      'El gateway está en 0.0.0.0 — sin puerta de salida no puede llegar a internet',
+      'La máscara de subred es incorrecta',
+      'El servidor DNS no está respondiendo',
+    ],
+    correcta: 1,
+    feedback_ok: 'Correcto. El gateway en 0.0.0.0 significa que la PC no tiene configurada una puerta de salida. Puede comunicarse dentro de la LAN, pero no puede salir a internet ni a otras redes.',
+    feedback_fail: 'El problema está en el campo "Default Gateway: 0.0.0.0". Sin gateway la PC no tiene por dónde salir de su red local. La máscara y la IP están bien.',
+    respuesta_tecnico: 'Hola Rosa, encontré el problema. Tu gateway está en blanco (0.0.0.0). Voy a configurarlo como 192.168.1.1 y en un momento puedes navegar.',
+    pts: 10,
+  },
+  {
+    id: 't2',
+    hora: '22:15',
+    remitente: 'Carlos · Bodega',
+    avatar: 'CA',
+    msg: 'Técnico me urge, acabo de conectar mi laptop personal y no me está jalando el internet, el cable está bien puesto. Además el chico de junto me dijo que su puerto también se apagó de la nada.',
+    cli: [
+      {t:'p', v:'Switch# '},
+      {t:'c', v:'show port-security interface fa0/8'},
+      {t:'w', v:''},
+      {t:'w', v:'Port Security     : Enabled'},
+      {t:'y', v:'Port Status       : Secure-shutdown'},
+      {t:'w', v:'Violation Mode    : Shutdown'},
+      {t:'w', v:'Maximum MAC Addrs : 1'},
+      {t:'y', v:'Last Source Addr  : 00:1B:44:11:3A:B7 (violation)'},
+    ],
+    tipo: 'opcion',
+    pregunta: '¿Qué está pasando en el puerto Fa0/8 y por qué se apagó?',
+    opciones: [
+      'El cable está roto y el switch lo detectó',
+      'Port-security apagó el puerto porque se conectó una MAC diferente a la autorizada',
+      'La VLAN del puerto fue borrada',
+      'El switch necesita reiniciarse para activar el puerto',
+    ],
+    correcta: 1,
+    feedback_ok: 'Exacto. Port-security tiene memorizada la MAC del equipo autorizado. Al conectar la laptop personal con una MAC diferente, el switch la detectó como intrusión y apagó el puerto automáticamente (err-disable).',
+    feedback_fail: 'La clave está en "Secure-shutdown" y "violation". El port-security detectó que la MAC de la laptop no coincide con la autorizada y apagó el puerto.',
+    respuesta_tecnico: 'Carlos, el puerto se apagó porque conectaste una laptop diferente. El sistema de seguridad detectó una MAC desconocida. Para reactivarlo necesito ir físicamente al switch.',
+    pts: 10,
+  },
+  {
+    id: 't3',
+    hora: '22:28',
+    remitente: 'Ing. Pérez · Sistemas',
+    avatar: 'IP',
+    msg: 'Necesito entrar al router de forma remota desde mi oficina para revisar unas rutas. Intento conectarme por SSH pero no me responde. Me dice "connection refused".',
+    cli: [
+      {t:'p', v:'Router# '},
+      {t:'c', v:'show ip ssh'},
+      {t:'w', v:''},
+      {t:'r', v:'SSH disabled'},
+      {t:'w', v:''},
+      {t:'p', v:'Router# '},
+      {t:'c', v:'show running-config | include domain'},
+      {t:'g', v:'(ningún resultado)'},
+    ],
+    tipo: 'opcion',
+    pregunta: '¿Por qué SSH está disabled y qué comando falta ejecutar primero?',
+    opciones: [
+      'Falta ejecutar "ip ssh version 2" directamente',
+      'El router no tiene nombre de dominio configurado — sin "ip domain-name" no se puede generar la clave RSA',
+      'El puerto 22 está bloqueado por el firewall',
+      'Falta crear el usuario admin con "username admin secret"',
+    ],
+    correcta: 1,
+    feedback_ok: 'Perfecto. SSH requiere una clave RSA para cifrar la conexión. Esa clave se genera con "crypto key generate rsa", pero ese comando necesita que el router tenga un nombre de dominio configurado primero con "ip domain-name". Sin dominio, la clave no se puede crear y SSH queda disabled.',
+    feedback_fail: 'El output muestra que no hay "ip domain-name" configurado (el show running-config no devuelve nada). Sin dominio no se puede generar la clave RSA y SSH se queda en disabled.',
+    respuesta_tecnico: 'Ingeniero, el problema es que al router le falta el ip domain-name. Sin eso SSH no puede activarse porque no puede generar la clave RSA. Lo configuro en unos minutos.',
+    pts: 10,
+  },
+  {
+    id: 't4',
+    hora: '22:41',
+    remitente: 'Lupita · Contabilidad',
+    avatar: 'LU',
+    msg: 'Hola buenas noches, yo puedo hacer ping a mis compañeras aquí en contabilidad sin problema, pero quise mandar un archivo a la computadora de gerencia y no llega. ¿Estará roto el cable de ellos?',
+    cli: [
+      {t:'p', v:'PC-Lupita> '},
+      {t:'c', v:'ping 10.10.10.5'},
+      {t:'o', v:'Reply from 10.10.10.5: bytes=32 time=1ms TTL=128'},
+      {t:'o', v:'Reply from 10.10.10.5: bytes=32 time=1ms TTL=128'},
+      {t:'o', v:'Lost = 0 (0% loss)   ← compañera Contabilidad'},
+      {t:'w', v:''},
+      {t:'p', v:'PC-Lupita> '},
+      {t:'c', v:'ping 10.30.30.1'},
+      {t:'r', v:'Request timeout for icmp_seq 0'},
+      {t:'r', v:'Request timeout for icmp_seq 1'},
+      {t:'r', v:'Lost = 4 (100% loss)  ← Gerencia'},
+    ],
+    tipo: 'opcion',
+    pregunta: 'Lupita piensa que el cable de Gerencia está roto. ¿Tiene razón? ¿Qué está pasando realmente?',
+    opciones: [
+      'Sí, el cable de gerencia está dañado — hay que reemplazarlo',
+      'No. Están en VLANs distintas (10 y 30). Sin router que enrute entre ellas, el ping falla correctamente — la red funciona bien',
+      'La IP de Gerencia está mal configurada',
+      'El switch de gerencia está apagado',
+    ],
+    correcta: 1,
+    feedback_ok: '¡Excelente análisis! El ping a la misma VLAN (10.10.10.5) funciona perfectamente. El fallo a 10.30.30.1 (VLAN 30) es correcto y esperado — las VLANs están aisladas por diseño. Para que se comuniquen necesitarían un router que enrute entre las subredes.',
+    feedback_fail: 'El primer ping (0% loss) demuestra que la red de Lupita está bien. El fallo al 100% hacia Gerencia se debe a que están en VLANs diferentes. Las VLANs aíslan el tráfico — sin router entre ellas, no pueden comunicarse.',
+    respuesta_tecnico: 'Lupita, el cable de Gerencia está bien. Tú estás en VLAN 10 y ellos en VLAN 30. Están separadas por diseño de seguridad. Para compartir archivos entre áreas necesitamos configurar el router.',
+    pts: 10,
+  },
+  {
+    id: 't5',
+    hora: '22:55',
+    remitente: 'Don Memo · Dirección',
+    avatar: 'DM',
+    msg: 'Joven buenas noches, perdone que le llame tan noche. Acabo de entrar al switch de la entrada para ver algo y noté que cualquiera puede escribir comandos sin contraseña. Eso está bien así?',
+    cli: [
+      {t:'p', v:'Switch> '},
+      {t:'c', v:'enable'},
+      {t:'w', v:''},
+      {t:'p', v:'Switch# '},
+      {t:'g', v:'(no pidió contraseña)'},
+      {t:'w', v:''},
+      {t:'p', v:'Switch# '},
+      {t:'c', v:'show running-config | include secret'},
+      {t:'g', v:'(ningún resultado)'},
+    ],
+    tipo: 'opcion',
+    pregunta: '¿Qué riesgo representa que el switch no pida contraseña y qué comando lo resuelve?',
+    opciones: [
+      'No es un riesgo, el switch solo lo usa el área de sistemas',
+      'Es un riesgo grave: cualquier persona con acceso físico puede borrar VLANs o cambiar la configuración. Se resuelve con "enable secret [contraseña]"',
+      'Hay que desconectar el switch de la red hasta que tenga contraseña',
+      'Solo afecta al acceso remoto, no al acceso físico',
+    ],
+    correcta: 1,
+    feedback_ok: 'Correcto. El output muestra que "enable" no pidió contraseña y que no hay ningún "enable secret" en el running-config. Cualquier persona que conecte un cable de consola puede entrar con acceso total y modificar o borrar toda la configuración.',
+    feedback_fail: 'El output es claro: "enable" no pidió contraseña (entró directo al modo #) y el show running-config no tiene ningún "enable secret". Eso significa acceso total sin autenticación.',
+    respuesta_tecnico: 'Don Memo tiene toda la razón. Ese switch está completamente abierto. Voy a configurar el "enable secret" inmediatamente para proteger el acceso privilegiado.',
+    pts: 10,
+  },
+  {
+    id: 't6',
+    hora: '23:12',
+    remitente: 'Mariana · RRHH',
+    avatar: 'MA',
+    msg: 'Técnico, necesito que me explique algo. Me dijeron que están en VLAN 20 pero en el sistema aparecen en VLAN 1. Yo no sé qué es eso pero dicen que es un problema.',
+    cli: [
+      {t:'p', v:'Switch# '},
+      {t:'c', v:'show vlan brief'},
+      {t:'w', v:''},
+      {t:'w', v:'VLAN  Name        Status   Ports'},
+      {t:'w', v:'----  ---------  -------  --------'},
+      {t:'y', v:'1     default    active   Fa0/4, Fa0/5'},
+      {t:'o', v:'10    Admin      active   Fa0/1, Fa0/2, Fa0/3'},
+      {t:'o', v:'20    RRHH       active'},
+      {t:'o', v:'30    Gerencia   active   Fa0/6, Fa0/7'},
+    ],
+    tipo: 'opcion',
+    pregunta: 'Los puertos Fa0/4 y Fa0/5 de RRHH aparecen en VLAN 1 en vez de VLAN 20. ¿Qué faltó hacer?',
+    opciones: [
+      'Crear la VLAN 20 — no existe en el switch',
+      'Asignar los puertos Fa0/4 y Fa0/5 a la VLAN 20. La VLAN fue creada pero nunca se les asignaron los puertos',
+      'Reiniciar el switch para que tome la configuración',
+      'Cambiar el nombre de la VLAN 20',
+    ],
+    correcta: 1,
+    feedback_ok: 'Exacto. El output muestra que la VLAN 20 "RRHH" existe y tiene status "active", pero no tiene puertos en la columna Ports. Los puertos Fa0/4 y Fa0/5 siguen en VLAN 1 porque nunca se ejecutaron "switchport mode access" y "switchport access vlan 20" en esas interfaces.',
+    feedback_fail: 'La VLAN 20 aparece en el listado (existe), pero la columna "Ports" está vacía. Los puertos Fa0/4 y Fa0/5 siguen en VLAN 1 porque nadie los asignó a VLAN 20 con los comandos de interfaz.',
+    respuesta_tecnico: 'Mariana, la VLAN 20 está creada pero los puertos de RRHH nunca se asignaron a ella. Voy al switch y ejecuto los dos comandos necesarios en Fa0/4 y Fa0/5.',
+    pts: 10,
+  },
+  {
+    id: 't7',
+    hora: '23:29',
+    remitente: 'Pedro · TI',
+    avatar: 'PE',
+    msg: 'Oye, revisé el router y encontré algo raro. Dicen que tienen SSH pero cuando ejecuto el verify sale esto. ¿Está bien o hay problema?',
+    cli: [
+      {t:'p', v:'Router# '},
+      {t:'c', v:'show ip ssh'},
+      {t:'w', v:''},
+      {t:'w', v:'SSH Enabled - version 1.5'},
+      {t:'w', v:'Authentication timeout: 120 secs'},
+      {t:'w', v:'Authentication retries: 3'},
+      {t:'w', v:''},
+      {t:'p', v:'Router# '},
+      {t:'c', v:'show running-config | include transport'},
+      {t:'y', v:'transport input telnet ssh'},
+    ],
+    tipo: 'opcion',
+    pregunta: '¿Qué dos problemas de seguridad muestra este output del router?',
+    opciones: [
+      'SSH está desactivado y el puerto 22 está cerrado',
+      'SSH corre en versión 1.5 (insegura) y Telnet también está permitido — cualquiera puede conectarse sin cifrado',
+      'El router no tiene usuario configurado y el timeout es muy largo',
+      'La configuración está correcta, SSH 1.5 es más rápido que la versión 2',
+    ],
+    correcta: 1,
+    feedback_ok: '¡Muy bien detectado! Dos problemas: 1) SSH version 1.5 tiene vulnerabilidades conocidas — se necesita "ip ssh version 2". 2) "transport input telnet ssh" permite Telnet que envía todo en texto plano. Debe quedar solo "transport input ssh".',
+    feedback_fail: 'El output tiene dos señales de alerta: "version 1.5" (debería ser 2.0) y "transport input telnet ssh" (debería ser solo ssh). Con Telnet permitido, un atacante puede conectarse sin cifrado.',
+    respuesta_tecnico: 'Pedro sí hay problema. SSH está en versión 1.5 que es insegura, y además Telnet sigue habilitado. Necesito cambiar a "ip ssh version 2" y quitar Telnet del transport input.',
+    pts: 10,
+  },
+  {
+    id: 't8',
+    hora: '23:47',
+    remitente: 'Gerente General',
+    avatar: 'GG',
+    msg: 'Técnico, antes de que termine su turno necesito que me confirme: ¿la configuración que hicieron esta noche quedará guardada si hay un corte de luz? Tenemos ese problema seguido.',
+    tipo: 'abierta',
+    pregunta: 'Explica con tus palabras: ¿qué diferencia hay entre running-config y startup-config, y qué comando asegura que la configuración sobreviva un reinicio?',
+    cli: [
+      {t:'p', v:'Router# '},
+      {t:'c', v:'show running-config | include hostname'},
+      {t:'w', v:'hostname Router-Logistica'},
+      {t:'w', v:''},
+      {t:'p', v:'Router# '},
+      {t:'c', v:'show startup-config | include hostname'},
+      {t:'g', v:'startup-config is not present'},
+    ],
+    feedback_ok: 'Buena respuesta. Running-config vive en RAM (volátil) y se pierde al reiniciar. Startup-config es la que está grabada en flash (permanente). El comando "copy running-config startup-config" (o simplemente "wr") copia los cambios actuales a la flash.',
+    feedback_fail: 'Running-config = RAM (se borra con el apagado). Startup-config = Flash permanente. El comando es "copy running-config startup-config" o el atajo "wr".',
+    respuesta_tecnico: 'Señor director, acabo de ejecutar "copy running-config startup-config" en todos los equipos. Ahora aunque haya un corte de luz la configuración se mantiene segura en la memoria flash.',
+    pts: 15,
+  },
+];
+
+// ═══════════════════════════════════════════════════════
+// ESTADO DEL EXAMEN
+// ═══════════════════════════════════════════════════════
+let curTicket = 0;
+let puntaje = 0;
+let totalPts = TICKETS.reduce((a,t)=>a+t.pts, 0);
+let respuestas = [];
+
+// ═══════════════════════════════════════════════════════
+// INICIAR EXAMEN
+// ═══════════════════════════════════════════════════════
+function iniciarExamen(){
+  const n = document.getElementById('fi-nombre').value.trim();
+  const c = document.getElementById('fi-control').value.trim();
+  const g = document.getElementById('fi-grupo').value.trim();
+  if(!n||!c||!g){ showToast('Completa nombre, control y grupo.'); return; }
+  alumno = {nombre:n, control:c, grupo:g, fecha: new Date().toLocaleDateString('es-MX')};
+  examActivo = true;
+  document.getElementById('screen-inicio').style.display = 'none';
+  document.getElementById('screen-examen').style.display = 'block';
+  document.getElementById('etb-nombre').textContent = n.split(' ')[0];
+  initChips();
+  updateScore();
+  setTimeout(()=>lanzarTicket(0), 400);
+}
+
+function initChips(){
+  const c = document.getElementById('progChips');
+  c.innerHTML = TICKETS.map((_,i)=>`<div class="pc" id="chip-${i}"></div>`).join('');
+}
+
+function updateScore(){
+  document.getElementById('etb-score').textContent = puntaje + ' pts';
+  const pct = (curTicket/TICKETS.length)*100;
+  document.getElementById('progFill').style.width = pct+'%';
+  TICKETS.forEach((_,i)=>{
+    const el = document.getElementById('chip-'+i);
+    if(!el) return;
+    el.className = 'pc' + (i<curTicket?' done':i===curTicket?' cur':'');
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// LANZAR UN TICKET
+// ═══════════════════════════════════════════════════════
+function lanzarTicket(idx){
+  if(idx >= TICKETS.length){ mostrarResultados(); return; }
+  const t = TICKETS[idx];
+  const feed = document.getElementById('feed');
+
+  // Separador horario
+  if(idx===0){
+    feed.innerHTML += `<div class="time-sep">Hoy · ${t.hora}</div>`;
+  } else {
+    feed.innerHTML += `<div class="time-sep">${t.hora}</div>`;
+  }
+
+  // Typing indicator
+  const typingId = 'typing-'+idx;
+  feed.innerHTML += `
+    <div class="typing" id="${typingId}">
+      <div class="msg-avatar">${t.avatar}</div>
+      <div class="typing-bubble">
+        <span></span><span></span><span></span>
+      </div>
+    </div>`;
+  scrollFeed();
+
+  setTimeout(()=>{
+    document.getElementById(typingId)?.remove();
+    renderTicket(t, idx, feed);
+    scrollFeed();
+  }, 1200);
+}
+
+function renderTicket(t, idx, feed){
+  // Burbuja del empleado
+  let cliHtml = '';
+  if(t.cli){
+    const lines = t.cli.map(l=>{
+      const cls = {p:'t-p',c:'t-c',y:'t-y',r:'t-r',g:'t-g',w:'t-w',o:'t-o'}[l.t]||'t-w';
+      return `<div class="${cls}">${esc(l.v)}</div>`;
+    }).join('');
+    cliHtml = `<div class="bubble-cli">
+      <div class="bc-bar">
+        <div class="bc-dot" style="background:#ff5f57"></div>
+        <div class="bc-dot" style="background:#ffbd2e"></div>
+        <div class="bc-dot" style="background:#28c840"></div>
+      </div>
+      ${lines}
+    </div>`;
+  }
+
+  const opcsHtml = t.tipo==='opcion' ? `
+    <div class="opciones" id="opts-${idx}">
+      ${t.opciones.map((o,oi)=>`
+        <div class="opcion" id="opt-${idx}-${oi}" onclick="seleccionarOpcion(${idx},${oi})">
+          <div class="opcion-letra">${'ABCD'[oi]}</div>
+          <span>${esc(o)}</span>
+        </div>`).join('')}
+    </div>` : `
+    <textarea class="resp-abierta" id="ta-${idx}" placeholder="Escribe tu respuesta aquí..." maxlength="700"
+      oninput="chkAITextarea(this)"></textarea>`;
+
+  const html = `
+    <div class="msg-in" id="msg-${idx}">
+      <div class="msg-avatar">${t.avatar}</div>
+      <div class="bubble-in">
+        <span class="bubble-sender">${esc(t.remitente)}</span>
+        <div class="bubble-text">${esc(t.msg)}</div>
+        ${cliHtml}
+        <div class="ticket-question">
+          <span class="tq-label">🔧 Tu diagnóstico — Ticket #${idx+1} de ${TICKETS.length}</span>
+          <div class="tq-text">${esc(t.pregunta)}</div>
+        </div>
+        ${opcsHtml}
+        <button class="btn-confirmar" id="btn-${idx}" onclick="confirmar(${idx})"
+          ${t.tipo==='abierta'?'':'disabled'}>Confirmar respuesta</button>
+        <div class="feedback" id="fb-${idx}"></div>
+        <button class="btn-siguiente" id="sig-${idx}" onclick="siguiente(${idx})">
+          ${idx+1<TICKETS.length?'Siguiente ticket →':'Ver resultados →'}
+        </button>
+        <span class="bubble-time">${t.hora}</span>
+      </div>
+    </div>
+    <div class="msg-out" id="out-${idx}">
+      <div class="bubble-out" id="bubout-${idx}"></div>
+    </div>`;
+
+  feed.innerHTML += html;
+
+  if(t.tipo==='abierta'){
+    const ta = document.getElementById('ta-'+idx);
+    ta.addEventListener('input',()=>{
+      const btn = document.getElementById('btn-'+idx);
+      if(btn) btn.disabled = ta.value.trim().length < 20;
+    });
+  }
+}
+
+function esc(s){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════
+// SELECCIONAR OPCIÓN
+// ═══════════════════════════════════════════════════════
+let selecciones = {};
+function seleccionarOpcion(idx, oi){
+  selecciones[idx] = oi;
+  document.querySelectorAll(`#opts-${idx} .opcion`).forEach(el=>el.classList.remove('sel'));
+  document.getElementById(`opt-${idx}-${oi}`)?.classList.add('sel');
+  const btn = document.getElementById(`btn-${idx}`);
+  if(btn) btn.disabled = false;
+}
+
+// ═══════════════════════════════════════════════════════
+// CONFIRMAR RESPUESTA
+// ═══════════════════════════════════════════════════════
+function confirmar(idx){
+  const t = TICKETS[idx];
+  const btn = document.getElementById('btn-'+idx);
+  const fb  = document.getElementById('fb-'+idx);
+  const sig = document.getElementById('sig-'+idx);
+  if(btn) btn.disabled = true;
+
+  let correcto = false;
+  let respTexto = '';
+
+  if(t.tipo==='opcion'){
+    const sel = selecciones[idx];
+    if(sel === undefined){ showToast('Selecciona una opción.'); btn.disabled=false; return; }
+    correcto = sel === t.correcta;
+    respTexto = t.opciones[sel];
+    // colorear opciones
+    document.querySelectorAll(`#opts-${idx} .opcion`).forEach((el,oi)=>{
+      el.classList.remove('sel');
+      el.classList.add('dis');
+      if(oi===t.correcta) el.classList.add('cor');
+      else if(oi===sel && !correcto) el.classList.add('inc');
+    });
+  } else {
+    const ta = document.getElementById('ta-'+idx);
+    respTexto = ta?.value?.trim() || '';
+    if(respTexto.length < 20){ showToast('Escribe una respuesta más completa.'); btn.disabled=false; return; }
+    if(chkAI(respTexto)){ secWarn('Posible respuesta generada por IA. Usa tus propias palabras.'); btn.disabled=false; return; }
+    correcto = true; // respuestas abiertas se marcan para revisión
+    if(ta) ta.readOnly = true;
+  }
+
+  const pts = correcto ? t.pts : 0;
+  puntaje += pts;
+  respuestas.push({ q: t.pregunta, resp: respTexto, correcto, pts, maxPts: t.pts, tipo: t.tipo });
+
+  // Feedback
+  fb.textContent = (correcto ? '✓ ' : '✗ ') + (correcto ? t.feedback_ok : t.feedback_fail)
+    + (t.tipo==='abierta' ? ' (Revisión docente)' : '');
+  fb.className = 'feedback show ' + (correcto?'ok':'fail');
+
+  // Respuesta del técnico
+  setTimeout(()=>{
+    const bo = document.getElementById('bubout-'+idx);
+    const mo = document.getElementById('out-'+idx);
+    if(bo){ bo.textContent = t.respuesta_tecnico; bo.classList.add('show'); }
+    if(mo) mo.style.display = 'flex';
+    sig?.classList.add('show');
+    updateScore();
+    scrollFeed();
+  }, 700);
+}
+
+// ═══════════════════════════════════════════════════════
+// SIGUIENTE TICKET
+// ═══════════════════════════════════════════════════════
+function siguiente(idx){
+  curTicket = idx + 1;
+  updateScore();
+  if(curTicket >= TICKETS.length){ mostrarResultados(); return; }
+  setTimeout(()=>lanzarTicket(curTicket), 400);
+  // desabilitar botón para no doble-click
+  const sig = document.getElementById('sig-'+idx);
+  if(sig) sig.disabled = true;
+}
+
+// ═══════════════════════════════════════════════════════
+// RESULTADOS
+// ═══════════════════════════════════════════════════════
+function mostrarResultados(){
+  examActivo = false;
+  document.getElementById('screen-examen').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'block';
+  document.getElementById('rs-score').textContent = puntaje;
+  document.getElementById('rs-total').textContent = 'de '+totalPts+' puntos';
+  document.getElementById('rs-name').textContent = alumno.nombre + ' · ' + alumno.grupo;
+  const list = document.getElementById('rs-list');
+  list.innerHTML = respuestas.map((r,i)=>`
+    <li>
+      <div class="ri-icon">${r.tipo==='abierta'?'📝':r.correcto?'✅':'❌'}</div>
+      <div class="ri-q">
+        <strong>Ticket ${i+1}:</strong> ${esc(r.q)}<br>
+        <span style="font-size:.82rem;color:var(--ink-secondary)">
+          ${r.tipo==='abierta'?'Respuesta abierta — revisión docente':('Tu respuesta: '+esc(r.resp))}
+        </span>
+      </div>
+      <div class="ri-pts">${r.tipo==='abierta'?'✎ rev':r.pts+'/'+r.maxPts+' pts'}</div>
+    </li>`).join('');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════════════
+// PDF
+// ═══════════════════════════════════════════════════════
+function generarPDF(){
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'letter'});
+  const PW=215.9, ML=18, MR=18;
+  let y=18;
+
+  // Header
+  doc.setFillColor(94,22,46);
+  doc.rect(0,0,PW,24,'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(13);
+  doc.setTextColor(255,255,255);
+  doc.text('El Técnico de Guardia — Evaluación de Redes LAN',PW/2,10,{align:'center'});
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(9);
+  doc.setTextColor(180,140,155);
+  doc.text('Soporte Opera una Red LAN · Unidad 3',PW/2,18,{align:'center'});
+  y=32;
+
+  // Datos
+  doc.setFillColor(245,232,238);
+  doc.rect(ML,y,PW-ML-MR,18,'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(9);
+  doc.setTextColor(94,22,46);
+  doc.text('Alumno: '+alumno.nombre,ML+3,y+7);
+  doc.text('Control: '+alumno.control+'   Grupo: '+alumno.grupo+'   Fecha: '+alumno.fecha,ML+3,y+14);
+  y+=24;
+
+  // Score
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(18);
+  doc.setTextColor(94,22,46);
+  doc.text('Puntaje: '+puntaje+' / '+totalPts, PW/2, y+6, {align:'center'});
+  y+=16;
+
+  // Respuestas
+  const CW = PW-ML-MR;
+  respuestas.forEach((r,i)=>{
+    if(y>240){doc.addPage();y=20;}
+    doc.setFillColor(94,22,46);
+    doc.rect(ML,y,CW,9,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.setTextColor(255,255,255);
+    doc.text(`Ticket ${i+1}: ${r.q.slice(0,80)}${r.q.length>80?'…':''}`,ML+3,y+6);
+    y+=12;
+    doc.setFillColor(r.tipo==='abierta'?[240,249,255]:r.correcto?[240,253,244]:[254,242,242]);
+    doc.rect(ML,y,CW,8,'F');
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(26,18,30);
+    const label = r.tipo==='abierta'?'Revisión docente':r.correcto?'Correcto':'Incorrecto';
+    doc.text(`${label} · ${r.pts}/${r.maxPts} pts`,ML+3,y+5.5);
+    y+=10;
+    // respuesta
+    doc.setFontSize(8);
+    doc.setTextColor(92,72,80);
+    const lines = doc.splitTextToSize('R: '+(r.resp||'(abierta)'), CW-6);
+    lines.forEach(l=>{ if(y>252){doc.addPage();y=20;} doc.text(l,ML+3,y); y+=4.5; });
+    y+=4;
+  });
+
+  // Footer en cada página
+  const pages = doc.internal.getNumberOfPages();
+  for(let p=1;p<=pages;p++){
+    doc.setPage(p);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(140,120,128);
+    doc.text('Generado: '+new Date().toLocaleString('es-MX'),ML,275);
+    doc.text(`${p}/${pages}`,PW-MR,275,{align:'right'});
+  }
+
+  doc.save(`Guardia_${alumno.nombre.replace(/\s+/g,'_')}.pdf`);
+  showToast('PDF generado.');
+}
+
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
+function scrollFeed(){
+  setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}),80);
+}
+function chkAITextarea(el){
+  if(chkAI(el.value)){
+    el.style.borderColor='#ef4444';
+    secWarn('Posible patrón de IA detectado. Escribe con tus propias palabras.');
+  } else {
+    el.style.borderColor='';
+  }
+}
+</script>
+</body>
+</html>
