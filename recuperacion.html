@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recuperación — Redes LAN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+/* ══ INICIO ══════════════════════════════════════════ */
+#screen-inicio {
+  min-height:100vh; display:flex;
+  align-items:center; justify-content:center;
+  background:var(--white);
+}
+.inicio-wrap {
+  max-width:500px; width:100%;
+  padding:2.5rem 2rem; text-align:center;
+}
+.inicio-icon {
+  font-size:3.2rem; margin-bottom:1rem;
+  display:block;
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.inicio-kicker {
+  font-family:var(--font-ui); font-size:.72rem;
+  font-weight:700; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--guinda);
+  display:block; margin-bottom:.55rem;
+}
+.inicio-h1 {
+  font-family:var(--font-display); font-size:2.1rem;
+  color:var(--ink); font-weight:700; line-height:1.15;
+  margin-bottom:.6rem;
+}
+.inicio-sub {
+  font-size:.92rem; color:var(--ink-secondary);
+  line-height:1.7; margin-bottom:1.6rem;
+}
+.form-field {
+  display:flex; flex-direction:column;
+  gap:.4rem; margin-bottom:.9rem; text-align:left;
+}
+.form-field label {
+  font-family:var(--font-ui); font-size:.7rem;
+  font-weight:700; text-transform:uppercase;
+  letter-spacing:.1em; color:var(--guinda);
+}
+.form-field input {
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-md);
+  padding:.65rem .9rem;
+  font-family:var(--font-ui); font-size:.93rem;
+  color:var(--ink); background:var(--off-white);
+  outline:none; transition:border-color .15s;
+}
+.form-field input:focus { border-color:var(--guinda); }
+.btn-primary {
+  display:block; width:100%;
+  background:var(--guinda); color:var(--white);
+  border:none; border-radius:var(--radius-md);
+  padding:.82rem 1rem;
+  font-family:var(--font-ui); font-size:.97rem;
+  font-weight:600; cursor:pointer;
+  transition:background .15s; margin-top:.4rem;
+}
+.btn-primary:hover{background:var(--guinda-dark);}
+.nota-sec {
+  font-family:var(--font-ui); font-size:.73rem;
+  color:var(--ink-muted); margin-top:.9rem;
+  line-height:1.55; padding:.6rem .85rem;
+  background:var(--surface); border-radius:var(--radius-sm);
+  border-left:3px solid var(--guinda-rule);
+}
+
+/* ══ TOPBAR ══════════════════════════════════════════ */
+#screen-examen{display:none;}
+.exam-topbar {
+  position:sticky; top:0; z-index:100;
+  background:var(--guinda);
+  display:flex; align-items:center;
+  justify-content:space-between;
+  padding:.6rem 1.5rem;
+  border-bottom:3px solid var(--guinda-dark);
+}
+.etb-l {
+  font-family:var(--font-ui); font-size:.8rem;
+  font-weight:600; color:rgba(255,255,255,.85);
+  display:flex; align-items:center; gap:.55rem;
+}
+.dot-on {
+  width:8px; height:8px; border-radius:50%;
+  background:#4ade80;
+  animation:blink 1.5s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+.etb-r {
+  display:flex; align-items:center; gap:1rem;
+  font-family:var(--font-mono); font-size:.78rem;
+  color:rgba(255,255,255,.7);
+}
+.prog-chips{display:flex;gap:.3rem;}
+.pc{width:13px;height:13px;border-radius:3px;background:rgba(255,255,255,.2);}
+.pc.done{background:#4ade80;}
+.pc.cur{background:#fbbf24;}
+.prog-line{height:3px;background:var(--guinda-light);}
+.prog-fill{height:100%;background:var(--guinda);transition:width .4s;width:0%;}
+
+/* ══ FEED ════════════════════════════════════════════ */
+.feed {
+  max-width:660px; margin:0 auto;
+  padding:2rem 1.5rem 7rem;
+}
+
+/* tiempo separador */
+.time-sep {
+  text-align:center;
+  font-family:var(--font-ui); font-size:.7rem;
+  color:var(--ink-muted); margin:1rem 0;
+  display:flex; align-items:center; gap:.65rem;
+}
+.time-sep::before,.time-sep::after{
+  content:''; flex:1; height:1px; background:var(--border);
+}
+
+/* tarjeta de pregunta */
+.q-card {
+  background:var(--off-white);
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:2rem;
+  box-shadow:var(--shadow-sm);
+}
+.q-card-top {
+  padding:1rem 1.25rem .85rem;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:flex-start; gap:.75rem;
+}
+.q-avatar {
+  width:38px; height:38px; border-radius:50%;
+  background:var(--guinda); color:var(--white);
+  font-family:var(--font-ui); font-size:.82rem;
+  font-weight:700; display:flex; align-items:center;
+  justify-content:center; flex-shrink:0;
+}
+.q-meta { flex:1; }
+.q-categoria {
+  font-family:var(--font-ui); font-size:.68rem;
+  font-weight:700; text-transform:uppercase;
+  letter-spacing:.1em; color:var(--guinda);
+  display:block; margin-bottom:.3rem;
+}
+.q-enunciado {
+  font-size:.96rem; color:var(--ink);
+  line-height:1.65; font-weight:500;
+}
+.q-numero {
+  font-family:var(--font-mono); font-size:.72rem;
+  color:var(--ink-muted); white-space:nowrap;
+  margin-top:.15rem;
+}
+
+/* cuerpo de la tarjeta */
+.q-card-body { padding:1.1rem 1.25rem; }
+
+/* analogia / contexto */
+.q-contexto {
+  background:var(--guinda-light);
+  border:1px solid #d8a8ba;
+  border-radius:var(--radius-md);
+  padding:.85rem 1rem;
+  margin-bottom:1rem;
+  font-size:.88rem; color:var(--guinda-dark);
+  line-height:1.65;
+}
+.q-contexto strong { color:var(--guinda); }
+
+/* esquema visual inline */
+.q-esquema {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  padding:.9rem 1rem; margin-bottom:1rem;
+  font-family:var(--font-mono); font-size:.82rem;
+  line-height:1.85; overflow-x:auto;
+  color:var(--ink-secondary);
+}
+.q-esquema .hl { color:var(--guinda); font-weight:600; }
+.q-esquema .ok { color:#15803d; }
+.q-esquema .err { color:#dc2626; }
+.q-esquema .nt  { color:#92400e; }
+
+/* opciones */
+.opciones {
+  display:flex; flex-direction:column; gap:.4rem;
+  margin-bottom:.75rem;
+}
+.opcion {
+  display:flex; align-items:flex-start; gap:.6rem;
+  padding:.65rem .9rem;
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-md); cursor:pointer;
+  transition:border-color .15s, background .15s;
+  font-size:.88rem; color:var(--ink); line-height:1.5;
+  user-select:none;
+}
+.opcion:hover{border-color:var(--guinda-rule);background:var(--guinda-light);}
+.opcion.sel{border-color:var(--guinda);background:var(--guinda-light);}
+.opcion.cor{border-color:#22c55e;background:#f0fdf4;color:#15803d;font-weight:600;}
+.opcion.inc{border-color:#ef4444;background:#fef2f2;color:#991b1b;}
+.opcion.dis{pointer-events:none;opacity:.5;}
+.olet {
+  width:21px; height:21px; border-radius:50%;
+  background:var(--border); color:var(--ink-muted);
+  font-family:var(--font-mono); font-size:.72rem;
+  font-weight:600; display:flex; align-items:center;
+  justify-content:center; flex-shrink:0; margin-top:1px;
+}
+.opcion.sel .olet{background:var(--guinda);color:var(--white);}
+.opcion.cor .olet{background:#22c55e;color:#fff;}
+.opcion.inc .olet{background:#ef4444;color:#fff;}
+
+/* textarea abierta */
+.resp-ta {
+  width:100%; min-height:78px; resize:vertical;
+  border:1.5px solid var(--border); border-radius:var(--radius-md);
+  padding:.7rem .9rem;
+  font-family:var(--font-ui); font-size:.9rem;
+  color:var(--ink); background:var(--white);
+  outline:none; transition:border-color .15s; line-height:1.6;
+  margin-bottom:.65rem;
+}
+.resp-ta:focus{border-color:var(--guinda);}
+
+/* verdadero / falso */
+.tf-opts {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:.5rem; margin-bottom:.75rem;
+}
+.tf-btn {
+  padding:.7rem; border:1.5px solid var(--border);
+  border-radius:var(--radius-md); cursor:pointer;
+  font-family:var(--font-ui); font-size:.9rem;
+  font-weight:600; text-align:center;
+  background:var(--white); color:var(--ink);
+  transition:all .15s; user-select:none;
+}
+.tf-btn:hover{border-color:var(--guinda-rule);background:var(--guinda-light);}
+.tf-btn.sel{border-color:var(--guinda);background:var(--guinda-light);color:var(--guinda);}
+.tf-btn.cor{border-color:#22c55e;background:#f0fdf4;color:#15803d;}
+.tf-btn.inc{border-color:#ef4444;background:#fef2f2;color:#991b1b;}
+.tf-btn.dis{pointer-events:none;opacity:.5;}
+
+/* orden */
+.orden-list {
+  display:flex; flex-direction:column; gap:.35rem;
+  margin-bottom:.75rem;
+}
+.orden-item {
+  display:flex; align-items:center; gap:.6rem;
+  padding:.6rem .8rem;
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-md); cursor:grab;
+  font-size:.87rem; color:var(--ink); line-height:1.4;
+  user-select:none; transition:border-color .15s, box-shadow .15s;
+}
+.orden-item:active{cursor:grabbing;box-shadow:var(--shadow-md);}
+.orden-item.drag-over{border-color:var(--guinda);background:var(--guinda-light);}
+.orden-handle {
+  font-size:1rem; color:var(--ink-muted); flex-shrink:0;
+}
+.orden-num {
+  width:22px; height:22px; border-radius:50%;
+  background:var(--guinda); color:var(--white);
+  font-family:var(--font-mono); font-size:.72rem;
+  font-weight:600; display:flex; align-items:center;
+  justify-content:center; flex-shrink:0;
+}
+
+/* botones acción */
+.btn-conf {
+  padding:.58rem 1.3rem;
+  background:var(--guinda); color:var(--white);
+  border:none; border-radius:var(--radius-md);
+  font-family:var(--font-ui); font-size:.83rem;
+  font-weight:600; cursor:pointer;
+  transition:background .15s;
+}
+.btn-conf:hover{background:var(--guinda-dark);}
+.btn-conf:disabled{opacity:.4;cursor:not-allowed;}
+.btn-sig {
+  display:none; padding:.58rem 1.3rem;
+  background:var(--ink); color:var(--white);
+  border:none; border-radius:var(--radius-md);
+  font-family:var(--font-ui); font-size:.83rem;
+  font-weight:600; cursor:pointer;
+  transition:background .15s; margin-left:.5rem;
+}
+.btn-sig.show{display:inline-block;}
+.btn-sig:hover{background:#2d2820;}
+
+/* feedback */
+.feedback {
+  display:none; margin-top:.65rem;
+  padding:.8rem 1rem; border-radius:var(--radius-md);
+  font-size:.87rem; line-height:1.6;
+}
+.feedback.show{display:block;}
+.feedback.ok{background:#f0fdf4;border:1px solid #86efac;color:#14532d;}
+.feedback.fail{background:#fef2f2;border:1px solid #fca5a5;color:#7f1d1d;}
+.feedback.rev{background:var(--guinda-light);border:1px solid #d8a8ba;color:var(--guinda-dark);}
+
+/* reflexion */
+.reflexion-badge {
+  display:inline-block;
+  font-family:var(--font-ui); font-size:.7rem;
+  font-weight:700; text-transform:uppercase;
+  letter-spacing:.09em; padding:.2rem .65rem;
+  border-radius:var(--radius-sm);
+  margin-bottom:.55rem;
+}
+
+/* typing */
+.typing {
+  display:flex; gap:.65rem; margin-bottom:1.25rem;
+  align-items:flex-end;
+}
+.typing-bubble {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:10px 10px 10px 2px;
+  padding:.6rem .9rem;
+  display:flex; gap:.3rem; align-items:center;
+}
+.typing-bubble span {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--guinda-rule);
+  animation:td .9s ease-in-out infinite;
+}
+.typing-bubble span:nth-child(2){animation-delay:.15s;}
+.typing-bubble span:nth-child(3){animation-delay:.3s;}
+@keyframes td{0%,80%,100%{transform:scale(.65);}40%{transform:scale(1);}}
+
+/* ══ RESULTADOS ══════════════════════════════════════ */
+#screen-result{display:none; min-height:100vh; background:var(--white);}
+.result-wrap{max-width:600px;margin:0 auto;padding:3.5rem 2rem;}
+.res-box {
+  background:var(--guinda); border-radius:var(--radius-lg);
+  padding:2.5rem 2rem; text-align:center; margin-bottom:2rem;
+  position:relative; overflow:hidden;
+}
+.res-box::before{
+  content:''; position:absolute; top:-30px; right:-30px;
+  width:160px; height:160px; border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+.res-kicker {
+  font-family:var(--font-ui); font-size:.7rem;
+  font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:rgba(255,255,255,.55);
+  display:block; margin-bottom:.65rem;
+}
+.res-num {
+  font-family:var(--font-display); font-size:4.5rem;
+  font-weight:700; line-height:1; color:var(--white);
+  display:block; margin-bottom:.35rem;
+}
+.res-de{font-size:.95rem;color:rgba(255,255,255,.6);}
+.res-name{
+  font-family:var(--font-ui); font-size:.95rem;
+  font-weight:600; color:rgba(255,255,255,.8);
+  margin-top:.9rem; display:block;
+}
+.res-lista{list-style:none;padding:0;}
+.res-lista li {
+  display:flex; align-items:flex-start; gap:.7rem;
+  padding:.7rem 0; border-bottom:1px solid var(--border);
+  font-size:.86rem;
+}
+.res-lista li:last-child{border-bottom:none;}
+.ri-ico{font-size:1rem;flex-shrink:0;margin-top:.05rem;}
+.ri-q{color:var(--ink);flex:1;line-height:1.5;}
+.ri-pts{
+  font-family:var(--font-mono); font-size:.75rem;
+  color:var(--ink-muted); white-space:nowrap;
+}
+.btn-pdf {
+  display:flex; align-items:center; justify-content:center;
+  gap:.55rem; width:100%; margin-top:1.75rem;
+  padding:.85rem; background:var(--guinda); color:var(--white);
+  border:none; border-radius:var(--radius-md);
+  font-family:var(--font-ui); font-size:.97rem; font-weight:600;
+  cursor:pointer; transition:background .15s;
+}
+.btn-pdf:hover{background:var(--guinda-dark);}
+
+/* ══ SEGURIDAD ══════════════════════════════════════ */
+.sec-alert {
+  position:fixed; top:0; left:0; right:0;
+  background:#dc2626; color:white;
+  text-align:center; padding:.6rem 1rem;
+  font-family:var(--font-ui); font-size:.83rem; font-weight:600;
+  z-index:999; transform:translateY(-100%);
+  transition:transform .3s;
+}
+.sec-alert.show{transform:translateY(0);}
+.toast {
+  position:fixed; bottom:22px; left:50%;
+  transform:translateX(-50%) translateY(60px);
+  background:var(--ink); color:white;
+  padding:.55rem 1.3rem; border-radius:20px;
+  font-family:var(--font-ui); font-size:.83rem;
+  z-index:998; transition:transform .3s; white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+@media(max-width:560px){
+  .feed{padding:1.25rem 1rem 6rem;}
+  .tf-opts{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="sec-alert" id="secAlert">⚠ Acción no permitida.</div>
+<div class="toast" id="toast"></div>
+
+<!-- ════ INICIO ════ -->
+<div id="screen-inicio">
+  <div class="inicio-wrap">
+    <span class="inicio-icon">🔁</span>
+    <span class="inicio-kicker">Actividad de recuperación · Redes LAN</span>
+    <h1 class="inicio-h1">¿Lo entendiste<br>de verdad?</h1>
+    <p class="inicio-sub">
+      No vas a escribir comandos. Esta vez tienes que <strong>pensar</strong>.<br>
+      Situaciones del mundo real, analogías, esquemas y preguntas que
+      requieren que entiendas el concepto — no que lo memorices.
+    </p>
+    <div class="form-field">
+      <label>Nombre completo</label>
+      <input type="text" id="fi-nombre" placeholder="Apellidos y nombre" autocomplete="off">
+    </div>
+    <div class="form-field">
+      <label>Número de control</label>
+      <input type="text" id="fi-control" placeholder="2024-0001" autocomplete="off">
+    </div>
+    <div class="form-field">
+      <label>Grupo</label>
+      <input type="text" id="fi-grupo" placeholder="3°A" autocomplete="off">
+    </div>
+    <button class="btn-primary" onclick="iniciar()">Comenzar actividad →</button>
+    <div class="nota-sec">
+      🔒 Copiar/pegar deshabilitado · Cambio de pestaña detectado · Detector de IA activo · Responde con tus propias palabras.
+    </div>
+  </div>
+</div>
+
+<!-- ════ EXAMEN ════ -->
+<div id="screen-examen">
+  <div class="exam-topbar">
+    <div class="etb-l">
+      <div class="dot-on"></div>
+      <span id="etb-n">Alumno</span>
+    </div>
+    <div class="etb-r">
+      <div class="prog-chips" id="progChips"></div>
+      <span id="etb-pts">0 pts</span>
+    </div>
+  </div>
+  <div class="prog-line"><div class="prog-fill" id="progFill"></div></div>
+  <div class="feed" id="feed"></div>
+</div>
+
+<!-- ════ RESULTADOS ════ -->
+<div id="screen-result">
+  <div class="result-wrap">
+    <div class="res-box">
+      <span class="res-kicker">Actividad de recuperación completada</span>
+      <span class="res-num" id="rs-pts">0</span>
+      <span class="res-de" id="rs-de">de 0 puntos</span>
+      <span class="res-name" id="rs-nm"></span>
+    </div>
+    <ul class="res-lista" id="rs-lista"></ul>
+    <button class="btn-pdf" onclick="generarPDF()">⬇ Descargar evidencia en PDF</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// ══════════════════════════════════════════════════
+// PREGUNTAS
+// ══════════════════════════════════════════════════
+const PREGUNTAS = [
+
+  // 1 — Analogía IP
+  {
+    id:'p1', tipo:'opcion', pts:8,
+    categoria:'Dirección IP', avatar:'🌐',
+    enunciado:'Tu vecino vive en la Calle Reforma 45, Col. Centro. Tú vives en Calle Reforma 10, Col. Centro. Pueden visitarse a pie. Ahora imagina que alguien más vive en Av. Juárez 5, Col. Las Flores. ¿Necesita algo especial para visitarte?',
+    contexto:'Esta situación es idéntica a cómo funcionan las IPs. Dos equipos con IP <strong>192.168.1.10</strong> y <strong>192.168.1.55</strong> están en la misma "colonia". Un equipo con IP <strong>10.0.0.5</strong> está en otra "colonia" completamente diferente.',
+    opciones:[
+      'No, puede llegar directamente como cualquier vecino',
+      'Sí, necesita un transporte que cruce colonias — igual que una IP necesita un router para salir de su subred',
+      'Solo necesita saber la dirección exacta, no importa la colonia',
+      'Necesita cambiar su dirección a la misma colonia',
+    ],
+    correcta:1,
+    fb_ok:'Exacto. Colonias distintas = subredes distintas. Para cruzar entre subredes se necesita un router (el "transporte") que conozca el camino. Sin gateway configurado, la PC no puede salir de su red.',
+    fb_fail:'Piénsalo como direcciones reales: colonias distintas no están conectadas a pie. En redes, subredes distintas necesitan un router para comunicarse. Es el mismo concepto.',
+  },
+
+  // 2 — Verdadero/Falso: VLAN
+  {
+    id:'p2', tipo:'tf', pts:8,
+    categoria:'VLANs', avatar:'🏢',
+    enunciado:'Afirmación: "Si dos computadoras están conectadas al mismo switch físico, siempre pueden hacerse ping entre sí sin importar nada más."',
+    contexto:'Imagina un edificio con un solo elevador. Aunque todos usan el mismo elevador, el piso de Gerencia tiene llave propia y los de Bodega no pueden entrar aunque quieran.',
+    tf_correcto:'Falso',
+    fb_ok:'Correcto: FALSO. Las VLANs crean separación lógica dentro del mismo switch físico. Dos PCs en el mismo switch pero en VLANs distintas NO pueden comunicarse directamente. El switch físico es compartido, pero las redes lógicas están aisladas.',
+    fb_fail:'La afirmación es FALSA. Las VLANs separan el tráfico lógicamente aunque el switch sea el mismo. Es como el edificio: mismo edificio, diferentes departamentos con sus propias puertas.',
+  },
+
+  // 3 — Ordenar pasos SSH
+  {
+    id:'p3', tipo:'orden', pts:10,
+    categoria:'SSH', avatar:'🔒',
+    enunciado:'Arrastra y ordena los 4 pasos para configurar SSH en un router. El orden importa — si lo haces al revés, SSH no funciona.',
+    contexto:'SSH necesita una clave RSA para cifrar. Esa clave lleva el nombre del router + su dominio. Por eso el dominio va primero — sin él, la clave no se puede crear.',
+    items:[
+      { id:'s1', txt:'Ejecutar: ip ssh version 2  y configurar transport input ssh en VTY' },
+      { id:'s2', txt:'Configurar: ip domain-name logistica.local' },
+      { id:'s3', txt:'Crear usuario: username admin privilege 15 secret [clave]' },
+      { id:'s4', txt:'Generar clave RSA: crypto key generate rsa modulus 1024' },
+    ],
+    orden_correcto:['s2','s3','s4','s1'],
+    fb_ok:'¡Perfecto! El orden es: 1) Dominio → 2) Usuario → 3) RSA → 4) Activar SSH v2. Sin el dominio no se puede generar la clave RSA, y sin la clave RSA SSH no puede habilitarse.',
+    fb_fail:'El orden correcto es: dominio primero (la clave RSA lo necesita), luego el usuario, luego generar la clave RSA, y al final activar SSH v2 y bloquear Telnet.',
+  },
+
+  // 4 — Analogía Telnet vs SSH
+  {
+    id:'p4', tipo:'opcion', pts:8,
+    categoria:'Seguridad · SSH', avatar:'📬',
+    enunciado:'Envías una carta con tu contraseña bancaria escrita en el sobre, visible para el cartero y cualquiera que la maneje. ¿Qué protocolo de red hace exactamente lo mismo?',
+    contexto:'Cuando te conectas a un router para administrarlo, el tráfico viaja por la red. Si alguien tiene Wireshark escuchando, puede ver todo lo que envías.',
+    opciones:[
+      'SSH — porque cifra todo el contenido',
+      'Telnet — porque envía todo en texto plano, sin cifrar, legible para cualquiera en la red',
+      'Ambos son igual de seguros, solo difieren en el puerto',
+      'Ninguno, porque el switch protege el tráfico automáticamente',
+    ],
+    correcta:1,
+    fb_ok:'Perfecto. Telnet es la "carta abierta": todo viaja en texto plano. Cualquiera con Wireshark en la misma red ve la contraseña en tiempo real. SSH es el equivalente a un sobre sellado con cifrado RSA.',
+    fb_fail:'Telnet envía todo en texto plano — exactamente como escribir la contraseña en el sobre. SSH cifra el contenido (es el sobre sellado). Por eso nunca debe usarse Telnet en entornos reales.',
+  },
+
+  // 5 — Identificar error en esquema
+  {
+    id:'p5', tipo:'opcion', pts:10,
+    categoria:'Topología · IP', avatar:'🗺',
+    enunciado:'Observa el esquema de red. Encuentra el dispositivo que tiene un error de configuración que le impide comunicarse con los demás.',
+    esquema:[
+      '  Switch 2960',
+      '  ├── PC-A  IP: 192.168.1.10  Máscara: 255.255.255.0  GW: 192.168.1.1',
+      '  ├── PC-B  IP: 192.168.1.25  Máscara: 255.255.255.0  GW: 192.168.1.1',
+      '  ├── PC-C  IP: 192.168.2.10  Máscara: 255.255.255.0  GW: 192.168.1.1',
+      '  └── PC-D  IP: 192.168.1.30  Máscara: 255.255.255.0  GW: 192.168.1.1',
+    ],
+    opciones:[
+      'PC-A — tiene la IP más baja del rango',
+      'PC-B — su IP está muy cercana al gateway',
+      'PC-C — su IP es 192.168.2.10, está en una subred diferente a las demás',
+      'PC-D — tiene la IP más alta y puede haber conflicto',
+    ],
+    correcta:2,
+    fb_ok:'PC-C tiene la IP 192.168.2.10 mientras todas las demás están en 192.168.1.x. Aunque el gateway (192.168.1.1) está en la red correcta para A, B y D, PC-C está en una subred completamente diferente (192.168.2.0/24). Sin router entre ellas, PC-C no puede comunicarse con ninguna.',
+    fb_fail:'Observa los primeros tres octetos. PC-A, B y D tienen 192.168.1.x — misma colonia. PC-C tiene 192.168.2.x — colonia diferente. Es la que está mal configurada.',
+  },
+
+  // 6 — Reflexión abierta: ¿por qué guardar?
+  {
+    id:'p6', tipo:'abierta', pts:12,
+    categoria:'Reflexión', avatar:'💭',
+    enunciado:'Un técnico pasa 3 horas configurando VLANs, contraseñas y SSH en el switch de una empresa. Al terminar se va sin ejecutar ningún comando adicional. Al día siguiente, un corte de luz reinicia el switch. ¿Qué encuentra el técnico cuando llega? ¿Por qué pasó eso?',
+    contexto:'Esta situación ocurre con más frecuencia de lo que imaginas. No es un fallo del equipo — es un paso que el técnico olvidó.',
+    fb_ok:'Muy bien. La configuración estaba en la RAM (running-config), memoria volátil que se borra al quitar la energía. Para que sobreviva, necesita copiarse a la flash permanente con "copy running-config startup-config" o el atajo "wr". Sin ese comando, cada reinicio borra todo el trabajo.',
+    fb_fail:'La clave es entender que running-config vive en RAM (volátil). La RAM se borra al apagar. La startup-config está en la flash (permanente). El comando "copy running-config startup-config" hace la copia de una a otra.',
+  },
+
+  // 7 — VF port-security
+  {
+    id:'p7', tipo:'tf', pts:8,
+    categoria:'Port-Security', avatar:'🛡',
+    enunciado:'Afirmación: "Cuando port-security apaga un puerto en err-disable, significa que el switch tiene una falla de hardware y hay que reemplazarlo."',
+    contexto:'Don Memo llama al técnico diciendo que el switch de la entrada "se arruinó" porque uno de los puertos dejó de funcionar de repente cuando conectó una laptop nueva.',
+    tf_correcto:'Falso',
+    fb_ok:'FALSO. El puerto en err-disable es una medida de seguridad intencional del port-security. El switch detectó una MAC no autorizada y apagó el puerto para proteger la red. No hay falla de hardware — se reactiva con shutdown → no shutdown en esa interfaz.',
+    fb_fail:'La afirmación es FALSA. El err-disable es exactamente lo que port-security debe hacer al detectar un intruso: apagar el puerto. Es el sistema funcionando correctamente, no una falla. Se recupera con dos comandos simples.',
+  },
+
+  // 8 — Completar la analogía
+  {
+    id:'p8', tipo:'opcion', pts:8,
+    categoria:'Conceptos · Gateway', avatar:'🚦',
+    enunciado:'Completa la analogía: "La máscara de subred es como el _____ de una ciudad: define dónde termina un barrio y empieza otro."',
+    contexto:'Cuando configuramos 255.255.255.0 en una PC, le estamos diciendo exactamente qué parte de la IP identifica la red y qué parte identifica el dispositivo individual dentro de esa red.',
+    opciones:[
+      'Semáforo — controla el flujo de tráfico',
+      'Nombre de la calle — identifica la ubicación exacta',
+      'Límite de colonia o delegación — separa una zona de otra',
+      'Número de casa — identifica a cada persona',
+    ],
+    correcta:2,
+    fb_ok:'Exacto. La máscara define los límites de la red, como los límites entre colonias. 255.255.255.0 (/24) dice: los primeros 3 octetos son la colonia (red), el último octeto es el número de casa (host)',
+    fb_fail:'La máscara delimita, no identifica. Es el límite entre colonias: 255.255.255.0 dice que los primeros 3 octetos (192.168.1) son la zona/colonia, y el último (.10) es el número de casa individual.',
+  },
+
+  // 9 — Reflexión: enable secret vs password
+  {
+    id:'p9', tipo:'opcion', pts:10,
+    categoria:'Seguridad', avatar:'🔑',
+    enunciado:'Un técnico configura "enable password Cisco123" en un switch. El gerente de TI ejecuta "show running-config" desde otra PC y ve "enable password Cisco123" escrito literalmente. ¿Qué error cometió el técnico y cuál es la consecuencia?',
+    contexto:'El running-config es como el "expediente" del switch — cualquier persona con acceso al CLI privilegiado puede leerlo completo.',
+    opciones:[
+      'Ningún error, la contraseña queda protegida por el switch',
+      'Usó "enable password" en lugar de "enable secret". La contraseña quedó en texto plano visible para cualquiera que pueda ver el running-config',
+      'El error es que la contraseña es muy corta — debió usar más caracteres',
+      'No hay problema porque solo el técnico conoce el running-config',
+    ],
+    correcta:1,
+    fb_ok:'Correcto. "enable password" guarda la contraseña en texto plano en el running-config. Cualquier administrador con acceso al equipo la puede leer directamente. "enable secret" usa hash MD5 — lo que aparece en el running-config es ilegible: "$1$mERr$9cTjUIuR4P1lTlNnm3X9k."',
+    fb_fail:'"enable password" almacena la clave en texto legible. "enable secret" la cifra con MD5. La diferencia es enorme: una la lee cualquiera con acceso al CLI, la otra es un hash ilegible aunque la veas.',
+  },
+
+  // 10 — Reflexión final abierta
+  {
+    id:'p10', tipo:'abierta', pts:13,
+    categoria:'Reflexión integradora', avatar:'🧠',
+    enunciado:'Un empleado nuevo llega a la empresa y le dicen: "estás en el departamento de Contabilidad, VLAN 10". Desde su PC puede hacer ping a sus compañeros de Contabilidad sin problema, pero no puede llegar a la impresora de Gerencia (VLAN 30). El empleado dice que la red está rota. ¿Tiene razón? Explica con tus palabras qué está pasando y si hay algo que debería hacerse diferente.',
+    contexto:'La respuesta correcta requiere que entiendas POR QUÉ las VLANs existen y cuándo ese comportamiento es el correcto vs cuándo sería un problema.',
+    fb_ok:'Muy bien razonado. El empleado NO tiene razón — la red funciona exactamente como fue diseñada. Las VLANs aíslan el tráfico entre departamentos por seguridad. Contabilidad no debería acceder directamente a Gerencia. Si hay una impresora que deben compartir, la solución no es "arreglar la red" sino configurar un router que enrute entre las VLANs de forma controlada, o mover la impresora a una VLAN compartida.',
+    fb_fail:'Las VLANs separan el tráfico intencionalmente. El comportamiento del empleado es correcto y esperado. "La red rota" sería si NO pudiera hacer ping a sus propios compañeros. La comunicación entre VLANs requiere un router — y esa decisión la toma el administrador de red con criterio de seguridad.',
+  },
+];
+
+// ══════════════════════════════════════════════════
+// ESTADO
+// ══════════════════════════════════════════════════
+let alumno={}, examActivo=false, curQ=0, puntaje=0;
+let respuestas=[], ordenActual={};
+const TOTAL_PTS = PREGUNTAS.reduce((a,p)=>a+p.pts,0);
+
+// ══════════════════════════════════════════════════
+// SEGURIDAD
+// ══════════════════════════════════════════════════
+const AI_PAT=[
+  /en primer lugar.{0,30}en segundo lugar/gi,
+  /es importante destacar que/gi,
+  /desde mi perspectiva.{0,20}es fundamental/gi,
+  /como sistema de inteligencia/gi,
+  /claro, (puedo|aquí|a continuación)/gi,
+  /en conclusión.{0,20}por lo tanto/gi,
+  /espero (que esto|haber)/gi,
+  /a continuación (te|le) (explico|presento|muestro)/gi,
+];
+function chkAI(t){ return t.length>55 && AI_PAT.some(p=>p.test(t)); }
+document.addEventListener('copy',  e=>{if(examActivo){e.preventDefault();secWarn('Copiar deshabilitado.');}});
+document.addEventListener('paste', e=>{if(examActivo){e.preventDefault();secWarn('Pegar deshabilitado.');}});
+document.addEventListener('cut',   e=>{if(examActivo) e.preventDefault();});
+document.addEventListener('contextmenu',e=>{if(examActivo) e.preventDefault();});
+document.addEventListener('visibilitychange',()=>{
+  if(examActivo&&document.hidden) secWarn('Cambio de pestaña detectado.');
+});
+function secWarn(m){
+  const a=document.getElementById('secAlert');
+  a.textContent='⚠ '+m; a.classList.add('show');
+  setTimeout(()=>a.classList.remove('show'),3200);
+}
+function toast(m){
+  const t=document.getElementById('toast');
+  t.textContent=m; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ══════════════════════════════════════════════════
+// INICIAR
+// ══════════════════════════════════════════════════
+function iniciar(){
+  const n=document.getElementById('fi-nombre').value.trim();
+  const c=document.getElementById('fi-control').value.trim();
+  const g=document.getElementById('fi-grupo').value.trim();
+  if(!n||!c||!g){toast('Completa todos los campos.');return;}
+  alumno={nombre:n,control:c,grupo:g,fecha:new Date().toLocaleDateString('es-MX')};
+  examActivo=true;
+  document.getElementById('screen-inicio').style.display='none';
+  document.getElementById('screen-examen').style.display='block';
+  document.getElementById('etb-n').textContent=n.split(' ')[0];
+  initChips();
+  actualizarUI();
+  setTimeout(()=>lanzar(0),400);
+}
+function initChips(){
+  document.getElementById('progChips').innerHTML=
+    PREGUNTAS.map((_,i)=>`<div class="pc" id="ch-${i}"></div>`).join('');
+}
+function actualizarUI(){
+  document.getElementById('etb-pts').textContent=puntaje+' pts';
+  const pct=(curQ/PREGUNTAS.length)*100;
+  document.getElementById('progFill').style.width=pct+'%';
+  PREGUNTAS.forEach((_,i)=>{
+    const el=document.getElementById('ch-'+i);
+    if(!el)return;
+    el.className='pc'+(i<curQ?' done':i===curQ?' cur':'');
+  });
+}
+
+// ══════════════════════════════════════════════════
+// LANZAR PREGUNTA
+// ══════════════════════════════════════════════════
+function lanzar(idx){
+  if(idx>=PREGUNTAS.length){mostrarResultados();return;}
+  const feed=document.getElementById('feed');
+  const p=PREGUNTAS[idx];
+
+  // separador
+  feed.innerHTML+=`<div class="time-sep">Pregunta ${idx+1} de ${PREGUNTAS.length}</div>`;
+
+  // typing
+  const tid='ty-'+idx;
+  feed.innerHTML+=`<div class="typing" id="${tid}">
+    <div style="width:34px;height:34px;border-radius:50%;background:var(--guinda);
+      display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">${p.avatar}</div>
+    <div class="typing-bubble"><span></span><span></span><span></span></div>
+  </div>`;
+  scrollF();
+
+  setTimeout(()=>{
+    document.getElementById(tid)?.remove();
+    renderQ(p,idx,feed);
+    scrollF();
+  },1000);
+}
+
+// ══════════════════════════════════════════════════
+// RENDER PREGUNTA
+// ══════════════════════════════════════════════════
+function renderQ(p,idx,feed){
+  const catColor='var(--guinda)';
+
+  // contexto
+  let ctxHtml='';
+  if(p.contexto){
+    ctxHtml=`<div class="q-contexto">${p.contexto}</div>`;
+  }
+
+  // esquema
+  let esqHtml='';
+  if(p.esquema){
+    const lines=p.esquema.map(l=>{
+      const cls=l.includes('192.168.2')?'err':l.includes('Switch')?'hl':'';
+      return `<div class="${cls}">${esc(l)}</div>`;
+    }).join('');
+    esqHtml=`<div class="q-esquema">${lines}</div>`;
+  }
+
+  // input según tipo
+  let inputHtml='';
+  if(p.tipo==='opcion'){
+    inputHtml=`<div class="opciones" id="opts-${idx}">
+      ${p.opciones.map((o,oi)=>`
+        <div class="opcion" id="opt-${idx}-${oi}" onclick="selOpc(${idx},${oi})">
+          <div class="olet">${'ABCD'[oi]}</div>
+          <span>${esc(o)}</span>
+        </div>`).join('')}
+    </div>`;
+  } else if(p.tipo==='tf'){
+    inputHtml=`<div class="tf-opts" id="tf-${idx}">
+      <div class="tf-btn" id="tf-${idx}-V" onclick="selTFbtn(${idx},'Verdadero')">✓ Verdadero</div>
+      <div class="tf-btn" id="tf-${idx}-F" onclick="selTFbtn(${idx},'Falso')">✗ Falso</div>
+    </div>`;
+  } else if(p.tipo==='orden'){
+    // mezclar items
+    const items=[...p.items].sort(()=>Math.random()-.5);
+    ordenActual[idx]=items.map(i=>i.id);
+    inputHtml=`<div class="orden-list" id="ord-${idx}">
+      ${items.map((it,ii)=>`
+        <div class="orden-item" id="oi-${idx}-${ii}"
+          draggable="true"
+          ondragstart="dragStart(event,'${idx}',${ii})"
+          ondragover="dragOver(event)"
+          ondragenter="dragEnter(event,'${idx}',${ii})"
+          ondragleave="dragLeave(event)"
+          ondrop="drop(event,'${idx}',${ii})">
+          <span class="orden-handle">⠿</span>
+          <div class="orden-num">${ii+1}</div>
+          <span>${esc(it.txt)}</span>
+        </div>`).join('')}
+    </div>`;
+  } else {
+    inputHtml=`<textarea class="resp-ta" id="ta-${idx}"
+      placeholder="Escribe tu respuesta aquí (mínimo 30 caracteres)..."
+      maxlength="800"
+      oninput="onTAChange(${idx},this)"></textarea>`;
+  }
+
+  const btnDis = (p.tipo==='opcion'||p.tipo==='tf') ? 'disabled' : '';
+
+  feed.innerHTML+=`
+    <div class="q-card" id="qcard-${idx}">
+      <div class="q-card-top">
+        <div class="q-avatar">${p.avatar}</div>
+        <div class="q-meta">
+          <span class="q-categoria">${esc(p.categoria)} · ${p.pts} pts</span>
+          <div class="q-enunciado">${esc(p.enunciado)}</div>
+        </div>
+        <div class="q-numero">#${idx+1}</div>
+      </div>
+      <div class="q-card-body">
+        ${ctxHtml}
+        ${esqHtml}
+        ${inputHtml}
+        <div style="margin-top:.6rem;">
+          <button class="btn-conf" id="bc-${idx}" onclick="confirmar(${idx})" ${btnDis}>
+            Confirmar →
+          </button>
+          <button class="btn-sig" id="bs-${idx}" onclick="siguiente(${idx})">
+            ${idx+1<PREGUNTAS.length?'Siguiente →':'Ver resultados →'}
+          </button>
+        </div>
+        <div class="feedback" id="fb-${idx}"></div>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════
+// SELECCIONES
+// ══════════════════════════════════════════════════
+const selOpciones={};
+function selOpc(idx,oi){
+  selOpciones[idx]=oi;
+  document.querySelectorAll(`#opts-${idx} .opcion`).forEach(e=>e.classList.remove('sel'));
+  document.getElementById(`opt-${idx}-${oi}`)?.classList.add('sel');
+  const bc=document.getElementById('bc-'+idx);
+  if(bc) bc.disabled=false;
+}
+
+const seleccionesTF={};
+function selTFbtn(idx,val){
+  seleccionesTF[idx]=val;
+  ['V','F'].forEach(k=>document.getElementById(`tf-${idx}-${k}`)?.classList.remove('sel'));
+  document.getElementById(`tf-${idx}-${val[0]}`)?.classList.add('sel');
+  const bc=document.getElementById('bc-'+idx);
+  if(bc) bc.disabled=false;
+}
+
+function onTAChange(idx,el){
+  if(chkAI(el.value)){
+    el.style.borderColor='#ef4444';
+    secWarn('Posible respuesta de IA detectada. Usa tus propias palabras.');
+  } else {
+    el.style.borderColor='';
+  }
+  const bc=document.getElementById('bc-'+idx);
+  if(bc) bc.disabled = el.value.trim().length<30;
+}
+
+// ══════════════════════════════════════════════════
+// DRAG & DROP ORDEN
+// ══════════════════════════════════════════════════
+let dragSrc=null, dragIdx=null;
+function dragStart(e,idx,ii){
+  dragSrc=ii; dragIdx=idx;
+  e.dataTransfer.effectAllowed='move';
+}
+function dragOver(e){ e.preventDefault(); e.dataTransfer.dropEffect='move'; }
+function dragEnter(e,idx,ii){
+  document.getElementById(`oi-${idx}-${ii}`)?.classList.add('drag-over');
+}
+function dragLeave(e){
+  e.currentTarget.classList.remove('drag-over');
+}
+function drop(e,idx,ii){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(dragSrc===null||dragSrc===ii) return;
+
+  const list=ordenActual[idx];
+  const tmp=list[dragSrc]; list[dragSrc]=list[ii]; list[ii]=tmp;
+
+  // re-render ítems dentro del mismo contenedor
+  const cont=document.getElementById(`ord-${idx}`);
+  const p=PREGUNTAS[idx];
+  cont.querySelectorAll('.orden-item').forEach((el,pos)=>{
+    const id=list[pos];
+    const item=p.items.find(it=>it.id===id);
+    const numEl=el.querySelector('.orden-num');
+    if(numEl) numEl.textContent=pos+1;
+    const spanEl=el.querySelector('span:last-child');
+    if(spanEl) spanEl.textContent=item?.txt||'';
+  });
+  dragSrc=ii;
+  // habilitar confirmar
+  const bc=document.getElementById('bc-'+idx);
+  if(bc) bc.disabled=false;
+}
+
+// ══════════════════════════════════════════════════
+// CONFIRMAR
+// ══════════════════════════════════════════════════
+function confirmar(idx){
+  const p=PREGUNTAS[idx];
+  const bc=document.getElementById('bc-'+idx);
+  const fb=document.getElementById('fb-'+idx);
+  const bs=document.getElementById('bs-'+idx);
+  if(bc) bc.disabled=true;
+
+  let correcto=false, respTexto='', pts=0;
+
+  if(p.tipo==='opcion'){
+    const sel=selOpciones[idx];
+    if(sel===undefined){toast('Selecciona una opción.');if(bc)bc.disabled=false;return;}
+    correcto=sel===p.correcta;
+    respTexto=p.opciones[sel];
+    document.querySelectorAll(`#opts-${idx} .opcion`).forEach((el,oi)=>{
+      el.classList.remove('sel'); el.classList.add('dis');
+      if(oi===p.correcta) el.classList.add('cor');
+      else if(oi===sel&&!correcto) el.classList.add('inc');
+    });
+  } else if(p.tipo==='tf'){
+    const sel=seleccionesTF[idx];
+    if(!sel){toast('Selecciona Verdadero o Falso.');if(bc)bc.disabled=false;return;}
+    correcto=sel===p.tf_correcto;
+    respTexto=sel;
+    ['V','F'].forEach(k=>{
+      const el=document.getElementById(`tf-${idx}-${k}`);
+      if(!el)return;
+      el.classList.add('dis'); el.classList.remove('sel');
+    });
+    const corKey=p.tf_correcto[0];
+    document.getElementById(`tf-${idx}-${corKey}`)?.classList.add('cor');
+    if(!correcto){
+      const incKey=sel[0];
+      document.getElementById(`tf-${idx}-${incKey}`)?.classList.add('inc');
+    }
+  } else if(p.tipo==='orden'){
+    const actual=ordenActual[idx]||[];
+    correcto=actual.join(',')===p.orden_correcto.join(',');
+    respTexto='Orden: '+actual.map(id=>p.items.find(it=>it.id===id)?.txt).join(' → ');
+    // deshabilitar drag
+    document.querySelectorAll(`#ord-${idx} .orden-item`).forEach(el=>{
+      el.setAttribute('draggable','false');
+      el.style.cursor='default';
+      el.style.opacity='.7';
+    });
+    if(correcto){
+      document.querySelectorAll(`#ord-${idx} .orden-item`).forEach(el=>{
+        el.style.borderColor='#22c55e';el.style.background='#f0fdf4';
+      });
+    }
+  } else {
+    const ta=document.getElementById('ta-'+idx);
+    respTexto=ta?.value?.trim()||'';
+    if(respTexto.length<30){toast('Escribe una respuesta más completa.');if(bc)bc.disabled=false;return;}
+    if(chkAI(respTexto)){secWarn('Posible respuesta de IA. Escribe con tus propias palabras.');if(bc)bc.disabled=false;return;}
+    correcto=true; // revisión docente
+    if(ta)ta.readOnly=true;
+  }
+
+  pts=correcto?p.pts:0;
+  puntaje+=pts;
+  respuestas.push({q:p.enunciado,resp:respTexto,correcto,pts,maxPts:p.pts,tipo:p.tipo});
+
+  const fbClass=p.tipo==='abierta'?'rev':correcto?'ok':'fail';
+  const fbTxt=p.tipo==='abierta'
+    ?'📝 Respuesta registrada para revisión docente. '+p.fb_ok
+    :correcto?'✓ '+p.fb_ok:'✗ '+p.fb_fail;
+  fb.textContent=fbTxt;
+  fb.className='feedback show '+fbClass;
+
+  bs?.classList.add('show');
+  actualizarUI();
+  scrollF();
+}
+
+// ══════════════════════════════════════════════════
+// SIGUIENTE
+// ══════════════════════════════════════════════════
+function siguiente(idx){
+  curQ=idx+1;
+  actualizarUI();
+  const bs=document.getElementById('bs-'+idx);
+  if(bs)bs.disabled=true;
+  if(curQ>=PREGUNTAS.length){mostrarResultados();return;}
+  setTimeout(()=>lanzar(curQ),400);
+}
+
+// ══════════════════════════════════════════════════
+// RESULTADOS
+// ══════════════════════════════════════════════════
+function mostrarResultados(){
+  examActivo=false;
+  document.getElementById('screen-examen').style.display='none';
+  document.getElementById('screen-result').style.display='block';
+  document.getElementById('rs-pts').textContent=puntaje;
+  document.getElementById('rs-de').textContent='de '+TOTAL_PTS+' puntos';
+  document.getElementById('rs-nm').textContent=alumno.nombre+' · '+alumno.grupo;
+  const lista=document.getElementById('rs-lista');
+  lista.innerHTML=respuestas.map((r,i)=>`
+    <li>
+      <div class="ri-ico">${r.tipo==='abierta'?'📝':r.correcto?'✅':'❌'}</div>
+      <div class="ri-q">
+        <strong>P${i+1}:</strong> ${esc(r.q.slice(0,90))}${r.q.length>90?'…':''}<br>
+        <span style="font-size:.8rem;color:var(--ink-secondary);">
+          ${r.tipo==='abierta'?'Revisión docente':esc(r.resp.slice(0,70))+(r.resp.length>70?'…':'')}
+        </span>
+      </div>
+      <div class="ri-pts">${r.tipo==='abierta'?'✎':r.pts+'/'+r.maxPts}</div>
+    </li>`).join('');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════════════
+// PDF
+// ══════════════════════════════════════════════════
+function generarPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'letter'});
+  const PW=215.9,ML=18,MR=18,CW=PW-ML-MR;
+  let y=18;
+
+  doc.setFillColor(94,22,46);
+  doc.rect(0,0,PW,26,'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(13);
+  doc.setTextColor(255,255,255);
+  doc.text('Actividad de Recuperación — Redes LAN',PW/2,11,{align:'center'});
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(9);
+  doc.setTextColor(180,140,155);
+  doc.text('Soporte Opera una Red LAN · Unidad 3 · Conceptos',PW/2,20,{align:'center'});
+  y=34;
+
+  doc.setFillColor(245,232,238);
+  doc.rect(ML,y,CW,20,'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(9);
+  doc.setTextColor(94,22,46);
+  doc.text('Alumno: '+alumno.nombre,ML+3,y+7);
+  doc.text('Control: '+alumno.control+'   Grupo: '+alumno.grupo+'   Fecha: '+alumno.fecha,ML+3,y+14);
+  y+=27;
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(18);
+  doc.setTextColor(94,22,46);
+  doc.text('Puntaje: '+puntaje+' / '+TOTAL_PTS,PW/2,y+6,{align:'center'});
+  y+=16;
+
+  respuestas.forEach((r,i)=>{
+    if(y>238){doc.addPage();y=20;}
+    doc.setFillColor(94,22,46);
+    doc.rect(ML,y,CW,9,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(255,255,255);
+    doc.text(`P${i+1}: ${r.q.slice(0,85)}${r.q.length>85?'…':''}`,ML+3,y+6);
+    y+=11;
+    const rgb=r.tipo==='abierta'?[235,240,255]:r.correcto?[240,253,244]:[254,242,242];
+    doc.setFillColor(...rgb);
+    doc.rect(ML,y,CW,7,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(94,22,46);
+    const lbl=r.tipo==='abierta'?'Revisión docente':r.correcto?`Correcto · ${r.pts}/${r.maxPts} pts`:`Incorrecto · 0/${r.maxPts} pts`;
+    doc.text(lbl,ML+3,y+5);
+    y+=9;
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(74,56,64);
+    const lines=doc.splitTextToSize('R: '+(r.resp||'(abierta)'),CW-6);
+    lines.forEach(l=>{if(y>252){doc.addPage();y=20;}doc.text(l,ML+3,y);y+=4.2;});
+    y+=4;
+  });
+
+  const pages=doc.internal.getNumberOfPages();
+  for(let pg=1;pg<=pages;pg++){
+    doc.setPage(pg);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7);
+    doc.setTextColor(140,120,128);
+    doc.text('Generado: '+new Date().toLocaleString('es-MX'),ML,275);
+    doc.text(`${pg}/${pages}`,PW-MR,275,{align:'right'});
+  }
+  doc.save('Recuperacion_'+alumno.nombre.replace(/\s+/g,'_')+'.pdf');
+  toast('PDF generado.');
+}
+
+// ══════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════
+function esc(s){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+function scrollF(){
+  setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}),80);
+}
+</script>
+</body>
+</html>
